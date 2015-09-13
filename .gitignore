@@ -1,0 +1,6 @@
+bin
+obj
+fadm.sln.ide
+packages
+*.user
+*.suo
