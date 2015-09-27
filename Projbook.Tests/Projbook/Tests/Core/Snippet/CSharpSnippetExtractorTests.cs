@@ -16,9 +16,17 @@ namespace Projbook.Tests.Core.Snippet
         /// </summary>
         [Test]
         [ExpectedException(typeof(ArgumentException))]
-        public void WrongInitSource()
+        public void WrongInitSourceDefaultDirectories()
         {
             new CSharpSnippetExtractor("Foo.cs");
+        }
+        /// <summary>
+        /// Tests with invalid input.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void WrongInitSourceEmptyDirectories()
+        {
             new CSharpSnippetExtractor("Foo.cs", new DirectoryInfo[0]);
         }
 
