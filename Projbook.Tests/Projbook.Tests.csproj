@@ -80,6 +80,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Compile Include="Foo\Bar.cs" />
+    <Compile Include="Projbook\Tests\Core\ConfigurationLoaderTests.cs" />
     <Compile Include="Projbook\Tests\Core\Markdown\InjectAnchorHtmlFormatterTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\CSharpSnippetExtractorTests.cs" />
     <Compile Include="Resources\SourcesA\AnyClass.cs">
@@ -90,6 +91,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Resources\testConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scripts\jquery-1.9.1.min.map" />
     <None Include="source.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
