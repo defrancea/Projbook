@@ -45,6 +45,11 @@ namespace Projbook.Core
         public DirectoryInfo OutputDirectory { get; private set; }
 
         /// <summary>
+        /// Snippet extractor factory.
+        /// </summary>
+        private SnippetExtractorFactory snippetExtractorFactory;
+
+        /// <summary>
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
         /// </summary>
         /// <param name="sourceDirectoryPath">Initializes the required <see cref="SourceDirectory"/>.</param>
@@ -67,6 +72,7 @@ namespace Projbook.Core
             this.TemplateFile = new FileInfo(templateFilePath);
             this.ConfigFile = new FileInfo(configFile);
             this.OutputDirectory = new DirectoryInfo(outputDirectoryPath);
+            this.snippetExtractorFactory = new SnippetExtractorFactory(this.SourceDirectory);
         }
 
         /// <summary>
@@ -109,10 +115,7 @@ namespace Projbook.Core
             documentationPages[0].IsHome = true;
             documentationTitle = (string)configuration["main.title"];
             
-            // Initializes snippet extractor
-            SnippetExtractor snippetExtractor = new SnippetExtractor(this.SourceDirectory);
-
-            //SortedDictionary<string, object> pages = new SortedDictionary<string, object>();
+            // Process all pages
             foreach (DocumentationPage documentationPage in documentationPages)
             {
                 // Declare formatter
@@ -129,23 +132,19 @@ namespace Projbook.Core
                     CommonMarkConverter.ProcessStage2(document);
                     
                     // Process snippet
-                    Regex regex = new Regex(@"^(.+)\[(.+)\]$", RegexOptions.Compiled);
                     foreach (var node in document.AsEnumerable())
                     {
                         // Filter fenced code
                         if (node.Block != null && node.Block.Tag == BlockTag.FencedCode)
                         {
-                            // Extract snippet pattern
+                            // Extract snippet
                             string fencedCode = node.Block.FencedCodeData.Info;
-                            Match match = regex.Match(fencedCode);
-                            if (match.Success)
-                            {
-                                // Retrieve code language and rule pattern
-                                string language = match.Groups[1].Value;
-                                string rulePattern = match.Groups[2].Value;
+                            ISnippetExtractor snippetExtractor = this.snippetExtractorFactory.CreateExtractor(fencedCode);
 
-                                // Extract the snippet
-                                Model.Snippet snippet = snippetExtractor.Extract(rulePattern);
+                            // Extract and inject snippet and the factory were able to create an extractor
+                            if (null != snippetExtractor)
+                            {
+                                Model.Snippet snippet = snippetExtractor.Extract();
                                 StringContent code = new StringContent();
                                 code.Append(snippet.Content, 0, snippet.Content.Length);
                                 node.Block.StringContent = code;
