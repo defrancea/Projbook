@@ -67,7 +67,12 @@ namespace Projbook.Tests.Core
                 Path.Combine(this.Extractor.SourceDictionaries[0].FullName, "AnyClass.cs"),
                 snippet.Rule.TargetFile.FullName);
             Assert.AreEqual(
-                "namespace Projbook.Tests.Resources.SourcesA\r\n{\r\n    public class AnyClass\r\n    {\r\n    }\r\n}",
+@"namespace Projbook.Tests.Resources.SourcesA
+{
+    public class AnyClass
+    {
+    }
+}",
                 snippet.Content);
         }
     }
