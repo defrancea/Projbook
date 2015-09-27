@@ -90,8 +90,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Projbook\Core\Markdown\InjectAnchorHtmlFormatter.cs" />
-    <Compile Include="Projbook\Core\Model\DocumentationPage.cs" />
-    <Compile Include="Projbook\Core\Model\Rule.cs" />
+    <Compile Include="Projbook\Core\Model\Page.cs" />
+    <Compile Include="Projbook\Core\Model\ConfigDocumentationPage.cs" />
     <Compile Include="Projbook\Core\Model\Snippet.cs" />
     <Compile Include="Projbook\Core\Snippet\ISnippetExtractor.cs" />
     <Compile Include="Projbook\Core\Snippet\CSharpSnippetExtractor.cs" />
