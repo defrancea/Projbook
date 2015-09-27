@@ -62,6 +62,7 @@ namespace Projbook.Core
             Ensure.That(File.Exists(templateFilePath)).IsTrue();
             Ensure.That(File.Exists(configFile)).IsTrue();
 
+            // Initialize
             this.SourceDirectory = new DirectoryInfo(sourceDirectoryPath);
             this.TemplateFile = new FileInfo(templateFilePath);
             this.ConfigFile = new FileInfo(configFile);
