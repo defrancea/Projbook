@@ -66,13 +66,9 @@ namespace Projbook.Tests.Core
             Assert.IsNotNull(
                 Path.Combine(this.Extractor.SourceDictionaries[0].FullName, "AnyClass.cs"),
                 snippet.Rule.TargetFile.FullName);
+
             Assert.AreEqual(
-@"namespace Projbook.Tests.Resources.SourcesA
-{
-    public class AnyClass
-    {
-    }
-}",
+                string.Format("namespace Projbook.Tests.Resources.SourcesA{0}{{{0}    public class AnyClass{0}    {{{0}    }}{0}}}", Environment.NewLine),
                 snippet.Content);
         }
     }
