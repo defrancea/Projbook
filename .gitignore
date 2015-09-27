@@ -4,3 +4,4 @@ fadm.sln.ide
 packages
 *.user
 *.suo
+.vs
