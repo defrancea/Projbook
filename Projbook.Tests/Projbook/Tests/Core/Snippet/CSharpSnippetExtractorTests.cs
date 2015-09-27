@@ -2,34 +2,15 @@
 using Projbook.Core.Snippet;
 using System;
 using System.IO;
-using System.Reflection;
 
-namespace Projbook.Tests.Core
+namespace Projbook.Tests.Core.Snippet
 {
     /// <summary>
     /// Tests <see cref="CSharpSnippetExtractor"/>.
     /// </summary>
     [TestFixture]
-    public class CSharpSnippetExtractorTests
+    public class CSharpSnippetExtractorTests : AbstractSnippetTests
     {
-        /// <summary>
-        /// The tested extractor.
-        /// </summary>
-        public DirectoryInfo SourceDirectory { get; private set; }
-
-        /// <summary>
-        /// Initializes the test.
-        /// </summary>
-        [SetUp]
-        public void Setup()
-        {
-            // Initialize extractor
-            string testAssemblyLocation = Assembly.GetAssembly(typeof(CSharpSnippetExtractorTests)).Location;
-            string testAssemblyDirectory = Path.GetDirectoryName(testAssemblyLocation);
-            string testSourceLocation = Path.GetFullPath(Path.Combine(testAssemblyDirectory, "..", ".."));
-            this.SourceDirectory = new DirectoryInfo(Path.Combine(testSourceLocation, "Resources", "SourcesA"));
-        }
-
         /// <summary>
         /// Tests with invalid input.
         /// </summary>
