@@ -9,6 +9,6 @@
         /// Extracts a snippet.
         /// </summary>
         /// <returns>The extracted snippet.</returns>
-        Model.Snippet Extract();
+        Model.Razor.Snippet Extract();
     }
 }

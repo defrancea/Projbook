@@ -1,4 +1,4 @@
-﻿namespace Projbook.Core.Model
+﻿namespace Projbook.Core.Model.Razor
 {
     /// <summary>
     /// Represents a documentation page.
@@ -31,7 +31,7 @@
         public string Content { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="ConfigDocumentationPage"/>.
+        /// Initializes a new instance of <see cref="Page"/>.
         /// </summary>
         /// <param name="id">Initializes the required <see cref="Id"/>.</param>
         /// <param name="title">Initializes the required <see cref="Title"/>.</param>

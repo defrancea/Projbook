@@ -41,7 +41,7 @@ namespace Projbook.Core.Snippet
         /// </summary>
         /// <param name="rule">The rule to parse and extract snippet from.</param>
         /// <returns>The extracted snippet.</returns>
-        public Model.Snippet Extract()
+        public Model.Razor.Snippet Extract()
         {
             // Load the file content
             FileInfo fileInfo = new FileInfo(Path.Combine(this.SourceDictionaries[0].FullName, this.Pattern)); // Todo: More validation and class member parsin with Roslyn
@@ -53,7 +53,7 @@ namespace Projbook.Core.Snippet
             }
             
             // Build and return the snippet
-            return new Model.Snippet(Encoding.UTF8.GetString(memoryStream.ToArray()));
+            return new Model.Razor.Snippet(Encoding.UTF8.GetString(memoryStream.ToArray()));
         }
     }
 }

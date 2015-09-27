@@ -90,13 +90,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Projbook\Core\Markdown\InjectAnchorHtmlFormatter.cs" />
-    <Compile Include="Projbook\Core\Model\Page.cs" />
-    <Compile Include="Projbook\Core\Model\ConfigDocumentationPage.cs" />
-    <Compile Include="Projbook\Core\Model\Snippet.cs" />
+    <Compile Include="Projbook\Core\Model\Configuration\Page.cs" />
+    <Compile Include="Projbook\Core\Model\Razor\Page.cs" />
+    <Compile Include="Projbook\Core\Model\Configuration\Configuration.cs" />
+    <Compile Include="Projbook\Core\Model\Razor\Snippet.cs" />
     <Compile Include="Projbook\Core\Snippet\ISnippetExtractor.cs" />
     <Compile Include="Projbook\Core\Snippet\CSharpSnippetExtractor.cs" />
     <Compile Include="Projbook\Core\ProjbookEngine.cs" />
-    <Compile Include="Projbook\Core\Model\Anchor.cs" />
+    <Compile Include="Projbook\Core\Model\Razor\Anchor.cs" />
     <Compile Include="Projbook\Core\Snippet\SnippetExtractorFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -109,6 +110,7 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
