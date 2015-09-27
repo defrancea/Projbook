@@ -8,15 +8,15 @@ using System.Reflection;
 namespace Projbook.Tests.Core
 {
     /// <summary>
-    /// Tests <see cref="SnippetExtractor"/>.
+    /// Tests <see cref="CSharpSnippetExtractor"/>.
     /// </summary>
     [TestFixture]
-    public class SnippetExtractorTests
+    public class CSharpSnippetExtractorTests
     {
         /// <summary>
         /// The tested extractor.
         /// </summary>
-        public SnippetExtractor Extractor { get; private set; }
+        public DirectoryInfo SourceDirectory { get; private set; }
 
         /// <summary>
         /// Initializes the test.
@@ -25,20 +25,21 @@ namespace Projbook.Tests.Core
         public void Setup()
         {
             // Initialize extractor
-            string testAssemblyLocation = Assembly.GetAssembly(typeof(SnippetExtractorTests)).Location;
+            string testAssemblyLocation = Assembly.GetAssembly(typeof(CSharpSnippetExtractorTests)).Location;
             string testAssemblyDirectory = Path.GetDirectoryName(testAssemblyLocation);
             string testSourceLocation = Path.GetFullPath(Path.Combine(testAssemblyDirectory, "..", ".."));
-            this.Extractor = new SnippetExtractor(new DirectoryInfo(Path.Combine(testSourceLocation, "Resources", "SourcesA")));
+            this.SourceDirectory = new DirectoryInfo(Path.Combine(testSourceLocation, "Resources", "SourcesA"));
         }
 
         /// <summary>
         /// Tests with invalid input.
         /// </summary>
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void WrongInitNull()
+        [ExpectedException(typeof(ArgumentException))]
+        public void WrongInitSource()
         {
-            new SnippetExtractor(null);
+            new CSharpSnippetExtractor("Foo.cs");
+            new CSharpSnippetExtractor("Foo.cs", new DirectoryInfo[0]);
         }
 
         /// <summary>
@@ -48,7 +49,9 @@ namespace Projbook.Tests.Core
         [ExpectedException(typeof(ArgumentException))]
         public void WrongInitEmpty()
         {
-            new SnippetExtractor(new DirectoryInfo[0]);
+            new CSharpSnippetExtractor(null, new DirectoryInfo[] { new DirectoryInfo("Foo") });
+            new CSharpSnippetExtractor(string.Empty, new DirectoryInfo[] { new DirectoryInfo("Foo") });
+            new CSharpSnippetExtractor("   ", new DirectoryInfo[] { new DirectoryInfo("Foo") });
         }
 
         /// <summary>
@@ -59,14 +62,10 @@ namespace Projbook.Tests.Core
         public void ExtractWholeFile()
         {
             // Process
-            Snippet snippet = this.Extractor.Extract("AnyClass.cs");
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("AnyClass.cs", this.SourceDirectory);
+            Snippet snippet = extractor.Extract();
 
             // Assert
-            Assert.IsNotNull(snippet.Rule);
-            Assert.IsNotNull(
-                Path.Combine(this.Extractor.SourceDictionaries[0].FullName, "AnyClass.cs"),
-                snippet.Rule.TargetFile.FullName);
-
             Assert.AreEqual(
                 string.Format("namespace Projbook.Tests.Resources.SourcesA{0}{{{0}    public class AnyClass{0}    {{{0}    }}{0}}}", Environment.NewLine),
                 snippet.Content);

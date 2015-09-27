@@ -93,9 +93,11 @@
     <Compile Include="Projbook\Core\Model\DocumentationPage.cs" />
     <Compile Include="Projbook\Core\Model\Rule.cs" />
     <Compile Include="Projbook\Core\Model\Snippet.cs" />
-    <Compile Include="Projbook\Core\Snippet\SnippetExtractor.cs" />
+    <Compile Include="Projbook\Core\Snippet\ISnippetExtractor.cs" />
+    <Compile Include="Projbook\Core\Snippet\CSharpSnippetExtractor.cs" />
     <Compile Include="Projbook\Core\ProjbookEngine.cs" />
     <Compile Include="Projbook\Core\Model\Anchor.cs" />
+    <Compile Include="Projbook\Core\Snippet\SnippetExtractorFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
