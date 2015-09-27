@@ -3,6 +3,7 @@ using Projbook.Core.Model;
 using Projbook.Core.Snippet;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace Projbook.Tests.Core
 {
@@ -24,7 +25,10 @@ namespace Projbook.Tests.Core
         public void Setup()
         {
             // Initialize extractor
-            this.Extractor = new SnippetExtractor(new DirectoryInfo(Path.Combine(".", "Resources", "SourcesA")));
+            string testAssemblyLocation = Assembly.GetAssembly(typeof(SnippetExtractorTests)).Location;
+            string testAssemblyDirectory = Path.GetDirectoryName(testAssemblyLocation);
+            string testSourceLocation = Path.GetFullPath(Path.Combine(testAssemblyDirectory, "..", ".."));
+            this.Extractor = new SnippetExtractor(new DirectoryInfo(Path.Combine(testSourceLocation, "Resources", "SourcesA")));
         }
 
         /// <summary>
