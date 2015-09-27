@@ -1,10 +1,9 @@
 ﻿using CommonMark;
 using CommonMark.Syntax;
 using EnsureThat;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using Projbook.Core.Markdown;
-using Projbook.Core.Model;
+using Projbook.Core.Model.Configuration;
 using Projbook.Core.Snippet;
 using RazorEngine;
 using RazorEngine.Configuration;
@@ -12,8 +11,7 @@ using RazorEngine.Templating;
 using RazorEngine.Text;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+using RazorPage = Projbook.Core.Model.Razor.Page;
 
 namespace Projbook.Core
 {
@@ -87,43 +85,23 @@ namespace Projbook.Core
             }
 
             // Read configuration
-            // Todo: Remove dynamic and use an actual model for configuration
-            Dictionary<string, object> configuration = null;
+            Configuration configuration;
             using (var reader = new StreamReader(new FileStream(this.ConfigFile.FullName, FileMode.Open)))
             {
-                configuration = JsonConvert.DeserializeObject<Dictionary<string, object>>(reader.ReadToEnd());
+                configuration = JsonConvert.DeserializeObject<Configuration>(reader.ReadToEnd());
             }
-            List<ConfigDocumentationPage> configDocumentationPages = new List<ConfigDocumentationPage>();
-            string documentationTitle;
-            foreach (string key in configuration.Keys)
-            {
-                // Isolate page entry
-                if (key.StartsWith("page."))
-                {
-                    dynamic page = configuration[key];
-                    string pageId = key.Substring("page.".Length);
-                    FileInfo pageFile = new FileInfo(pageId);
-                    string pageTitle = page.title;
-                    int pageIndex = page.index;
-
-                    // Create documentation page
-                    configDocumentationPages.Add(new ConfigDocumentationPage(pageId, pageTitle, pageFile, pageIndex));
-                }
-            }
-            configDocumentationPages = configDocumentationPages.OrderBy(x => x.Index).ToList(); // Todo: Avoid useless intermediaite data structure
-            documentationTitle = (string)configuration["main.title"];
 
             // Process all pages
-            List<Page> documentationPages = new List<Page>();
+            List<RazorPage> pages = new List<RazorPage>();
             bool first = true;
-            foreach (ConfigDocumentationPage configDocumentationPage in configDocumentationPages)
+            foreach (Page page in configuration.Pages)
             {
                 // Declare formatter
                 InjectAnchorHtmlFormatter formatter = null;
 
                 // Load the document
                 Block document;
-                using (StreamReader reader = new StreamReader(new FileStream(configDocumentationPage.File.FullName, FileMode.Open)))
+                using (StreamReader reader = new StreamReader(new FileStream(new FileInfo(page.Path).FullName, FileMode.Open)))
                 {
                     document = CommonMarkConverter.ProcessStage1(reader);
                 }
@@ -142,7 +120,7 @@ namespace Projbook.Core
                         // Extract and inject snippet and the factory were able to create an extractor
                         if (null != snippetExtractor)
                         {
-                            Model.Snippet snippet = snippetExtractor.Extract();
+                            Model.Razor.Snippet snippet = snippetExtractor.Extract();
                             StringContent code = new StringContent();
                             code.Append(snippet.Content, 0, snippet.Content.Length);
                             node.Block.StringContent = code;
@@ -154,7 +132,7 @@ namespace Projbook.Core
                 CommonMarkSettings.Default.OutputDelegate =
                     (d, output, settings) =>
                     {
-                        formatter = new InjectAnchorHtmlFormatter(configDocumentationPage.Id, output, settings);
+                        formatter = new InjectAnchorHtmlFormatter(page.Path, output, settings);
                         formatter.WriteDocument(d);
                     };
 
@@ -166,9 +144,9 @@ namespace Projbook.Core
                 }
 
                 // Add new page
-                documentationPages.Add(new Page(
-                    id: configDocumentationPage.Id.Replace(".", string.Empty),
-                    title: configDocumentationPage.Title,
+                pages.Add(new RazorPage(
+                    id: page.Path.Replace(".", string.Empty),
+                    title: page.Title,
                     isHome: first,
                     anchor: formatter.Anchors,
                     content: System.Text.Encoding.UTF8.GetString(documentStream.ToArray())));
@@ -186,7 +164,7 @@ namespace Projbook.Core
                 config.EncodedStringFactory = new RawStringFactory();
                 var service = RazorEngineService.Create(config);
                 Engine.Razor = service;
-                processed = Engine.Razor.RunCompile(new LoadedTemplateSource(reader.ReadToEnd()), string.Empty, null, new { Title = documentationTitle, Pages = documentationPages });
+                processed = Engine.Razor.RunCompile(new LoadedTemplateSource(reader.ReadToEnd()), string.Empty, null, new { Title = configuration.Title, Pages = pages });
                 writer.WriteLine(processed);
             }
         }

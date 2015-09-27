@@ -1,5 +1,13 @@
 ﻿{
-  "main.title": "Projbook",
-  "page.source.md": { "index": 0, "title": "Main" },
-  "page.injs.md": { "index":  1, "title": "In js" }
+  "title": "Projbook",
+  "pages": [
+    {
+      "path": "source.md",
+      "title": "Main"
+    },
+    {
+      "path": "injs.md",
+      "title": "In JS"
+    }
+  ]
 }

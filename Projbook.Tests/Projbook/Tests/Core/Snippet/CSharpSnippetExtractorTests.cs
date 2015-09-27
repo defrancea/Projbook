@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using Projbook.Core.Model;
 using Projbook.Core.Snippet;
 using System;
 using System.IO;
@@ -63,7 +62,7 @@ namespace Projbook.Tests.Core
         {
             // Process
             CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("AnyClass.cs", this.SourceDirectory);
-            Snippet snippet = extractor.Extract();
+            Projbook.Core.Model.Razor.Snippet snippet = extractor.Extract();
 
             // Assert
             Assert.AreEqual(
