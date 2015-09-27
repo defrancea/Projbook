@@ -42,9 +42,18 @@ namespace Projbook.Tests.Core
         /// </summary>
         [Test]
         [ExpectedException(typeof(ArgumentException))]
-        public void WrongInitNotFound()
+        public void WrongInitEmpty()
         {
             this.ConfigurationLoader.Load(new FileInfo(""));
+        }
+
+        /// <summary>
+        /// Tests with invalid input.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void WrongInitNotFound()
+        {
             this.ConfigurationLoader.Load(new FileInfo("does not exist"));
         }
 
