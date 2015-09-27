@@ -105,7 +105,6 @@ namespace Projbook.Core
                     FileInfo pageFile = new FileInfo(pageId);
                     string pageTitle = page.title;
                     int pageIndex = page.index;
-                    pageId = pageId;
 
                     // Create documentation page
                     configDocumentationPages.Add(new ConfigDocumentationPage(pageId, pageTitle, pageFile, pageIndex));
@@ -122,46 +121,47 @@ namespace Projbook.Core
                 // Declare formatter
                 InjectAnchorHtmlFormatter formatter = null;
 
-                // Load the documentation
-                // Todo: reduce using scopes
-                MemoryStream documentStream = new MemoryStream();
-                using (var reader = new StreamReader(new FileStream(configDocumentationPage.File.FullName, FileMode.Open)))
-                using (var writer = new StreamWriter(documentStream))
+                // Load the document
+                Block document;
+                using (StreamReader reader = new StreamReader(new FileStream(configDocumentationPage.File.FullName, FileMode.Open)))
                 {
-                    // Process two first stages in order to retrieve a model to work on
-                    Block document = CommonMarkConverter.ProcessStage1(reader);
-                    CommonMarkConverter.ProcessStage2(document);
-                    
-                    // Process snippet
-                    foreach (var node in document.AsEnumerable())
-                    {
-                        // Filter fenced code
-                        if (node.Block != null && node.Block.Tag == BlockTag.FencedCode)
-                        {
-                            // Extract snippet
-                            string fencedCode = node.Block.FencedCodeData.Info;
-                            ISnippetExtractor snippetExtractor = this.snippetExtractorFactory.CreateExtractor(fencedCode);
+                    document = CommonMarkConverter.ProcessStage1(reader);
+                }
 
-                            // Extract and inject snippet and the factory were able to create an extractor
-                            if (null != snippetExtractor)
-                            {
-                                Model.Snippet snippet = snippetExtractor.Extract();
-                                StringContent code = new StringContent();
-                                code.Append(snippet.Content, 0, snippet.Content.Length);
-                                node.Block.StringContent = code;
-                            }
+                // Process snippet
+                CommonMarkConverter.ProcessStage2(document);
+                foreach (var node in document.AsEnumerable())
+                {
+                    // Filter fenced code
+                    if (node.Block != null && node.Block.Tag == BlockTag.FencedCode)
+                    {
+                        // Extract snippet
+                        string fencedCode = node.Block.FencedCodeData.Info;
+                        ISnippetExtractor snippetExtractor = this.snippetExtractorFactory.CreateExtractor(fencedCode);
+
+                        // Extract and inject snippet and the factory were able to create an extractor
+                        if (null != snippetExtractor)
+                        {
+                            Model.Snippet snippet = snippetExtractor.Extract();
+                            StringContent code = new StringContent();
+                            code.Append(snippet.Content, 0, snippet.Content.Length);
+                            node.Block.StringContent = code;
                         }
                     }
+                }
 
-                    // Setup custom formatter
-                    CommonMarkSettings.Default.OutputDelegate =
-                        (d, output, settings) =>
-                        {
-                            formatter = new InjectAnchorHtmlFormatter(configDocumentationPage.Id, output, settings);
-                            formatter.WriteDocument(d);
-                        };
+                // Setup custom formatter
+                CommonMarkSettings.Default.OutputDelegate =
+                    (d, output, settings) =>
+                    {
+                        formatter = new InjectAnchorHtmlFormatter(configDocumentationPage.Id, output, settings);
+                        formatter.WriteDocument(d);
+                    };
 
-                    // Render the documentation page
+                // Write to output
+                MemoryStream documentStream = new MemoryStream();
+                using (StreamWriter writer = new StreamWriter(documentStream))
+                {
                     CommonMarkConverter.ProcessStage3(document, writer);
                 }
 
