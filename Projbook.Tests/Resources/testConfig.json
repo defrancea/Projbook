@@ -1,0 +1,13 @@
+﻿{
+  "title": "Simple title",
+  "pages": [
+    {
+      "path": "firstPage.md",
+      "title": "First page title"
+    },
+    {
+      "path": "secondPage.md",
+      "title": "Second page title"
+    }
+  ]
+}

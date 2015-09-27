@@ -4,6 +4,7 @@ using EnsureThat;
 using Newtonsoft.Json;
 using Projbook.Core.Markdown;
 using Projbook.Core.Model.Configuration;
+using Projbook.Core.Projbook.Core;
 using Projbook.Core.Snippet;
 using RazorEngine;
 using RazorEngine.Configuration;
@@ -85,12 +86,9 @@ namespace Projbook.Core
             }
 
             // Read configuration
-            Configuration configuration;
-            using (var reader = new StreamReader(new FileStream(this.ConfigFile.FullName, FileMode.Open)))
-            {
-                configuration = JsonConvert.DeserializeObject<Configuration>(reader.ReadToEnd());
-            }
-
+            ConfigurationLoader configurationLoader = new ConfigurationLoader();
+            Configuration configuration = configurationLoader.Load(this.ConfigFile);
+            
             // Process all pages
             List<RazorPage> pages = new List<RazorPage>();
             bool first = true;
