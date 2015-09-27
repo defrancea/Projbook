@@ -32,10 +32,10 @@ namespace Projbook.Core.Model
         {
             // Data validation
             Ensure.That(() => targetFile).IsNotNullOrWhiteSpace();
-            Ensure.That(File.Exists(targetFile)).IsTrue();
             
-            // Initialize
+            // Initialize and check
             this.TargetFile = new FileInfo(targetFile);
+            Ensure.That(this.TargetFile.Exists, string.Format("Could not load '{0}' file because it doesn't exist.", this.TargetFile.FullName)).IsTrue();
         }
     }
 }
