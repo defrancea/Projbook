@@ -93,7 +93,7 @@ namespace Projbook.Core
             {
                 configuration = JsonConvert.DeserializeObject<Dictionary<string, object>>(reader.ReadToEnd());
             }
-            List<DocumentationPage> documentationPages = new List<DocumentationPage>();
+            List<ConfigDocumentationPage> configDocumentationPages = new List<ConfigDocumentationPage>();
             string documentationTitle;
             foreach (string key in configuration.Keys)
             {
@@ -105,18 +105,19 @@ namespace Projbook.Core
                     FileInfo pageFile = new FileInfo(pageId);
                     string pageTitle = page.title;
                     int pageIndex = page.index;
-                    pageId = pageId.Replace(".", string.Empty);
+                    pageId = pageId;
 
                     // Create documentation page
-                    documentationPages.Add(new DocumentationPage(pageId, pageTitle, pageFile, pageIndex));
+                    configDocumentationPages.Add(new ConfigDocumentationPage(pageId, pageTitle, pageFile, pageIndex));
                 }
             }
-            documentationPages = documentationPages.OrderBy(x => x.Index).ToList(); // Todo: Avoid useless intermediaite data structure
-            documentationPages[0].IsHome = true;
+            configDocumentationPages = configDocumentationPages.OrderBy(x => x.Index).ToList(); // Todo: Avoid useless intermediaite data structure
             documentationTitle = (string)configuration["main.title"];
-            
+
             // Process all pages
-            foreach (DocumentationPage documentationPage in documentationPages)
+            List<Page> documentationPages = new List<Page>();
+            bool first = true;
+            foreach (ConfigDocumentationPage configDocumentationPage in configDocumentationPages)
             {
                 // Declare formatter
                 InjectAnchorHtmlFormatter formatter = null;
@@ -124,7 +125,7 @@ namespace Projbook.Core
                 // Load the documentation
                 // Todo: reduce using scopes
                 MemoryStream documentStream = new MemoryStream();
-                using (var reader = new StreamReader(new FileStream(documentationPage.File.FullName, FileMode.Open)))
+                using (var reader = new StreamReader(new FileStream(configDocumentationPage.File.FullName, FileMode.Open)))
                 using (var writer = new StreamWriter(documentStream))
                 {
                     // Process two first stages in order to retrieve a model to work on
@@ -156,7 +157,7 @@ namespace Projbook.Core
                     CommonMarkSettings.Default.OutputDelegate =
                         (d, output, settings) =>
                         {
-                            formatter = new InjectAnchorHtmlFormatter(documentationPage.Id, output, settings);
+                            formatter = new InjectAnchorHtmlFormatter(configDocumentationPage.Id, output, settings);
                             formatter.WriteDocument(d);
                         };
 
@@ -164,13 +165,17 @@ namespace Projbook.Core
                     CommonMarkConverter.ProcessStage3(document, writer);
                 }
 
-                // Set anchors found during the rendering
-                documentationPage.Anchors = formatter.Anchors;
-                documentationPage.Content = System.Text.Encoding.UTF8.GetString(documentStream.ToArray());
+                // Add new page
+                documentationPages.Add(new Page(
+                    id: configDocumentationPage.Id.Replace(".", string.Empty),
+                    title: configDocumentationPage.Title,
+                    isHome: first,
+                    anchor: formatter.Anchors,
+                    content: System.Text.Encoding.UTF8.GetString(documentStream.ToArray())));
+                first = false;
             }
 
             // Generate final documentation from the template using razor engine
-            // Todo: Split loading and razor models
             string processed;
             string outputFile = Path.Combine(this.OutputDirectory.FullName, "generated.html");
             using (var reader = new StreamReader(new FileStream(this.TemplateFile.FullName, FileMode.Open)))
