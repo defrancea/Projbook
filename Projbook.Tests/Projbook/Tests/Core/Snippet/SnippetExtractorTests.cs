@@ -52,6 +52,7 @@ namespace Projbook.Tests.Core
         /// </summary>
         [Test]
         [TestCase]
+        [Ignore]
         public void ExtractWholeFile()
         {
             // Process
