@@ -139,7 +139,7 @@ public string Foo { get; set; }
 public string Bar { get; set; }
 ```
 
-```csharp[Foo/Bar.cs]
+```csharp[Code/Foo.cs]
 ```
 
 ![Pouet](http://www.ecoledesloisirs.fr/php-edl/images/couvertures/E116360.gif)
