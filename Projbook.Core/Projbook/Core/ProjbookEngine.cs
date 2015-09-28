@@ -1,7 +1,6 @@
 ﻿using CommonMark;
 using CommonMark.Syntax;
 using EnsureThat;
-using Newtonsoft.Json;
 using Projbook.Core.Markdown;
 using Projbook.Core.Model.Configuration;
 using Projbook.Core.Projbook.Core;
@@ -62,9 +61,9 @@ namespace Projbook.Core
             Ensure.That(() => templateFilePath).IsNotNullOrWhiteSpace();
             Ensure.That(() => configFile).IsNotNullOrWhiteSpace();
             Ensure.That(() => outputDirectoryPath).IsNotNullOrWhiteSpace();
-            Ensure.That(Directory.Exists(sourceDirectoryPath)).IsTrue();
-            Ensure.That(File.Exists(templateFilePath)).IsTrue();
-            Ensure.That(File.Exists(configFile)).IsTrue();
+            Ensure.That(Directory.Exists(sourceDirectoryPath), string.Format("Could not find '{0}' directory", sourceDirectoryPath)).IsTrue();
+            Ensure.That(File.Exists(templateFilePath), string.Format("Could not find '{0}' file", templateFilePath)).IsTrue();
+            Ensure.That(File.Exists(configFile), string.Format("Could not find '{0}' file", configFile)).IsTrue();
 
             // Initialize
             this.SourceDirectory = new DirectoryInfo(sourceDirectoryPath);
