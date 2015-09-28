@@ -22,10 +22,20 @@ namespace Projbook.Core.Projbook.Core
             Ensure.That(configurationFile.Exists, string.Format("Could not load '{0}': File not found", configurationFile.FullName)).IsTrue();
 
             // Deserialize configuration
+            Configuration configuration;
             using (var reader = new StreamReader(new FileStream(configurationFile.FullName, FileMode.Open)))
             {
-                return JsonConvert.DeserializeObject<Configuration>(reader.ReadToEnd());
+                configuration = JsonConvert.DeserializeObject<Configuration>(reader.ReadToEnd());
             }
+
+            // Initialize page with empty array if none are found
+            if (null == configuration.Pages)
+            {
+                configuration.Pages = new Page[0];
+            }
+
+            // Return the configuration
+            return configuration;
         }
     }
 }
