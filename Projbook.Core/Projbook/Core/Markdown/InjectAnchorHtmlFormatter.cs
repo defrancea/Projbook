@@ -89,6 +89,9 @@ namespace Projbook.Core.Markdown
                 // Compute the anchor value
                 string anchor = string.Format("{0}-{1}", this.ContextName, headerContent).ToLower();
 
+                // Encode for url usage
+                anchor = HttpUtility.UrlEncode(anchor);
+
                 // Detect anchor conflict
                 if (anchors.ContainsKey(anchor))
                 {
@@ -106,9 +109,6 @@ namespace Projbook.Core.Markdown
                     // Append the index
                     anchor = string.Format("{0}-{1}", anchor, index);
                 }
-
-                // Encode for url usage
-                anchor = HttpUtility.UrlEncode(anchor);
 
                 // Write anchor
                 this.Write(string.Format(@"<a name=""{0}""></a>", anchor));
