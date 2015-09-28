@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Projbook.Core;
+using System;
 using System.IO;
 
 namespace Projbook.Tests.Core
@@ -24,7 +25,7 @@ namespace Projbook.Tests.Core
             string expectedContent;
             using (StreamReader reader = new StreamReader(new FileStream("Resources/FullGeneration/expected.txt", FileMode.Open)))
             {
-                expectedContent = reader.ReadToEnd();
+                expectedContent = reader.ReadToEnd().Replace("\r\n", Environment.NewLine);
             }
 
             // Read generated ouput
