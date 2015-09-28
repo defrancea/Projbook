@@ -200,7 +200,36 @@ namespace Projbook.Tests.Core
             Assert.AreEqual("Title", this.Formatter.Anchors[1].Label);
             Assert.AreEqual(0, this.Formatter.Anchors[1].Level);
         }
-        
+
+        /// <summary>
+        /// Tests with conflicting anchor.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WriteHeaderConflictWithEncodedChar()
+        {
+            // Process
+            Block block1 = new Block(BlockTag.AtxHeader, 0);
+            block1.InlineContent = new Inline("One/Title");
+            Block block2 = new Block(BlockTag.AtxHeader, 0);
+            block2.InlineContent = new Inline("One/Title");
+            Block block = new Block(BlockTag.Document, 0);
+            block.FirstChild = block1;
+            block.FirstChild.FirstChild = block2;
+            string output = this.Process(block);
+
+            // Assert
+            Assert.IsTrue(output.Contains(@"<a name=""page-one%2ftitle"">"));
+            Assert.IsTrue(output.Contains(@"<a name=""page-one%2ftitle-2"">"));
+            Assert.AreEqual(2, this.Formatter.Anchors.Length);
+            Assert.AreEqual("page-one%2ftitle", this.Formatter.Anchors[0].Value);
+            Assert.AreEqual("One/Title", this.Formatter.Anchors[0].Label);
+            Assert.AreEqual(0, this.Formatter.Anchors[0].Level);
+            Assert.AreEqual("page-one%2ftitle-2", this.Formatter.Anchors[1].Value);
+            Assert.AreEqual("One/Title", this.Formatter.Anchors[1].Label);
+            Assert.AreEqual(0, this.Formatter.Anchors[1].Level);
+        }
+
         // Tests with chained inline header.
         [Test]
         [TestCase]
