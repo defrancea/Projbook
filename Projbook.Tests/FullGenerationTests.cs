@@ -10,7 +10,7 @@ namespace Projbook.Tests
         [TestCase]
         public void FullGeneration()
         {
-            new ProjbookEngine("../..", "template.html", "projbook.json", ".").Generate();
+            new ProjbookEngine("../..", "Resources/Example/template.html", "Resources/Example/projbook.json", ".").Generate();
         }
     }
 }
