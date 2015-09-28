@@ -56,6 +56,12 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Content Include="Resources\FullGeneration\expected.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\FullGeneration\testTemplate.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Content\bootstrap-theme.css.map" />
     <None Include="Content\bootstrap.css.map" />
     <None Include="fonts\glyphicons-halflings-regular.eot" />
@@ -65,28 +71,27 @@
     <Content Include="Content\projbook.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Compile Include="Foo\Bar.cs" />
+    <Compile Include="Resources\FullGeneration\Source\Foo.cs" />
     <Compile Include="Projbook\Tests\Core\ConfigurationLoaderTests.cs" />
     <Compile Include="Projbook\Tests\Core\Markdown\InjectAnchorHtmlFormatterTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\AbstractSnippetTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\SnippetExtractorFactoryTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\CSharpSnippetExtractorTests.cs" />
+    <None Include="Resources\FullGeneration\Page\secondPage.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\FullGeneration\Page\firstPage.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="Resources\SourcesA\AnyClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="FullGenerationTests.cs" />
+    <Compile Include="Projbook\Tests\FullGenerationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="Resources\Example\Page\second.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Example\Page\source.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Example\projbook.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
     </None>
     <None Include="Resources\testConfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -110,9 +115,6 @@
     </Content>
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\prism.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Example\template.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Scripts\prism.js">
