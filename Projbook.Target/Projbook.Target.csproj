@@ -50,7 +50,14 @@
   <ItemGroup>
     <None Include="Projbook.targets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Projbook.Core\Projbook.Core.csproj">
+      <Project>{f0cd4edc-5873-4d81-9458-7cfba3e49fe5}</Project>
+      <Name>Projbook.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

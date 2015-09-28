@@ -1,22 +1,50 @@
 ﻿using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Projbook.Core;
 
 namespace Projbook.Target
 {
+    /// <summary>
+    /// Define MSBuild task trigerring documentation generation.
+    /// </summary>
     public class Projbook : Task
     {
+        /// <summary>
+        /// The source directory where the snippets are located.
+        /// </summary>
+        [Required]
+        public string SourceDirectory { get; set; }
+
+        /// <summary>
+        /// The template file.
+        /// </summary>
+        [Required]
+        public string TemplateFile { get; set; }
+
+        /// <summary>
+        /// The configuration file.
+        /// </summary>
+        [Required]
+        public string ConfigurationFile { get; set; }
+
+        /// <summary>
+        /// The output directory.
+        /// </summary>
+        [Required]
+        public string OutputDirectory { get; set; }
+
+        /// <summary>
+        /// Trigger task execution.
+        /// </summary>
+        /// <returns>True if the task succeeded.</returns>
         public override bool Execute()
         {
-            Log.LogError(this.Pouet);
-            Log.LogWarning(this.Pouet);
-            return false;
-        }
+            // Run generation
+            ProjbookEngine projbookEngine = new ProjbookEngine(this.SourceDirectory, this.TemplateFile, this.ConfigurationFile, this.OutputDirectory);
+            projbookEngine.Generate();
 
-        [Required]
-        public string Pouet { get; set; }
+            // Return output
+            return true;
+        }
     }
 }
