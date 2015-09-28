@@ -143,7 +143,7 @@ namespace Projbook.Core
 
                 // Add new page
                 pages.Add(new RazorPage(
-                    id: page.Path.Replace(".", string.Empty),
+                    id: page.Path.Replace(".", string.Empty).Replace("/", string.Empty),
                     title: page.Title,
                     isHome: first,
                     anchor: formatter.Anchors,
