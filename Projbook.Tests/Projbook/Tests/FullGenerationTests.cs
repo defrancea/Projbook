@@ -32,7 +32,7 @@ namespace Projbook.Tests.Core
             string generatedContent;
             using (StreamReader reader = new StreamReader(new FileStream("generated.html", FileMode.Open)))
             {
-                generatedContent = reader.ReadToEnd();
+                generatedContent = reader.ReadToEnd().Replace("\r\n", Environment.NewLine);
             }
 
             // Assert contents
