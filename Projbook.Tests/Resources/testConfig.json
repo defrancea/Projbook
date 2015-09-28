@@ -1,12 +1,12 @@
 ﻿{
-  "title": "Simple title",
+  "title": "Test title",
   "pages": [
     {
-      "path": "firstPage.md",
+      "path": "Resources/FullGeneration/Page/firstPage.md",
       "title": "First page title"
     },
     {
-      "path": "secondPage.md",
+      "path": "Resources/FullGeneration/Page/secondPage.md",
       "title": "Second page title"
     }
   ]
