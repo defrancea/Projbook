@@ -1,9 +1,9 @@
 ﻿using EnsureThat;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Projbook.Core.Projbook.Core.Snippet;
+using Projbook.Core.Projbook.Core.Snippet.CSharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -49,7 +49,7 @@ namespace Projbook.Core.Snippet.CSharp
         /// <returns>The extracted snippet.</returns>
         public Model.Snippet Extract()
         {
-            SnippetMatchingRule rule = SnippetMatchingRule.Parse(this.Pattern);
+            CSharpMatchingRule rule = CSharpMatchingRule.Parse(this.Pattern);
 
             // Load the file content
             FileInfo fileInfo = new FileInfo(Path.Combine(this.SourceDictionaries[0].FullName, rule.File)); // Todo: More validation and class member parsin with Roslyn
@@ -78,27 +78,38 @@ namespace Projbook.Core.Snippet.CSharp
                 writer.Write(s.ToString());
             }
 
-            CSharpSyntaxMatchingNode n1 = trieBuilder.Root.Children["A"];
+            CSharpSyntaxMatchingNode node = trieBuilder.Root;
+            foreach (string fragment in rule.MatchingChunks)
+            {
+                if (!node.Children.TryGetValue(fragment, out node))
+                {
+                    // Raise error
+                }
+            }
+
+            /*CSharpSyntaxMatchingNode n1 = trieBuilder.Root.Children["A"];
             CSharpSyntaxMatchingNode n2 = trieBuilder.Root.Children["NS"].Children["OneLevelNamespaceClass"].Children["SubClass"];
             CSharpSyntaxMatchingNode n3 = trieBuilder.Root.Children["OneLevelNamespaceClass"].Children["SubClass"];
             CSharpSyntaxMatchingNode n4 = trieBuilder.Root.Children["NS2"].Children["NS2"].Children["NS3"].Children["A"];
 
-            Model.Snippet s1 = this.BuildSnippet(n1.MatchingSyntaxNodes[0]);
-            Model.Snippet s2 = this.BuildSnippet(n2.MatchingSyntaxNodes[0]);
-            Model.Snippet s3 = this.BuildSnippet(n3.MatchingSyntaxNodes[0]);
-            Model.Snippet s4 = this.BuildSnippet(n4.MatchingSyntaxNodes[0]);
+            Model.Snippet s1 = this.BuildSnippet(n1.MatchingSyntaxNodes);
+            Model.Snippet s2 = this.BuildSnippet(n2.MatchingSyntaxNodes);
+            Model.Snippet s3 = this.BuildSnippet(n3.MatchingSyntaxNodes);
+            Model.Snippet s4 = this.BuildSnippet(n4.MatchingSyntaxNodes);*/
             
             // Return the entire code if no member is specified
-            if (rule.MemberChunks.Length == 0)
+            /*if (rule.MemberChunks.Length == 0)
             {
                 return new Model.Snippet(code);
-            }
+            }*/
 
-            return null;
+            return this.BuildSnippet(node.MatchingSyntaxNodes);
         }
 
-        private Model.Snippet BuildSnippet(SyntaxNode node)
+        private Model.Snippet BuildSnippet(List<SyntaxNode> nodes)
         {
+            // Todo implements many nodes
+            SyntaxNode node = nodes[0];
             string[] lines = node.GetText().Lines.Select(x => x.ToString()).ToArray();
 
             int start = 0;

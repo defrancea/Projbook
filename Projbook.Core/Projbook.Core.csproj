@@ -94,7 +94,7 @@
     <Compile Include="Projbook\Core\ProjbookEngine.cs" />
     <Compile Include="Projbook\Core\Model\Anchor.cs" />
     <Compile Include="Projbook\Core\Snippet\SnippetExtractorFactory.cs" />
-    <Compile Include="Projbook\Core\Snippet\SnippetMatchingRule.cs" />
+    <Compile Include="Projbook\Core\Snippet\CSharp\CSharpMatchingRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
