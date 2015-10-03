@@ -85,12 +85,12 @@ namespace Projbook.Tests.Core.Snippet
         public void ExtractSingleLevelNamespaceClass()
         {
             // Process
-            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs OneLevelNamespace", this.SourceDirectory);
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs OneLevelNamespaceClass", this.SourceDirectory);
             Projbook.Core.Model.Snippet snippet = extractor.Extract();
 
             // Assert
             Assert.AreEqual(
-                string.Format("public class OneLevelNamespace{0}{{{0}}}", Environment.NewLine),
+                string.Format("public class OneLevelNamespaceClass{0}{{{0}}}", Environment.NewLine),
                 snippet.Content);
         }
 
@@ -102,12 +102,12 @@ namespace Projbook.Tests.Core.Snippet
         public void ExtractSingleLevelNamespaceFqnClass()
         {
             // Process
-            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs NS.OneLevelNamespace", this.SourceDirectory);
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs NS.OneLevelNamespaceClass", this.SourceDirectory);
             Projbook.Core.Model.Snippet snippet = extractor.Extract();
 
             // Assert
             Assert.AreEqual(
-                string.Format("public class OneLevelNamespace{0}{{{0}}}", Environment.NewLine),
+                string.Format("public class OneLevelNamespaceClass{0}{{{0}}}", Environment.NewLine),
                 snippet.Content);
         }
 

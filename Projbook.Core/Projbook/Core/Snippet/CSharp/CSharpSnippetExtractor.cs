@@ -62,6 +62,12 @@ namespace Projbook.Core.Snippet.CSharp
             
             string code = Encoding.UTF8.GetString(memoryStream.ToArray());
 
+            // Return the entire code if no member is specified
+            if (rule.MatchingChunks.Length <= 0)
+            {
+                return new Model.Snippet(code);
+            }
+            
             SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
 
             SyntaxNode root = tree.GetRoot();
@@ -86,23 +92,7 @@ namespace Projbook.Core.Snippet.CSharp
                     // Raise error
                 }
             }
-
-            /*CSharpSyntaxMatchingNode n1 = trieBuilder.Root.Children["A"];
-            CSharpSyntaxMatchingNode n2 = trieBuilder.Root.Children["NS"].Children["OneLevelNamespaceClass"].Children["SubClass"];
-            CSharpSyntaxMatchingNode n3 = trieBuilder.Root.Children["OneLevelNamespaceClass"].Children["SubClass"];
-            CSharpSyntaxMatchingNode n4 = trieBuilder.Root.Children["NS2"].Children["NS2"].Children["NS3"].Children["A"];
-
-            Model.Snippet s1 = this.BuildSnippet(n1.MatchingSyntaxNodes);
-            Model.Snippet s2 = this.BuildSnippet(n2.MatchingSyntaxNodes);
-            Model.Snippet s3 = this.BuildSnippet(n3.MatchingSyntaxNodes);
-            Model.Snippet s4 = this.BuildSnippet(n4.MatchingSyntaxNodes);*/
             
-            // Return the entire code if no member is specified
-            /*if (rule.MemberChunks.Length == 0)
-            {
-                return new Model.Snippet(code);
-            }*/
-
             return this.BuildSnippet(node.MatchingSyntaxNodes);
         }
 
