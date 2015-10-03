@@ -53,33 +53,7 @@ namespace Projbook.Core.Snippet
         /// <returns>The extracted snippet.</returns>
         public Model.Razor.Snippet Extract()
         {
-            //Regex regex = new Regex(@"^\s*([^\s]+)(\s+([^(\s]+)\s*(\(([^)]*\s*)\))?)?\s*$", RegexOptions.Compiled);
-            //Match match = regex.Match(this.Pattern);
-
-            //Match match1 = regex.Match("A/Foo.txt");
-            //Match match2 = regex.Match("A/Foo.txt Foo.Bar");
-            //Match match3 = regex.Match("A/Foo.txt Foo.Bar   ()");
-            //Match match4 = regex.Match("A/Foo.txt Foo.Bar   (string,int)");
-            SnippetMatchingRule rule1 = SnippetMatchingRule.Parse("A/Foo.txt");
-            SnippetMatchingRule rule2 = SnippetMatchingRule.Parse("A/Foo.txt Foo.Bar");
-            SnippetMatchingRule rule3 = SnippetMatchingRule.Parse("A/Foo.txt Foo.Bar   ()");
-            SnippetMatchingRule rule4 = SnippetMatchingRule.Parse("A/Foo.txt Foo.Bar   (string,int)");
-
-
             SnippetMatchingRule rule = SnippetMatchingRule.Parse(this.Pattern);
-
-            //string file = match.Groups[1].Value;
-            //string rawMember = match.Groups[2].Value;
-            //string rawParameters = match.Groups[3].Value;
-            
-            //string[] memberChunk = rawMember.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries).ToArray();
-            // check lenght >= 2
-
-            //string ns = string.Join(".", memberChunk.Take(memberChunk.Length - 2));
-            //string clazz = memberChunk[memberChunk.Length - 2];
-            //string member = memberChunk[memberChunk.Length - 1];
-
-            //string[] parameters = rawParameters.Split(new char[] { ',', ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries).ToArray();
 
             // Load the file content
             FileInfo fileInfo = new FileInfo(Path.Combine(this.SourceDictionaries[0].FullName, rule.File)); // Todo: More validation and class member parsin with Roslyn
@@ -89,44 +63,12 @@ namespace Projbook.Core.Snippet
             {
                 fileWriter.Write(fileReader.ReadToEnd());
             }
-
-            //string member = match.Groups[2].Value.Replace(" ", string.Empty);
+            
             string code = Encoding.UTF8.GetString(memoryStream.ToArray());
 
             SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
 
             SyntaxNode root = tree.GetRoot();
-            /*NamespaceDeclarationSyntax[] s = tree.GetRoot().DescendantNodes().OfType<NamespaceDeclarationSyntax>().Where(x => x.Name.ToString() == ns).ToArray();
-
-            ClassDeclarationSyntax[] cs = s[0].Members.OfType<ClassDeclarationSyntax>().Where(x => x.Identifier.ValueText == clazz).ToArray();
-
-            MethodDeclarationSyntax[] ms = cs[0].Members.OfType<MethodDeclarationSyntax>().Where(x => x.Identifier.ValueText == member).ToArray();
-            
-            var compilation = CSharpCompilation.Create("HelloWorld")
-                                               .AddReferences(
-                                                    MetadataReference.CreateFromFile(
-                                                        typeof(object).Assembly.Location))
-                                               .AddSyntaxTrees(tree);
-
-            var model = compilation.GetSemanticModel(tree);
-
-            var nameInfo = model.GetSymbolInfo(((CompilationUnitSyntax)tree.GetRoot()).Usings[0].Name);
-
-            var systemSymbol = (INamespaceSymbol)nameInfo.Symbol;
-
-            foreach (var ns2 in systemSymbol.GetNamespaceMembers())
-            {
-                Console.WriteLine(ns2.Name);
-            }*/
-
-            /*foreach (SyntaxNode node in root.ChildNodes())
-            {
-                NamespaceDeclarationSyntax namespaceSyntax = node as NamespaceDeclarationSyntax;
-                if (null != namespaceSyntax)
-                {
-
-                }
-            }*/
 
             TrieBuilderVisiter trieBuilder = new TrieBuilderVisiter();
             trieBuilder.Visit(root);
@@ -140,69 +82,21 @@ namespace Projbook.Core.Snippet
                 writer.Write(s.ToString());
             }
 
-            /*Node n1 = trieBuilder.Root.Nodes["A"];
+            Node n1 = trieBuilder.Root.Nodes["A"];
             Node n2 = trieBuilder.Root.Nodes["NS"].Nodes["OneLevelNamespaceClass"].Nodes["SubClass"];
             Node n3 = trieBuilder.Root.Nodes["OneLevelNamespaceClass"].Nodes["SubClass"];
-            Node n4 = trieBuilder.Root.Nodes["NS2"].Nodes["NS2"].Nodes["NS3"].Nodes["A"];*/
+            Node n4 = trieBuilder.Root.Nodes["NS2"].Nodes["NS2"].Nodes["NS3"].Nodes["A"];
 
-
-
+            Model.Razor.Snippet s1 = this.BuildSnippet(n1.SyntaxNodes[0]);
+            Model.Razor.Snippet s2 = this.BuildSnippet(n2.SyntaxNodes[0]);
+            Model.Razor.Snippet s3 = this.BuildSnippet(n3.SyntaxNodes[0]);
+            Model.Razor.Snippet s4 = this.BuildSnippet(n4.SyntaxNodes[0]);
+            
             // Return the entire code if no member is specified
             if (rule.MemberChunks.Length == 0)
             {
                 return new Model.Razor.Snippet(code);
             }
-
-            // If member chunks are specified but is not a method, We need to match two possible cases:
-            // 1. Namespace
-            // 2. Class
-            // For performence reason the algorithm is the following:
-            // 1. Match all namespace based on n-1 chunk
-            // 2. Match the last member
-            /*if (rule.MemberChunks.Length > 0 && !rule.IsMethod)
-            {
-                if (rule.MemberChunks.Length == 1)
-                {
-                    var nsDeclaration = root
-                       .DescendantNodes()
-                       .OfType<NamespaceDeclarationSyntax>()
-                       .FirstOrDefault(x => x.Name.ToString() == rule.MemberChunks[0]);
-                    if (null != nsDeclaration)
-                    {
-                        return this.BuildSnippet(nsDeclaration);
-                    }
-                    
-                    var classDeclaration = root
-                       .DescendantNodes()
-                       .OfType<ClassDeclarationSyntax>()
-                       .FirstOrDefault(x => x.Identifier.ValueText == rule.MemberChunks[0]);
-                    if (null != classDeclaration)
-                    {
-                        return this.BuildSnippet(classDeclaration);
-                    }
-                }
-
-                // For performence purpose, matche the n-1 member only
-                string nsToMatch = string.Join(".", rule.MemberChunks.Take(rule.MemberChunks.Length - 1));
-                var prefixDeclaration = root
-                    .DescendantNodes()
-                    .OfType<NamespaceDeclarationSyntax>()
-                    .FirstOrDefault(x => x.Name.ToString().StartsWith(nsToMatch));
-                if (null != prefixDeclaration)
-                {
-                    var prefixClassDeclaration = root
-                        .DescendantNodes()
-                        .OfType<ClassDeclarationSyntax>()
-                        .FirstOrDefault(x => x.Identifier.ValueText == rule.MemberChunks.Last());
-                    if (null != prefixClassDeclaration)
-                    {
-                        return this.BuildSnippet(prefixClassDeclaration);
-                    }
-                }
-
-                
-
-            }*/
 
             return null;
         }
@@ -289,11 +183,6 @@ namespace Projbook.Core.Snippet
                 }
                 this.Root.SyntaxNodes.Add(node);
 
-                /*if (this.InvariantRoot != initialNode)
-                {
-                    this.AddToNode(this.InvariantRoot, ns[0], startNsNode);
-                }*/
-
                 base.VisitNamespaceDeclaration(node);
                 this.CopyTo(this.InvariantRoot, startNsNode, ns[0]);
                 this.Root = initialNode;
@@ -306,11 +195,6 @@ namespace Projbook.Core.Snippet
 
                 this.Root = this.AddToNode(this.Root, name);
                 this.Root.SyntaxNodes.Add(node);
-                
-                /*if (this.InvariantRoot != initialNode)
-                {
-                    this.AddToNode(this.InvariantRoot, name, this.Root);
-                }*/
 
                 base.VisitClassDeclaration(node);
                 this.CopyTo(this.InvariantRoot, this.Root, name);
@@ -383,35 +267,16 @@ namespace Projbook.Core.Snippet
                 }
             }
 
-            private Node AddToNode(Node node, string name/*, Node newNode = null*/)
+            private Node AddToNode(Node node, string name)
             {
                 Node firstLevelNode;
                 if (node.Nodes.TryGetValue(name, out firstLevelNode))
                 {
-                    // Add existing node children
-                    /*if (null != newNode)
-                    {
-                        firstLevelNode.SyntaxNodes.AddRange(newNode.SyntaxNodes);
-                    }*
-
-                    // Recurse
-                    /*if (null != newNode && newNode.Nodes.Count > 0)
-                    {
-                        foreach (string k in newNode.Nodes.Keys)
-                        {
-                            this.AddToNode(firstLevelNode, k, newNode.Nodes[k]);
-                        }
-                    }*/
                     return firstLevelNode;
                 }
                 else
                 {
                     firstLevelNode = new Node();
-                    /*if (null != newNode)
-                    {
-                        firstLevelNode.Nodes = newNode.Nodes;
-                        firstLevelNode.SyntaxNodes = newNode.SyntaxNodes;
-                    }*/
 
                     node.Nodes[name] = firstLevelNode;
                     return firstLevelNode;
