@@ -26,7 +26,12 @@ namespace Projbook.Core.Projbook.Core.Snippet.CSharp
 
             List<string> matchingChunks = new List<string>();
             matchingChunks.AddRange(rawMember.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries));
-            matchingChunks.Add(Regex.Replace(rawParameters, @"\s", string.Empty));
+
+            string parameterChunk = Regex.Replace(rawParameters, @"\s", string.Empty);
+            if (parameterChunk.Length >= 1)
+            {
+                matchingChunks.Add(Regex.Replace(rawParameters, @"\s", string.Empty));
+            }
 
             return new CSharpMatchingRule
             {
