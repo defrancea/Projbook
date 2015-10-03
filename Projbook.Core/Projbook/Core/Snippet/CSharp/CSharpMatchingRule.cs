@@ -30,7 +30,7 @@ namespace Projbook.Core.Projbook.Core.Snippet.CSharp
             string parameterChunk = Regex.Replace(rawParameters, @"\s", string.Empty);
             if (parameterChunk.Length >= 1)
             {
-                matchingChunks.Add(Regex.Replace(rawParameters, @"\s", string.Empty));
+                matchingChunks.Add(parameterChunk);
             }
 
             return new CSharpMatchingRule
