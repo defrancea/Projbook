@@ -2,7 +2,7 @@
 using CommonMark.Formatters;
 using CommonMark.Syntax;
 using EnsureThat;
-using Projbook.Core.Model.Razor;
+using Projbook.Core.Model;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

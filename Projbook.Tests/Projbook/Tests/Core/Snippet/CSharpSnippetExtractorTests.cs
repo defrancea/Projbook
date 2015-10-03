@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Projbook.Core.Snippet;
+using Projbook.Core.Snippet.CSharp;
 using System;
 using System.IO;
 
@@ -51,7 +52,7 @@ namespace Projbook.Tests.Core.Snippet
         {
             // Process
             CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("AnyClass.cs", this.SourceDirectory);
-            Projbook.Core.Model.Razor.Snippet snippet = extractor.Extract();
+            Projbook.Core.Model.Snippet snippet = extractor.Extract();
 
             // Assert
             Assert.AreEqual(
@@ -68,7 +69,7 @@ namespace Projbook.Tests.Core.Snippet
         {
             // Process
             CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs NS", this.SourceDirectory);
-            Projbook.Core.Model.Razor.Snippet snippet = extractor.Extract();
+            Projbook.Core.Model.Snippet snippet = extractor.Extract();
 
             // Assert
             Assert.AreEqual(
@@ -85,7 +86,7 @@ namespace Projbook.Tests.Core.Snippet
         {
             // Process
             CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs OneLevelNamespace", this.SourceDirectory);
-            Projbook.Core.Model.Razor.Snippet snippet = extractor.Extract();
+            Projbook.Core.Model.Snippet snippet = extractor.Extract();
 
             // Assert
             Assert.AreEqual(
@@ -102,7 +103,7 @@ namespace Projbook.Tests.Core.Snippet
         {
             // Process
             CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs NS.OneLevelNamespace", this.SourceDirectory);
-            Projbook.Core.Model.Razor.Snippet snippet = extractor.Extract();
+            Projbook.Core.Model.Snippet snippet = extractor.Extract();
 
             // Assert
             Assert.AreEqual(
@@ -119,7 +120,7 @@ namespace Projbook.Tests.Core.Snippet
         {
             // Process
             CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs NS.OneLevelNamespace.Foo(string,int)", this.SourceDirectory);
-            Projbook.Core.Model.Razor.Snippet snippet = extractor.Extract();
+            Projbook.Core.Model.Snippet snippet = extractor.Extract();
 
             // Assert
             Assert.AreEqual(

@@ -11,7 +11,6 @@ using RazorEngine.Templating;
 using RazorEngine.Text;
 using System.Collections.Generic;
 using System.IO;
-using RazorPage = Projbook.Core.Model.Razor.Page;
 
 namespace Projbook.Core
 {
@@ -89,7 +88,7 @@ namespace Projbook.Core
             Configuration configuration = configurationLoader.Load(this.ConfigFile);
             
             // Process all pages
-            List<RazorPage> pages = new List<RazorPage>();
+            List<Model.Page> pages = new List<Model.Page>();
             bool first = true;
             foreach (Page page in configuration.Pages)
             {
@@ -117,7 +116,7 @@ namespace Projbook.Core
                         // Extract and inject snippet and the factory were able to create an extractor
                         if (null != snippetExtractor)
                         {
-                            Model.Razor.Snippet snippet = snippetExtractor.Extract();
+                            Model.Snippet snippet = snippetExtractor.Extract();
                             StringContent code = new StringContent();
                             code.Append(snippet.Content, 0, snippet.Content.Length);
                             node.Block.StringContent = code;
@@ -141,7 +140,7 @@ namespace Projbook.Core
                 }
 
                 // Add new page
-                pages.Add(new RazorPage(
+                pages.Add(new Model.Page(
                     id: page.Path.Replace(".", string.Empty).Replace("/", string.Empty),
                     title: page.Title,
                     isHome: first,

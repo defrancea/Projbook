@@ -1,4 +1,5 @@
 ﻿using EnsureThat;
+using Projbook.Core.Snippet.CSharp;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
