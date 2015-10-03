@@ -52,7 +52,7 @@ namespace Projbook.Core.Snippet.CSharp
             CSharpMatchingRule rule = CSharpMatchingRule.Parse(this.Pattern);
 
             // Load the file content
-            FileInfo fileInfo = new FileInfo(Path.Combine(this.SourceDictionaries[0].FullName, rule.File)); // Todo: More validation and class member parsin with Roslyn
+            FileInfo fileInfo = new FileInfo(Path.Combine(this.SourceDictionaries[0].FullName, rule.TargetFile)); // Todo: More validation and class member parsin with Roslyn
             MemoryStream memoryStream = new MemoryStream();
             using (var fileReader = new StreamReader(new FileStream(fileInfo.FullName, FileMode.Open)))
             using (var fileWriter = new StreamWriter(memoryStream))
