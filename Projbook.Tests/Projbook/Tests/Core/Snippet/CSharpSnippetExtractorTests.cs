@@ -119,7 +119,7 @@ namespace Projbook.Tests.Core.Snippet
         public void ExtractSingleLevelNamespaceFqnClassMethod()
         {
             // Process
-            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs NS.OneLevelNamespace.Foo(string,int)", this.SourceDirectory);
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs NS.OneLevelNamespaceClass.Foo(string,int)", this.SourceDirectory);
             Projbook.Core.Model.Snippet snippet = extractor.Extract();
 
             // Assert
