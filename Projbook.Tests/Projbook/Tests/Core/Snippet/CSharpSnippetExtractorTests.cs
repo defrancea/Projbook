@@ -58,5 +58,73 @@ namespace Projbook.Tests.Core.Snippet
                 string.Format("namespace Projbook.Tests.Resources.SourcesA{0}{{{0}    public class AnyClass{0}    {{{0}    }}{0}}}", Environment.NewLine),
                 snippet.Content);
         }
+
+        /// <summary>
+        /// Tests extract whole file.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void ExtractSingleLevelNamespaceNS()
+        {
+            // Process
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs NS", this.SourceDirectory);
+            Projbook.Core.Model.Razor.Snippet snippet = extractor.Extract();
+
+            // Assert
+            Assert.AreEqual(
+                string.Format("namespace NS{0}{{{0}    public class OneLevelNamespace{0}    {{{0}    }}{0}}}", Environment.NewLine),
+                snippet.Content);
+        }
+
+        /// <summary>
+        /// Tests extract whole file.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void ExtractSingleLevelNamespaceClass()
+        {
+            // Process
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs OneLevelNamespace", this.SourceDirectory);
+            Projbook.Core.Model.Razor.Snippet snippet = extractor.Extract();
+
+            // Assert
+            Assert.AreEqual(
+                string.Format("public class OneLevelNamespace{0}{{{0}}}", Environment.NewLine),
+                snippet.Content);
+        }
+
+        /// <summary>
+        /// Tests extract whole file.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void ExtractSingleLevelNamespaceFqnClass()
+        {
+            // Process
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs NS.OneLevelNamespace", this.SourceDirectory);
+            Projbook.Core.Model.Razor.Snippet snippet = extractor.Extract();
+
+            // Assert
+            Assert.AreEqual(
+                string.Format("public class OneLevelNamespace{0}{{{0}}}", Environment.NewLine),
+                snippet.Content);
+        }
+
+        /// <summary>
+        /// Tests extract whole file.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void ExtractSingleLevelNamespaceFqnClassMethod()
+        {
+            // Process
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor("OneLevelNamespace.cs NS.OneLevelNamespace.Foo(string,int)", this.SourceDirectory);
+            Projbook.Core.Model.Razor.Snippet snippet = extractor.Extract();
+
+            // Assert
+            Assert.AreEqual(
+                string.Format("public class OneLevelNamespace{0}{{{0}}}", Environment.NewLine),
+                snippet.Content);
+        }
     }
 }
