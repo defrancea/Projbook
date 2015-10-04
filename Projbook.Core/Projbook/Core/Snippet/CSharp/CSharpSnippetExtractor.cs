@@ -48,6 +48,7 @@ namespace Projbook.Core.Snippet.CSharp
         /// <returns>The extracted snippet.</returns>
         public Model.Snippet Extract()
         {
+            // Parse the matching rule from the pattern
             CSharpMatchingRule rule = CSharpMatchingRule.Parse(this.Pattern);
 
             // Load the file content
@@ -59,72 +60,101 @@ namespace Projbook.Core.Snippet.CSharp
                 fileWriter.Write(fileReader.ReadToEnd());
             }
             
-            string code = Encoding.UTF8.GetString(memoryStream.ToArray());
+            // Read the code snippet from the file
+            string sourceCode = Encoding.UTF8.GetString(memoryStream.ToArray());
 
             // Return the entire code if no member is specified
             if (rule.MatchingChunks.Length <= 0)
             {
-                return new Model.Snippet(code);
+                return new Model.Snippet(sourceCode);
             }
             
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
-
+            // Build a syntax tree from the source code
+            SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceCode);
             SyntaxNode root = tree.GetRoot();
 
-            CSharpSyntaxWalkerMatchingBuilder trieBuilder = new CSharpSyntaxWalkerMatchingBuilder();
-            trieBuilder.Visit(root);
-            
-            string t = trieBuilder.Root.ToString();
-            FileInfo fi = new FileInfo("TrieOutput.txt");
-            string fullPath = fi.FullName;
-            using (var writer = new StreamWriter(new FileStream(fi.FullName, FileMode.Create)))
-            {
-                writer.Write(t);
-            }
+            // Visit the syntax tree for generating a Trie for pattern matching
+            CSharpSyntaxWalkerMatchingBuilder syntaxMatchingBuilder = new CSharpSyntaxWalkerMatchingBuilder();
+            syntaxMatchingBuilder.Visit(root);
 
-            CSharpSyntaxMatchingNode node = trieBuilder.Root.Match(rule.MatchingChunks);
+            // Match the rule from the syntax matching Trie
+            CSharpSyntaxMatchingNode node = syntaxMatchingBuilder.Root.Match(rule.MatchingChunks); // Todo: Raise error if the matching is null
             
+            // Build a snippet for extracted syntax nodes
             return this.BuildSnippet(node.MatchingSyntaxNodes);
         }
 
+        /// <summary>
+        /// Builds a snippet from extracted syntax nodes.
+        /// </summary>
+        /// <param name="nodes">The exctracted nodes.</param>
+        /// <returns>The built snippet.</returns>
         private Model.Snippet BuildSnippet(SyntaxNode[] nodes)
         {
-            // Todo implements many nodes
-            SyntaxNode node = nodes[0];
-            string[] lines = node.GetText().Lines.Select(x => x.ToString()).ToArray();
+            // Data validation
+            Ensure.That(() => nodes).IsNotNull();
+            Ensure.That(() => nodes).HasItems();
 
-            int start = 0;
-            for (; start < lines.Length && lines[start].ToString().Trim().Length == 0; ++start) ;
-
-            int end = lines.Length - 1;
-            for (; 0 <= end && lines[end].ToString().Trim().Length == 0; --end) ;
-
-            int pad = int.MaxValue;
-            for (int i = start; i <= end; ++i)
+            // Extract code from each snippets
+            StringBuilder stringBuilder = new StringBuilder();
+            bool firstSnippet = true;
+            foreach (SyntaxNode node in nodes)
             {
-                if (!string.IsNullOrWhiteSpace(lines[i]))
+                // Write line return between each snippet
+                if (!firstSnippet)
                 {
-                    pad = Math.Min(pad, lines[i].ToString().TakeWhile(Char.IsWhiteSpace).Count());
-                }
-            }
-
-            StringBuilder sb = new StringBuilder();
-            bool needNewLine = false;
-            for (int i = start; i <= end; ++i)
-            {
-                if (needNewLine)
-                {
-                    sb.AppendLine();
+                    stringBuilder.AppendLine();
                 }
 
-                if (lines[i].Length > pad)
+                // Retrieve all lines
+                string[] lines = node.GetText().Lines.Select(x => x.ToString()).ToArray();
+
+                // Compute the index of the first non empty line
+                int startPos = 0;
+                for (; startPos < lines.Length && lines[startPos].ToString().Trim().Length == 0; ++startPos) ;
+
+                // Compute the index of the last non empty line
+                int endPos = lines.Length - 1;
+                for (; 0 <= endPos && lines[endPos].ToString().Trim().Length == 0; --endPos) ;
+
+                // Compute the padding to remove for removing a part of the indentation
+                int leftPadding = int.MaxValue;
+                for (int i = startPos; i <= endPos; ++i)
                 {
-                    sb.Append(lines[i].Substring(pad));
+                    // Ignore empty lines in the middle of the snippet
+                    if (!string.IsNullOrWhiteSpace(lines[i]))
+                    {
+                        // Adjust the left padding with the available whilespace at the beginning of the line
+                        leftPadding = Math.Min(leftPadding, lines[i].ToString().TakeWhile(Char.IsWhiteSpace).Count());
+                    }
                 }
-                needNewLine = true;
+
+                // Write selected lines to the string builder
+                bool firstLine = true;
+                for (int i = startPos; i <= endPos; ++i)
+                {
+                    // Write line return between each line
+                    if (!firstLine)
+                    {
+                        stringBuilder.AppendLine();
+                    }
+
+                    // Remove a part of the indentation padding
+                    if (lines[i].Length > leftPadding)
+                    {
+                        stringBuilder.Append(lines[i].Substring(leftPadding));
+                    }
+                    
+                    // Flag the first line as false
+                    firstLine = false;
+                }
+
+                // Flag the first snippet as false
+                firstSnippet = false;
             }
             
-            return new Model.Snippet(sb.ToString());
+            // Create the snippet from the exctracted code
+            return new Model.Snippet(stringBuilder.ToString());
         }
     }
 }
