@@ -179,13 +179,13 @@ namespace Projbook.Core.Snippet.CSharp
             if (null != name)
             {
                 ++nextIndex;
-                stringBuilder.AppendLine(new string('-', level) + name);
+                stringBuilder.AppendLine(string.Format("{0}{1}", new string('-', level), name));
             }
 
             // Print each matching syntax node
             foreach (var k in this.MatchingSyntaxNodes)
             {
-                stringBuilder.AppendLine(new string('-', level) +"[" + k.GetType().Name + "]");
+                stringBuilder.AppendLine(string.Format("{0}{1}", new string('-', level)) +"[" + k.GetType().Name + "]");
             }
 
             // Recurse to children
