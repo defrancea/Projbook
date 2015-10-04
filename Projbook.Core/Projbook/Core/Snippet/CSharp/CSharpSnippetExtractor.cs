@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Projbook.Core.Projbook.Core.Snippet.CSharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -66,7 +67,7 @@ namespace Projbook.Core.Snippet.CSharp
             // Return the entire code if no member is specified
             if (rule.MatchingChunks.Length <= 0)
             {
-                return new Model.Snippet(sourceCode);
+                return this.BuildSnippet(sourceCode);
             }
             
             // Build a syntax tree from the source code
@@ -106,48 +107,9 @@ namespace Projbook.Core.Snippet.CSharp
                     stringBuilder.AppendLine();
                 }
 
-                // Retrieve all lines
+                // Write each snippet line
                 string[] lines = node.GetText().Lines.Select(x => x.ToString()).ToArray();
-
-                // Compute the index of the first non empty line
-                int startPos = 0;
-                for (; startPos < lines.Length && lines[startPos].ToString().Trim().Length == 0; ++startPos) ;
-
-                // Compute the index of the last non empty line
-                int endPos = lines.Length - 1;
-                for (; 0 <= endPos && lines[endPos].ToString().Trim().Length == 0; --endPos) ;
-
-                // Compute the padding to remove for removing a part of the indentation
-                int leftPadding = int.MaxValue;
-                for (int i = startPos; i <= endPos; ++i)
-                {
-                    // Ignore empty lines in the middle of the snippet
-                    if (!string.IsNullOrWhiteSpace(lines[i]))
-                    {
-                        // Adjust the left padding with the available whilespace at the beginning of the line
-                        leftPadding = Math.Min(leftPadding, lines[i].ToString().TakeWhile(Char.IsWhiteSpace).Count());
-                    }
-                }
-
-                // Write selected lines to the string builder
-                bool firstLine = true;
-                for (int i = startPos; i <= endPos; ++i)
-                {
-                    // Write line return between each line
-                    if (!firstLine)
-                    {
-                        stringBuilder.AppendLine();
-                    }
-
-                    // Remove a part of the indentation padding
-                    if (lines[i].Length > leftPadding)
-                    {
-                        stringBuilder.Append(lines[i].Substring(leftPadding));
-                    }
-                    
-                    // Flag the first line as false
-                    firstLine = false;
-                }
+                this.WriteAndCleanupSnippet(stringBuilder, lines);
 
                 // Flag the first snippet as false
                 firstSnippet = false;
@@ -155,6 +117,95 @@ namespace Projbook.Core.Snippet.CSharp
             
             // Create the snippet from the exctracted code
             return new Model.Snippet(stringBuilder.ToString());
+        }
+
+        /// <summary>
+        /// Builds a snippet from a full file content.
+        /// </summary>
+        /// <param name="fileContent">The file content.</param>
+        /// <returns>The built snippet.</returns>
+        private Model.Snippet BuildSnippet(string fileContent)
+        {
+            // Data validation
+            Ensure.That(() => fileContent).IsNotNull();
+
+            // Extract each lines
+            StringBuilder stringBuilder = new StringBuilder();
+            List<string> lines = new List<string>();
+            using (StringReader stringReader = new StringReader(fileContent))
+            {
+                while (true)
+                {
+                    string line = stringReader.ReadLine();
+                    if (null != line)
+                    {
+                        lines.Add(line);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            this.WriteAndCleanupSnippet(stringBuilder, lines.ToArray());
+
+            // Create the snippet from the exctracted code
+            return new Model.Snippet(stringBuilder.ToString());
+        }
+
+        /// <summary>
+        /// Writes and cleanup line snippets.
+        /// Snippets are moved out of their context, for this reasong we need to trim lines aroung and remove a part of the indentation.
+        /// </summary>
+        /// <param name="stringBuilder">The string builder used as output.</param>
+        /// <param name="lines">The lines to process.</param>
+        private void WriteAndCleanupSnippet(StringBuilder stringBuilder, string[] lines)
+        {
+            // Data validation
+            Ensure.That(() => stringBuilder).IsNotNull();
+            Ensure.That(() => lines).IsNotNull();
+            Ensure.That(() => lines).HasItems();
+
+            // Compute the index of the first non empty line
+            int startPos = 0;
+            for (; startPos < lines.Length && lines[startPos].ToString().Trim().Length == 0; ++startPos) ;
+
+            // Compute the index of the last non empty line
+            int endPos = lines.Length - 1;
+            for (; 0 <= endPos && lines[endPos].ToString().Trim().Length == 0; --endPos) ;
+
+            // Compute the padding to remove for removing a part of the indentation
+            int leftPadding = int.MaxValue;
+            for (int i = startPos; i <= endPos; ++i)
+            {
+                // Ignore empty lines in the middle of the snippet
+                if (!string.IsNullOrWhiteSpace(lines[i]))
+                {
+                    // Adjust the left padding with the available whilespace at the beginning of the line
+                    leftPadding = Math.Min(leftPadding, lines[i].ToString().TakeWhile(Char.IsWhiteSpace).Count());
+                }
+            }
+
+            // Write selected lines to the string builder
+            bool firstLine = true;
+            for (int i = startPos; i <= endPos; ++i)
+            {
+                // Write line return between each line
+                if (!firstLine)
+                {
+                    stringBuilder.AppendLine();
+                }
+
+                // Remove a part of the indentation padding
+                if (lines[i].Length > leftPadding)
+                {
+                    stringBuilder.Append(lines[i].Substring(leftPadding));
+                }
+
+                // Flag the first line as false
+                firstLine = false;
+            }
         }
     }
 }
