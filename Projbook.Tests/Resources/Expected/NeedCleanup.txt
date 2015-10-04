@@ -11,5 +11,5 @@ namespace Projbook.Tests.Resources.SourcesA
         // That has to be kept without preventing the indent fix
     }
 }
-    
+
 // Some more fucky lines after
