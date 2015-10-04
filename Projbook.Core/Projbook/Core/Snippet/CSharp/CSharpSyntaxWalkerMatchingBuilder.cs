@@ -31,7 +31,7 @@ namespace Projbook.Core.Snippet.CSharp
 
             foreach (string n in ns)
             {
-                this.Root = this.Root.AddToNode(n);
+                this.Root = this.Root.EnsureNode(n);
                 if (null == startNsNode)
                 {
                     startNsNode = this.Root;
@@ -41,7 +41,8 @@ namespace Projbook.Core.Snippet.CSharp
 
             base.VisitNamespaceDeclaration(node);
 
-            this.InvariantRoot.CopyTo(startNsNode, ns[0]);
+
+            startNsNode.CopyTo(this.InvariantRoot, ns[0]);
             this.Root = initialNode;
         }
 
@@ -50,11 +51,11 @@ namespace Projbook.Core.Snippet.CSharp
             string name = node.Identifier.ValueText;
             CSharpSyntaxMatchingNode initialNode = this.Root;
 
-            this.Root = this.Root.AddToNode(name);
+            this.Root = this.Root.EnsureNode(name);
             this.Root.AddSyntaxNode(node);
 
             base.VisitClassDeclaration(node);
-            this.InvariantRoot.CopyTo(this.Root, name);
+            this.Root.CopyTo(this.InvariantRoot, name);
             this.Root = initialNode;
         }
 
@@ -63,11 +64,11 @@ namespace Projbook.Core.Snippet.CSharp
             string name = node.Identifier.ValueText;
             CSharpSyntaxMatchingNode initialNode = this.Root;
 
-            this.Root = this.Root.AddToNode(name);
+            this.Root = this.Root.EnsureNode(name);
             this.Root.AddSyntaxNode(node);
 
             base.VisitPropertyDeclaration(node);
-            this.InvariantRoot.CopyTo(this.Root, name);
+            this.Root.CopyTo(this.InvariantRoot, name);
             this.Root = initialNode;
         }
 
@@ -76,11 +77,11 @@ namespace Projbook.Core.Snippet.CSharp
             string name = node.Keyword.ValueText;
             CSharpSyntaxMatchingNode initialNode = this.Root;
 
-            this.Root = this.Root.AddToNode(name);
+            this.Root = this.Root.EnsureNode(name);
             this.Root.AddSyntaxNode(node);
 
             base.VisitAccessorDeclaration(node);
-            this.InvariantRoot.CopyTo(this.Root, name);
+            this.Root.CopyTo(this.InvariantRoot, name);
             this.Root = initialNode;
         }
 
@@ -89,11 +90,11 @@ namespace Projbook.Core.Snippet.CSharp
             string name = node.Identifier.ValueText;
             CSharpSyntaxMatchingNode initialNode = this.Root;
 
-            this.Root = this.Root.AddToNode(name);
+            this.Root = this.Root.EnsureNode(name);
             this.Root.AddSyntaxNode(node);
 
             base.VisitMethodDeclaration(node);
-            this.InvariantRoot.CopyTo(this.Root, name);
+            this.Root.CopyTo(this.InvariantRoot, name);
             this.Root = initialNode;
         }
 
@@ -102,11 +103,11 @@ namespace Projbook.Core.Snippet.CSharp
             string name = "(" + string.Join(",", node.Parameters.Select(x => x.Type.ToString())) + ")";
             CSharpSyntaxMatchingNode initialNode = this.Root;
 
-            this.Root = this.Root.AddToNode(name);
+            this.Root = this.Root.EnsureNode(name);
             this.Root.AddSyntaxNode(node.Parent);
 
             base.VisitParameterList(node);
-            this.InvariantRoot.CopyTo(this.Root, name);
+            this.Root.CopyTo(this.InvariantRoot, name);
             this.Root = initialNode;
         }
     }

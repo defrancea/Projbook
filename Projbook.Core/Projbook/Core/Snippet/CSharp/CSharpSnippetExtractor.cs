@@ -73,17 +73,16 @@ namespace Projbook.Core.Snippet.CSharp
 
             CSharpSyntaxWalkerMatchingBuilder trieBuilder = new CSharpSyntaxWalkerMatchingBuilder();
             trieBuilder.Visit(root);
-
-            StringBuilder s = new StringBuilder();
-            this.Print(s, "", trieBuilder.Root, 0);
+            
+            string t = trieBuilder.Root.ToString();
             FileInfo fi = new FileInfo("TrieOutput.txt");
             string fullPath = fi.FullName;
             using (var writer = new StreamWriter(new FileStream(fi.FullName, FileMode.Create)))
             {
-                writer.Write(s.ToString());
+                writer.Write(t);
             }
 
-            CSharpSyntaxMatchingNode node = trieBuilder.Root.FindNode(rule.MatchingChunks);
+            CSharpSyntaxMatchingNode node = trieBuilder.Root.Match(rule.MatchingChunks);
             
             return this.BuildSnippet(node.MatchingSyntaxNodes);
         }
@@ -126,19 +125,6 @@ namespace Projbook.Core.Snippet.CSharp
             }
             
             return new Model.Snippet(sb.ToString());
-        }
-
-        void Print(StringBuilder sb, string name, CSharpSyntaxMatchingNode node, int i)
-        {
-            /*sb.AppendLine(new string('-', i) + name);
-            foreach (var k in node.MatchingSyntaxNodes)
-            {
-                sb.AppendLine(new string('-', i) +"[" + k.GetType().Name + "]");
-            }
-            foreach (string k in node.Children.Keys)
-            {
-                this.Print(sb, k, node.Children[k], 1 + i);
-            }*/
         }
     }
 }
