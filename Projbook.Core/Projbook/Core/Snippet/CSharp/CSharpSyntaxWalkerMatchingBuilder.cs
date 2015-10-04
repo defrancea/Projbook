@@ -1,113 +1,171 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Projbook.Core.Snippet.CSharp
 {
-    class CSharpSyntaxWalkerMatchingBuilder : CSharpSyntaxWalker
+    /// <summary>
+    /// Implements a syntax walker generating a Trie for pattern matching.
+    /// </summary>
+    public class CSharpSyntaxWalkerMatchingBuilder : CSharpSyntaxWalker
     {
-        public CSharpSyntaxMatchingNode Root { get; set; }
+        /// <summary>
+        /// The current Trie root available from the outside.
+        /// </summary>
+        public CSharpSyntaxMatchingNode Root { get; private set; }
 
-        public CSharpSyntaxMatchingNode InvariantRoot { get; set; }
+        /// <summary>
+        /// The Trie root referencing the root without any reference change.
+        /// </summary>
+        private CSharpSyntaxMatchingNode internalInvariantRoot;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="CSharpSyntaxWalkerMatchingBuilder"/>.
+        /// </summary>
         public CSharpSyntaxWalkerMatchingBuilder()
         {
-            this.Root = new CSharpSyntaxMatchingNode();
-            this.InvariantRoot = this.Root;
-
+            this.internalInvariantRoot = new CSharpSyntaxMatchingNode();
+            this.Root = this.internalInvariantRoot;
         }
 
+        /// <summary>
+        /// Visits a namespace declaration.
+        /// A namespace may be composed with different segment dot separated, each segment has to be represented by a different node.
+        /// However the syntax node is attached to the last node only.
+        /// </summary>
+        /// <param name="node">The namespace declaration node to visit.</param>
         public override void VisitNamespaceDeclaration(NamespaceDeclarationSyntax node)
         {
+            // Retrieve the namespace name and split segments
             string name = node.Name.ToString();
-            string[] ns = name.Split('.');
+            string[] namespaces = name.Split('.');
+
+            // Keep track of the initial node the restore the root after the visit
             CSharpSyntaxMatchingNode initialNode = this.Root;
 
-            CSharpSyntaxMatchingNode startNsNode = null;
-
-            foreach (string n in ns)
+            // Browse all namespaces and generate intermediate node for each segment for the copy to the root
+            CSharpSyntaxMatchingNode firstNamespaceNode = null;
+            foreach (string currentNamespace in namespaces)
             {
-                this.Root = this.Root.EnsureNode(n);
-                if (null == startNsNode)
+                // Create the node and keep track of the first one
+                this.Root = this.Root.EnsureNode(currentNamespace);
+                if (null == firstNamespaceNode)
                 {
-                    startNsNode = this.Root;
+                    firstNamespaceNode = this.Root;
                 }
             }
-            this.Root.AddSyntaxNode(node);
 
+            // Add the syntax node the last segment
+            this.Root.AddSyntaxNode(node);
+            
+            // Triger member visiting
             base.VisitNamespaceDeclaration(node);
 
+            // Copy the generated sub tree to the Trie root
+            firstNamespaceNode.CopyTo(this.internalInvariantRoot, namespaces[0]);
 
-            startNsNode.CopyTo(this.InvariantRoot, ns[0]);
+            // Restore the initial root
             this.Root = initialNode;
         }
 
+        /// <summary>
+        /// Visits a class declaration.
+        /// </summary>
+        /// <param name="node">The class declaration to visit.</param>
         public override void VisitClassDeclaration(ClassDeclarationSyntax node)
         {
-            string name = node.Identifier.ValueText;
-            CSharpSyntaxMatchingNode initialNode = this.Root;
-
-            this.Root = this.Root.EnsureNode(name);
-            this.Root.AddSyntaxNode(node);
-
-            base.VisitClassDeclaration(node);
-            this.Root.CopyTo(this.InvariantRoot, name);
-            this.Root = initialNode;
+            // Visit
+            this.Visit<ClassDeclarationSyntax>(
+                node: node,
+                exctractName: n => n.Identifier.ValueText,
+                targetNode: n => n,
+                visit: base.VisitClassDeclaration);
         }
 
+        /// <summary>
+        /// Visits a property declaration.
+        /// </summary>
+        /// <param name="node">The property declaration to visit.</param>
         public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
-            string name = node.Identifier.ValueText;
-            CSharpSyntaxMatchingNode initialNode = this.Root;
-
-            this.Root = this.Root.EnsureNode(name);
-            this.Root.AddSyntaxNode(node);
-
-            base.VisitPropertyDeclaration(node);
-            this.Root.CopyTo(this.InvariantRoot, name);
-            this.Root = initialNode;
+            // Visit
+            this.Visit<PropertyDeclarationSyntax>(
+                node: node,
+                exctractName: n => n.Identifier.ValueText,
+                targetNode: n => n,
+                visit: base.VisitPropertyDeclaration);
         }
 
+        /// <summary>
+        /// Visits an accessor declaration.
+        /// </summary>
+        /// <param name="node">The accessor declaration to visit.</param>
         public override void VisitAccessorDeclaration(AccessorDeclarationSyntax node)
         {
-            string name = node.Keyword.ValueText;
-            CSharpSyntaxMatchingNode initialNode = this.Root;
-
-            this.Root = this.Root.EnsureNode(name);
-            this.Root.AddSyntaxNode(node);
-
-            base.VisitAccessorDeclaration(node);
-            this.Root.CopyTo(this.InvariantRoot, name);
-            this.Root = initialNode;
+            // Visit
+            this.Visit<AccessorDeclarationSyntax>(
+                node: node,
+                exctractName: n => n.Keyword.ValueText,
+                targetNode: n => n,
+                visit: base.VisitAccessorDeclaration);
         }
 
+        /// <summary>
+        /// Visits a method declaration.
+        /// </summary>
+        /// <param name="node">The method declaration to visit.</param>
         public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
-            string name = node.Identifier.ValueText;
-            CSharpSyntaxMatchingNode initialNode = this.Root;
-
-            this.Root = this.Root.EnsureNode(name);
-            this.Root.AddSyntaxNode(node);
-
-            base.VisitMethodDeclaration(node);
-            this.Root.CopyTo(this.InvariantRoot, name);
-            this.Root = initialNode;
+            // Visit
+            this.Visit<MethodDeclarationSyntax>(
+                node: node,
+                exctractName: n => n.Identifier.ValueText,
+                targetNode: n => n,
+                visit: base.VisitMethodDeclaration);
         }
-
+        /// <summary>
+        /// Visits parameter list.
+        /// </summary>
+        /// <param name="node">The parameter list to visit.</param>
         public override void VisitParameterList(ParameterListSyntax node)
         {
-            string name = "(" + string.Join(",", node.Parameters.Select(x => x.Type.ToString())) + ")";
+            // Visit
+            this.Visit<ParameterListSyntax>(
+                node: node,
+                exctractName: n => string.Format("({0})", string.Join(",", node.Parameters.Select(x => x.Type.ToString()))),
+                targetNode: n => n.Parent,
+                visit: base.VisitParameterList);
+        }
+
+        /// <summary>
+        /// Visits a member.
+        /// </summary>
+        /// <typeparam name="T">The syntax node type to visit.</typeparam>
+        /// <param name="node">The node to visit.</param>
+        /// <param name="exctractName">Extract the node name.</param>
+        /// <param name="targetNode">Resolved the target node.</param>
+        /// <param name="visit">Visit sub nodes.</param>
+        private void Visit<T>(T node, Func<T, string> exctractName, Func<T, SyntaxNode> targetNode, Action<T> visit) where T : CSharpSyntaxNode
+        {
+            // Retrieve the accessor name
+            string name = exctractName(node);
+
+            // Keep track of the initial node the restore the root after the visit
             CSharpSyntaxMatchingNode initialNode = this.Root;
 
+            // Create and add the node
             this.Root = this.Root.EnsureNode(name);
-            this.Root.AddSyntaxNode(node.Parent);
+            this.Root.AddSyntaxNode(targetNode(node));
 
-            base.VisitParameterList(node);
-            this.Root.CopyTo(this.InvariantRoot, name);
+            // Trigger member visiting
+            visit(node);
+
+            // Copy the class sub tree to the Trie root
+            this.Root.CopyTo(this.internalInvariantRoot, name);
+
+            // Restore the initial root
             this.Root = initialNode;
         }
     }
