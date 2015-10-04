@@ -105,6 +105,7 @@ namespace Projbook.Core.Snippet.CSharp
                 if (!firstSnippet)
                 {
                     stringBuilder.AppendLine();
+                    stringBuilder.AppendLine();
                 }
 
                 // Write each snippet line
@@ -165,7 +166,12 @@ namespace Projbook.Core.Snippet.CSharp
             // Data validation
             Ensure.That(() => stringBuilder).IsNotNull();
             Ensure.That(() => lines).IsNotNull();
-            Ensure.That(() => lines).HasItems();
+
+            // Do not process if lines are empty
+            if (0 >= lines.Length)
+            {
+                return;
+            }
 
             // Compute the index of the first non empty line
             int startPos = 0;

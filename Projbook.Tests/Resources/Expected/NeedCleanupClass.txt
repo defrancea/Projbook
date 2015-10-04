@@ -1,0 +1,6 @@
+﻿public class NeedCleanup
+{
+    // Following is an empty line
+
+    // That has to be kept without preventing the indent fix
+}

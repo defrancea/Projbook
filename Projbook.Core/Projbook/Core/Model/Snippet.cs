@@ -19,7 +19,7 @@ namespace Projbook.Core.Model
         public Snippet(string content)
         {
             // Data validation
-            Ensure.That(() => content).IsNotNullOrWhiteSpace();
+            Ensure.That(() => content).IsNotNull();
 
             // Initialize
             this.Content = content;

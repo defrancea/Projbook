@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NS
 {
-    public class OneLevelNamespaceClass
+    public class OneClassSomewhere
     {
         private class SubClass
         {

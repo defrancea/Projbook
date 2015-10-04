@@ -1,0 +1,4 @@
+﻿class A
+{
+    // In NS2.NS2.NS3
+}

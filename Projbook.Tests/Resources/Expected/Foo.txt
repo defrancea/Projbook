@@ -1,0 +1,9 @@
+﻿protected bool Foo(string foo)
+{
+    return true;
+}
+
+protected bool Foo(string foo, int bar)
+{
+    return false;
+}

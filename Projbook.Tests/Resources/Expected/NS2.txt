@@ -1,0 +1,10 @@
+﻿namespace NS2
+{
+    namespace NS2.NS3
+    {
+        class A
+        {
+            // In NS2.NS2.NS3
+        }
+    }
+}
