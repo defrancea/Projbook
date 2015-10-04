@@ -1,0 +1,4 @@
+﻿set
+{
+    string foo = "foo";
+}

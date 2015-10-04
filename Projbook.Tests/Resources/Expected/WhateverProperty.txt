@@ -1,0 +1,11 @@
+﻿public int WhateverProperty
+{
+    get
+    {
+        return 42;
+    }
+    set
+    {
+        string foo = "foo";
+    }
+}

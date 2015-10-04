@@ -1,14 +1,8 @@
-﻿
-    // Something here
+﻿using System;
 
-    namespace Projbook.Tests.Resources.SourcesA
+namespace Projbook.Tests.Resources.SourcesA
+{
+    public class AnyClass
     {
-        public class AnyClass
-        {
-            // Something here
-
-            // Something here
-        }
     }
-
-
+}

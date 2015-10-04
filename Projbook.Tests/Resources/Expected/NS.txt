@@ -1,6 +1,6 @@
 ﻿namespace NS
 {
-    public class OneLevelNamespaceClass
+    public class OneClassSomewhere
     {
         private class SubClass
         {
