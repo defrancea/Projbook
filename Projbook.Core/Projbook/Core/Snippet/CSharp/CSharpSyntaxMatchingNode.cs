@@ -150,7 +150,7 @@ namespace Projbook.Core.Snippet.CSharp
                 string[] childrenName = this.children.Keys.ToArray();
                 foreach (string childName in childrenName)
                 {
-                    newNode.CopyTo(this.children[childName], childName);
+                    this.children[childName].CopyTo(newNode, childName);
                 }
             }
         }
