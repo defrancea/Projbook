@@ -18,7 +18,7 @@ namespace NS
                 }
                 set
                 {
-                    string foo = "42";
+                    string foo = "foo";
                 }
             }
         }
@@ -37,19 +37,18 @@ namespace NS
     {
         class A
         {
+            // In NS.NS2.NS3
         }
     }
 }
 
 namespace NS2
 {
-    //namespace NS3
-    //{
-        namespace NS2.NS3
+    namespace NS2.NS3
+    {
+        class A
         {
-            class A
-            {
-            }
+            // In NS2.NS2.NS3
         }
-    //}
+    }
 }

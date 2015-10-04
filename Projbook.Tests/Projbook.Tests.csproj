@@ -56,8 +56,14 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="Resources\SourcesA\OneLevelNamespace.cs" />
+    <Compile Include="Resources\SourcesA\Sample.cs" />
+    <Content Include="Resources\Expected\AnyClass.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\FullGeneration\expected.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\NS.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\FullGeneration\testTemplate.txt">
