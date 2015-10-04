@@ -140,8 +140,8 @@ namespace Projbook.Core.Snippet.CSharp
                 }
 
                 // Merge syntax nodes
-                int[] omdexes = newNode.matchingSyntaxNodes.Select(x => x.Span.Start).ToArray();
-                newNode.matchingSyntaxNodes.AddRange(this.matchingSyntaxNodes.Where(x => !omdexes.Contains(x.Span.Start)));
+                int[] indexes = newNode.matchingSyntaxNodes.Select(x => x.Span.Start).ToArray();
+                newNode.matchingSyntaxNodes.AddRange(this.matchingSyntaxNodes.Where(x => !indexes.Contains(x.Span.Start)));
             }
 
             // Recurse for applying copy to the children
