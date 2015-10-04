@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Projbook.Core.Projbook.Core.Snippet.CSharp;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -84,19 +83,12 @@ namespace Projbook.Core.Snippet.CSharp
                 writer.Write(s.ToString());
             }
 
-            CSharpSyntaxMatchingNode node = trieBuilder.Root;
-            foreach (string fragment in rule.MatchingChunks)
-            {
-                if (!node.Children.TryGetValue(fragment, out node))
-                {
-                    // Raise error
-                }
-            }
+            CSharpSyntaxMatchingNode node = trieBuilder.Root.FindNode(rule.MatchingChunks);
             
             return this.BuildSnippet(node.MatchingSyntaxNodes);
         }
 
-        private Model.Snippet BuildSnippet(List<SyntaxNode> nodes)
+        private Model.Snippet BuildSnippet(SyntaxNode[] nodes)
         {
             // Todo implements many nodes
             SyntaxNode node = nodes[0];
@@ -138,7 +130,7 @@ namespace Projbook.Core.Snippet.CSharp
 
         void Print(StringBuilder sb, string name, CSharpSyntaxMatchingNode node, int i)
         {
-            sb.AppendLine(new string('-', i) + name);
+            /*sb.AppendLine(new string('-', i) + name);
             foreach (var k in node.MatchingSyntaxNodes)
             {
                 sb.AppendLine(new string('-', i) +"[" + k.GetType().Name + "]");
@@ -146,7 +138,7 @@ namespace Projbook.Core.Snippet.CSharp
             foreach (string k in node.Children.Keys)
             {
                 this.Print(sb, k, node.Children[k], 1 + i);
-            }
+            }*/
         }
     }
 }
