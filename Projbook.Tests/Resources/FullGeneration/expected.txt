@@ -27,17 +27,8 @@
     <Content>
 <![CDATA[<a name="resources%2ffullgeneration%2fpage%2fsecondpage.md-bar"></a>
 <h1>Bar</h1>
-<pre><code class="language-csharp[Resources/FullGeneration/Source/Foo.cs]">using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Projbook.Tests.Foo
+<pre><code class="language-csharp">public class Foo
 {
-    public class Foo
-    {
-    }
 }</code></pre>
 ]]>
     </Content>

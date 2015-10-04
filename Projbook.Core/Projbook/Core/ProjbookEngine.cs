@@ -116,6 +116,10 @@ namespace Projbook.Core
                         // Extract and inject snippet and the factory were able to create an extractor
                         if (null != snippetExtractor)
                         {
+                            // Cleanup Projbook specific syntax
+                            node.Block.FencedCodeData.Info = snippetExtractor.Language;
+
+                            // Inject snippet
                             Model.Snippet snippet = snippetExtractor.Extract();
                             StringContent code = new StringContent();
                             code.Append(snippet.Content, 0, snippet.Content.Length);

@@ -16,6 +16,11 @@ namespace Projbook.Core.Snippet.CSharp
     public class CSharpSnippetExtractor : ISnippetExtractor
     {
         /// <summary>
+        /// Expose the extractor language.
+        /// </summary>
+        public string Language { get { return "csharp"; } }
+
+        /// <summary>
         /// All source directories where snippets could possibly be.
         /// </summary>
         public DirectoryInfo[] SourceDictionaries { get; private set; }
