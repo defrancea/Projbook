@@ -175,25 +175,25 @@ namespace Projbook.Core.Snippet.CSharp
         private void Write(StringBuilder stringBuilder, string name, int level)
         {
             // Print the node only if the name is not null in order to ignore the root node for more clarity
-            int nextIndex = level;
+            int nextLevel = level;
             if (null != name)
             {
-                ++nextIndex;
+                ++nextLevel;
                 stringBuilder.AppendLine(string.Format("{0}{1}", new string('-', level), name));
             }
 
             // Print each matching syntax node
-            foreach (var k in this.MatchingSyntaxNodes)
+            foreach (var matchingSyntaxNode in this.MatchingSyntaxNodes)
             {
-                stringBuilder.AppendLine(string.Format("{0}{1}", new string('-', level)) +"[" + k.GetType().Name + "]");
+                stringBuilder.AppendLine(string.Format("{0}[{1}]", new string('-', level), matchingSyntaxNode.GetType().Name));
             }
 
             // Recurse to children
             if (null != this.children)
             {
-                foreach (string k in this.children.Keys)
+                foreach (string childName in this.children.Keys)
                 {
-                    this.children[k].Write(stringBuilder, k, nextIndex);
+                    this.children[childName].Write(stringBuilder, childName, nextLevel);
                 }
             }
         }
