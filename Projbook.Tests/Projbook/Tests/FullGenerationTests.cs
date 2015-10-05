@@ -19,24 +19,31 @@ namespace Projbook.Tests.Core
         public void FullGeneration()
         {
             // Perform generation
-            new ProjbookEngine("../../..", "../..", "Resources/FullGeneration/testTemplate.txt", "Resources/testConfig.json", ".").Generate();
+            new ProjbookEngine("../..", "Resources/FullGeneration/testTemplate.txt", "Resources/testConfig.json", ".").Generate();
 
             // Read expected ouput
-            string expectedContent;
-            using (StreamReader reader = new StreamReader(new FileStream("Resources/FullGeneration/expected.txt", FileMode.Open)))
-            {
-                expectedContent = reader.ReadToEnd().Replace("\r\n", Environment.NewLine);
-            }
+            string expectedContent = this.LoadFile("Resources/FullGeneration/expected.txt");
+
+            // Read expected ouput
+            string expectedPdfContent = this.LoadFile("Resources/FullGeneration/expected-pdf.txt");
 
             // Read generated ouput
-            string generatedContent;
-            using (StreamReader reader = new StreamReader(new FileStream("generated.html", FileMode.Open)))
-            {
-                generatedContent = reader.ReadToEnd().Replace("\r\n", Environment.NewLine);
-            }
+            string generatedContent = this.LoadFile("testTemplate-generated.txt");
+
+            // Read generated pdf ouput
+            string generatedPdfContent = this.LoadFile("testTemplate-pdf-generated.txt");
 
             // Assert contents
             Assert.AreEqual(expectedContent, generatedContent);
+            Assert.AreEqual(expectedPdfContent, generatedPdfContent);
+        }
+
+        private string LoadFile(string path)
+        {
+            using (StreamReader reader = new StreamReader(new FileStream(path, FileMode.Open)))
+            {
+                return reader.ReadToEnd().Replace("\r\n", Environment.NewLine);
+            }
         }
     }
 }
