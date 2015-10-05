@@ -19,7 +19,7 @@ namespace Projbook.Tests.Core
         public void FullGeneration()
         {
             // Perform generation
-            new ProjbookEngine("../..", "Resources/FullGeneration/testTemplate.txt", "Resources/testConfig.json", ".").Generate();
+            new ProjbookEngine("../../..", "../..", "Resources/FullGeneration/testTemplate.txt", "Resources/testConfig.json", ".").Generate();
 
             // Read expected ouput
             string expectedContent;

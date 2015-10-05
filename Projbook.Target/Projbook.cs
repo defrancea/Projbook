@@ -10,6 +10,12 @@ namespace Projbook.Target
     public class Projbook : Task
     {
         /// <summary>
+        /// The solution directory.
+        /// </summary>
+        [Required]
+        public string SolutionDirectory { get; set; }
+
+        /// <summary>
         /// The source directory where the snippets are located.
         /// </summary>
         [Required]
@@ -40,7 +46,7 @@ namespace Projbook.Target
         public override bool Execute()
         {
             // Run generation
-            ProjbookEngine projbookEngine = new ProjbookEngine(this.SourceDirectory, this.TemplateFile, this.ConfigurationFile, this.OutputDirectory);
+            ProjbookEngine projbookEngine = new ProjbookEngine(this.SolutionDirectory, this.SourceDirectory, this.TemplateFile, this.ConfigurationFile, this.OutputDirectory);
             projbookEngine.Generate();
 
             // Return output
