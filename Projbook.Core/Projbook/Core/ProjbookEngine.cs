@@ -10,7 +10,6 @@ using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using RazorEngine.Text;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace Projbook.Core
@@ -22,19 +21,20 @@ namespace Projbook.Core
     public class ProjbookEngine
     {
         /// <summary>
-        /// Solution directory.
-        /// </summary>
-        public DirectoryInfo SolutionDirectory { get; private set; }
-        /// <summary>
         /// Source directory where source code is.
         /// Snippets are will be looked up from this location.
         /// </summary>
         public DirectoryInfo SourceDirectory { get; private set; }
 
         /// <summary>
-        /// The documentation template using razon syntax, see documentation for model structure.
+        /// The documentation template using razor syntax, see documentation for model structure.
         /// </summary>
         public FileInfo TemplateFile { get; private set; }
+
+        /// <summary>
+        /// The documentation template for pdf using razor syntax, see documentation for model structure.
+        /// </summary>
+        public FileInfo TemplateFilePdf { get; private set; }
 
         /// <summary>
         /// The config file defining documentation pages and labels.
@@ -54,31 +54,32 @@ namespace Projbook.Core
         /// <summary>
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
         /// </summary>
-        /// <param name="solutionDirectory">Initializes the required <see cref="SolutionDirectory"/>.</param>
         /// <param name="sourceDirectoryPath">Initializes the required <see cref="SourceDirectory"/>.</param>
         /// <param name="templateFilePath">Initializes the required <see cref="TemplateFile"/>.</param>
         /// <param name="configFile">Initializes the required <see cref="ConfigFile"/>.</param>
         /// <param name="outputDirectoryPath">Initializes the required <see cref="OutputDirectory"/>.</param>
-        public ProjbookEngine(string solutionDirectory, string sourceDirectoryPath, string templateFilePath, string configFile, string outputDirectoryPath)
+        public ProjbookEngine(string sourceDirectoryPath, string templateFilePath, string configFile, string outputDirectoryPath)
         {
             // Data validation
-            Ensure.That(() => solutionDirectory).IsNotNullOrWhiteSpace();
             Ensure.That(() => sourceDirectoryPath).IsNotNullOrWhiteSpace();
             Ensure.That(() => templateFilePath).IsNotNullOrWhiteSpace();
             Ensure.That(() => configFile).IsNotNullOrWhiteSpace();
             Ensure.That(() => outputDirectoryPath).IsNotNullOrWhiteSpace();
-            Ensure.That(Directory.Exists(solutionDirectory), string.Format("Could not find '{0}' directory", solutionDirectory)).IsTrue();
             Ensure.That(Directory.Exists(sourceDirectoryPath), string.Format("Could not find '{0}' directory", sourceDirectoryPath)).IsTrue();
             Ensure.That(File.Exists(templateFilePath), string.Format("Could not find '{0}' file", templateFilePath)).IsTrue();
             Ensure.That(File.Exists(configFile), string.Format("Could not find '{0}' file", configFile)).IsTrue();
 
             // Initialize
-            this.SolutionDirectory = new DirectoryInfo(solutionDirectory);
             this.SourceDirectory = new DirectoryInfo(sourceDirectoryPath);
             this.TemplateFile = new FileInfo(templateFilePath);
             this.ConfigFile = new FileInfo(configFile);
             this.OutputDirectory = new DirectoryInfo(outputDirectoryPath);
             this.snippetExtractorFactory = new SnippetExtractorFactory(this.SourceDirectory);
+
+            // Compute and initialize pdf template
+            string templateDirectory = Path.GetDirectoryName(templateFilePath);
+            string pdfTemplateFile = string.Format("{0}-pdf{1}", Path.GetFileNameWithoutExtension(templateFilePath), Path.GetExtension(templateFilePath));
+            this.TemplateFilePdf = new FileInfo(Path.Combine(templateDirectory, pdfTemplateFile));
         }
 
         /// <summary>
@@ -161,11 +162,21 @@ namespace Projbook.Core
                     content: System.Text.Encoding.UTF8.GetString(documentStream.ToArray())));
                 first = false;
             }
+            
+            // Standard generation
+            this.GenerateFile(this.TemplateFile.FullName, this.TemplateFile.FullName, configuration, pages);
 
+            // Pdf specific generation
+            string pdfTemplate = this.TemplateFilePdf.Exists ? this.TemplateFilePdf.FullName : this.TemplateFile.FullName;
+            this.GenerateFile(pdfTemplate, this.TemplateFilePdf.FullName, configuration, pages);
+        }
+
+        private void GenerateFile(string templateName, string targetName, Configuration configuration, List<Model.Page> pages)
+        {
             // Generate final documentation from the template using razor engine
-            string processed;
-            string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, "generated.html");
-            using (var reader = new StreamReader(new FileStream(this.TemplateFile.FullName, FileMode.Open)))
+            string fileName = string.Format("{0}-generated{1}", Path.GetFileNameWithoutExtension(targetName), Path.GetExtension(targetName));
+            string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, fileName);
+            using (var reader = new StreamReader(new FileStream(templateName, FileMode.Open)))
             using (var writer = new StreamWriter(new FileStream(outputFileHtml, FileMode.Create)))
             {
                 var config = new TemplateServiceConfiguration();
@@ -173,20 +184,9 @@ namespace Projbook.Core
                 config.EncodedStringFactory = new RawStringFactory();
                 var service = RazorEngineService.Create(config);
                 Engine.Razor = service;
-                processed = Engine.Razor.RunCompile(new LoadedTemplateSource(reader.ReadToEnd()), string.Empty, null, new { Title = configuration.Title, Pages = pages });
+                string processed = Engine.Razor.RunCompile(new LoadedTemplateSource(reader.ReadToEnd()), string.Empty, null, new { Title = configuration.Title, Pages = pages });
                 writer.WriteLine(processed);
             }
-            
-            // Generate pdf document
-            string outputFilePdf = Path.Combine(this.OutputDirectory.FullName, "generated.pdf");
-            Process process = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.FileName = Path.Combine(this.SolutionDirectory.FullName, "packages", "wkhtmltopdf.msvc.64.exe.0.12.2.5", "tools", "wkhtmltopdf.exe");
-            startInfo.Arguments = string.Format("{0} {1}", outputFileHtml, outputFilePdf);
-            process.StartInfo = startInfo;
-            process.Start();
-            process.WaitForExit();
         }
     }
 }

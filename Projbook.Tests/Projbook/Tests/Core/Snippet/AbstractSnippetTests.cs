@@ -10,7 +10,7 @@ namespace Projbook.Tests.Core.Snippet
     public abstract class AbstractSnippetTests
     {
         /// <summary>
-        /// The tested extractor.
+        /// The source directory.
         /// </summary>
         protected DirectoryInfo SourceDirectory { get; private set; }
 
