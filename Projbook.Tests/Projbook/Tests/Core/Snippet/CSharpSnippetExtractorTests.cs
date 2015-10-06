@@ -106,6 +106,18 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Sample.cs NS2.NS2.NS3", "NS2NS2NS3.txt")]
         [TestCase("Sample.cs NS2.NS2.NS3.A", "NS2NS2NS3A.txt")]
 
+        // Match constructor
+        [TestCase("Sample.cs NS2.NS2.NS3.B.<Constructor>", "Constructor.txt")]
+        [TestCase("Sample.cs NS2.NS3.B.<Constructor>", "Constructor.txt")]
+        [TestCase("Sample.cs B.<Constructor>", "Constructor.txt")]
+        [TestCase("Sample.cs <Constructor>", "Constructor.txt")]
+
+        // Match destructor
+        [TestCase("Sample.cs NS2.NS2.NS3.B.<Destructor>", "Destructor.txt")]
+        [TestCase("Sample.cs NS2.NS3.B.<Destructor>", "Destructor.txt")]
+        [TestCase("Sample.cs B.<Destructor>", "Destructor.txt")]
+        [TestCase("Sample.cs <Destructor>", "Destructor.txt")]
+
         // Aggregate namespaces
         [TestCase("Sample.cs NS2.NS3", "NS2NS3.txt")]
 

@@ -50,5 +50,16 @@ namespace NS2
         {
             // In NS2.NS2.NS3
         }
+
+        class B
+        {
+            B(int foo)
+            {
+            }
+
+            ~B()
+            {
+            }
+        }
     }
 }
