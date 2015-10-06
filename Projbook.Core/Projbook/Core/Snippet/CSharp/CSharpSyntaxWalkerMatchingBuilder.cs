@@ -125,6 +125,27 @@ namespace Projbook.Core.Snippet.CSharp
                 targetNode: n => n,
                 visit: base.VisitMethodDeclaration);
         }
+
+        public override void VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
+        {
+            // Visit
+            this.Visit<ConstructorDeclarationSyntax>(
+                node: node,
+                exctractName: n => "<Constructor>",
+                targetNode: n => n,
+                visit: base.VisitConstructorDeclaration);
+        }
+
+        public override void VisitDestructorDeclaration(DestructorDeclarationSyntax node)
+        {
+            // Visit
+            this.Visit<DestructorDeclarationSyntax>(
+                node: node,
+                exctractName: n => "<Destructor>",
+                targetNode: n => n,
+                visit: base.VisitDestructorDeclaration);
+        }
+
         /// <summary>
         /// Visits parameter list.
         /// </summary>
