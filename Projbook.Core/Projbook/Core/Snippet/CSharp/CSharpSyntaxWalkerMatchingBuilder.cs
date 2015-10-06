@@ -79,7 +79,8 @@ namespace Projbook.Core.Snippet.CSharp
             // Visit
             this.Visit<ClassDeclarationSyntax>(
                 node: node,
-                exctractName: n => n.Identifier.ValueText,
+                typeParameterList: node.TypeParameterList,
+                exctractName: n => node.Identifier.ValueText,
                 targetNode: n => n,
                 visit: base.VisitClassDeclaration);
         }
@@ -93,6 +94,7 @@ namespace Projbook.Core.Snippet.CSharp
             // Visit
             this.Visit<PropertyDeclarationSyntax>(
                 node: node,
+                typeParameterList: null,
                 exctractName: n => n.Identifier.ValueText,
                 targetNode: n => n,
                 visit: base.VisitPropertyDeclaration);
@@ -107,6 +109,7 @@ namespace Projbook.Core.Snippet.CSharp
             // Visit
             this.Visit<AccessorDeclarationSyntax>(
                 node: node,
+                typeParameterList: null,
                 exctractName: n => n.Keyword.ValueText,
                 targetNode: n => n,
                 visit: base.VisitAccessorDeclaration);
@@ -121,6 +124,7 @@ namespace Projbook.Core.Snippet.CSharp
             // Visit
             this.Visit<MethodDeclarationSyntax>(
                 node: node,
+                typeParameterList: node.TypeParameterList,
                 exctractName: n => n.Identifier.ValueText,
                 targetNode: n => n,
                 visit: base.VisitMethodDeclaration);
@@ -131,6 +135,7 @@ namespace Projbook.Core.Snippet.CSharp
             // Visit
             this.Visit<ConstructorDeclarationSyntax>(
                 node: node,
+                typeParameterList: null,
                 exctractName: n => "<Constructor>",
                 targetNode: n => n,
                 visit: base.VisitConstructorDeclaration);
@@ -141,6 +146,7 @@ namespace Projbook.Core.Snippet.CSharp
             // Visit
             this.Visit<DestructorDeclarationSyntax>(
                 node: node,
+                typeParameterList: null,
                 exctractName: n => "<Destructor>",
                 targetNode: n => n,
                 visit: base.VisitDestructorDeclaration);
@@ -155,6 +161,7 @@ namespace Projbook.Core.Snippet.CSharp
             // Visit
             this.Visit<ParameterListSyntax>(
                 node: node,
+                typeParameterList: null,
                 exctractName: n => string.Format("({0})", string.Join(",", node.Parameters.Select(x => x.Type.ToString()))),
                 targetNode: n => n.Parent,
                 visit: base.VisitParameterList);
@@ -166,13 +173,23 @@ namespace Projbook.Core.Snippet.CSharp
         /// <typeparam name="T">The syntax node type to visit.</typeparam>
         /// <param name="node">The node to visit.</param>
         /// <param name="exctractName">Extract the node name.</param>
+        /// <param name="typeParameterList">The type parameter list.</param>
         /// <param name="targetNode">Resolved the target node.</param>
         /// <param name="visit">Visit sub nodes.</param>
-        private void Visit<T>(T node, Func<T, string> exctractName, Func<T, SyntaxNode> targetNode, Action<T> visit) where T : CSharpSyntaxNode
+        private void Visit<T>(T node, Func<T, string> exctractName, TypeParameterListSyntax typeParameterList , Func<T, SyntaxNode> targetNode, Action<T> visit) where T : CSharpSyntaxNode
         {
             // Retrieve the accessor name
             string name = exctractName(node);
 
+            // Compute suffix for representing generics
+            if (null != typeParameterList)
+            {
+                name = string.Format(
+                    "{0}{{{1}}}",
+                    name,
+                    string.Join(",", typeParameterList.Parameters.Select(x => x.ToString())));
+            }
+            
             // Keep track of the initial node the restore the root after the visit
             CSharpSyntaxMatchingNode initialNode = this.Root;
 

@@ -118,6 +118,17 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Sample.cs B.<Destructor>", "Destructor.txt")]
         [TestCase("Sample.cs <Destructor>", "Destructor.txt")]
 
+        // Match generic class
+        [TestCase("Sample.cs NS2.NS2.NS3.C{T,U}", "GenericClass.txt")]
+        [TestCase("Sample.cs NS2.NS3.C{T,U}", "GenericClass.txt")]
+        [TestCase("Sample.cs C{T,U}", "GenericClass.txt")]
+
+        // Match generic method
+        [TestCase("Sample.cs NS2.NS2.NS3.C{T,U}.CMethod{X,Y}", "GenericMethod.txt")]
+        [TestCase("Sample.cs NS2.NS3.C{T,U}.CMethod{X,Y}", "GenericMethod.txt")]
+        [TestCase("Sample.cs C{T,U}.CMethod{X,Y}", "GenericMethod.txt")]
+        [TestCase("Sample.cs CMethod{X,Y}", "GenericMethod.txt")]
+
         // Aggregate namespaces
         [TestCase("Sample.cs NS2.NS3", "NS2NS3.txt")]
 

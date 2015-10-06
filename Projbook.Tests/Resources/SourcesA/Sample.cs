@@ -61,5 +61,12 @@ namespace NS2
             {
             }
         }
+
+        class C<T, U>
+        {
+            void CMethod<X, Y>(X x, Y y)
+            {
+            }
+        }
     }
 }
