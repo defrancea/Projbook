@@ -23,4 +23,11 @@ namespace NS2.NS3
         {
         }
     }
+
+    class C<T, U>
+    {
+        void CMethod<X, Y>(X x, Y y)
+        {
+        }
+    }
 }

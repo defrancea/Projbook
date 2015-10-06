@@ -1,0 +1,3 @@
+﻿void CMethod<X, Y>(X x, Y y)
+{
+}
