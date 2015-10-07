@@ -2,8 +2,3 @@
 {
     return 42;
 }
-
-get
-{
-    return 51;
-}

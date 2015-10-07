@@ -27,7 +27,7 @@ namespace Projbook.Core.Projbook.Core.Snippet.CSharp
         /// * The optional second chunks are all full qualified name to the member separated by "."
         /// * The optional last chunk is the method parameters if matching a method.
         /// </summary>
-        private static Regex ruleRegex = new Regex(@"^\s*([^\s]+)(\s+([^(\s]+)?\s*(\([^)]*\s*\))?)?\s*$", RegexOptions.Compiled);
+        private static Regex ruleRegex = new Regex(@"^\s*([^\s]+)(\s+([^(]+)?\s*(\([^)]*\s*\))?)?\s*$", RegexOptions.Compiled);
 
         /// <summary>
         /// Parses the token
