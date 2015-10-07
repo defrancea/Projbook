@@ -71,18 +71,38 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Sample.cs WhateverProperty", "WhateverProperty.txt")]
 
         // Match property getter
-        [TestCase("Sample.cs NS.OneClassSomewhere.SubClass.WhateverProperty.get", "get.txt")]
-        [TestCase("Sample.cs OneClassSomewhere.SubClass.WhateverProperty.get", "get.txt")]
-        [TestCase("Sample.cs SubClass.WhateverProperty.get", "get.txt")]
-        [TestCase("Sample.cs WhateverProperty.get", "get.txt")]
-        [TestCase("Sample.cs get", "get.txt")]
+        [TestCase("Sample.cs NS.OneClassSomewhere.SubClass.WhateverProperty.get", "WhateverPropertyget.txt")]
+        [TestCase("Sample.cs OneClassSomewhere.SubClass.WhateverProperty.get", "WhateverPropertyget.txt")]
+        [TestCase("Sample.cs SubClass.WhateverProperty.get", "WhateverPropertyget.txt")]
+        [TestCase("Sample.cs WhateverProperty.get", "WhateverPropertyget.txt")]
 
         // Match property setter
-        [TestCase("Sample.cs NS.OneClassSomewhere.SubClass.WhateverProperty.set", "set.txt")]
-        [TestCase("Sample.cs OneClassSomewhere.SubClass.WhateverProperty.set", "set.txt")]
-        [TestCase("Sample.cs SubClass.WhateverProperty.set", "set.txt")]
-        [TestCase("Sample.cs WhateverProperty.set", "set.txt")]
+        [TestCase("Sample.cs NS.OneClassSomewhere.SubClass.WhateverProperty.set", "WhateverPropertyset.txt")]
+        [TestCase("Sample.cs OneClassSomewhere.SubClass.WhateverProperty.set", "WhateverPropertyset.txt")]
+        [TestCase("Sample.cs SubClass.WhateverProperty.set", "WhateverPropertyset.txt")]
+        [TestCase("Sample.cs WhateverProperty.set", "WhateverPropertyset.txt")]
+
+        // Match indexer
+        [TestCase("Sample.cs NS2.NS2.NS3.D.[string,int]", "Indexer.txt")]
+        [TestCase("Sample.cs NS2.NS3.D.[string,int]", "Indexer.txt")]
+        [TestCase("Sample.cs D.[string,int]", "Indexer.txt")]
+        [TestCase("Sample.cs [string,int]", "Indexer.txt")]
+
+        // Match indexer getter
+        [TestCase("Sample.cs NS2.NS2.NS3.D.[string,int].get", "Indexerget.txt")]
+        [TestCase("Sample.cs NS2.NS3.D.[string,int].get", "Indexerget.txt")]
+        [TestCase("Sample.cs D.[string,int].get", "Indexerget.txt")]
+        [TestCase("Sample.cs [string,int].get", "Indexerget.txt")]
+
+        // Match all getter and setter
         [TestCase("Sample.cs set", "set.txt")]
+        [TestCase("Sample.cs get", "get.txt")]
+
+        // Match indexer setter
+        [TestCase("Sample.cs NS2.NS2.NS3.D.[string,int].set", "Indexerset.txt")]
+        [TestCase("Sample.cs NS2.NS3.D.[string,int].set", "Indexerset.txt")]
+        [TestCase("Sample.cs D.[string,int].set", "Indexerset.txt")]
+        [TestCase("Sample.cs [string,int].set", "Indexerset.txt")]
 
         // Match method with overloads
         [TestCase("Sample.cs NS.OneClassSomewhere.Foo", "Foo.txt")]

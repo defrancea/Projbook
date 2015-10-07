@@ -100,6 +100,26 @@ namespace Projbook.Core.Snippet.CSharp
                 visit: base.VisitPropertyDeclaration);
         }
 
+        public override void VisitIndexerDeclaration(IndexerDeclarationSyntax node)
+        {
+            // Compute suffix for representing generics
+            string memberName = string.Empty;
+            if (null != node.ParameterList)
+            {
+                memberName = string.Format(
+                    "[{0}]",
+                    string.Join(",", node.ParameterList.Parameters.Select(x => x.Type.ToString())));
+            }
+
+            // Visit
+            this.Visit<IndexerDeclarationSyntax>(
+                node: node,
+                typeParameterList: null,
+                exctractName: n => memberName,
+                targetNode: n => n,
+                visit: base.VisitIndexerDeclaration);
+        }
+
         /// <summary>
         /// Visits an accessor declaration.
         /// </summary>

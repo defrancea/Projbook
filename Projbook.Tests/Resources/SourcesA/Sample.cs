@@ -68,5 +68,20 @@ namespace NS2
             {
             }
         }
+
+        class D
+        {
+            public int this[string s, int i]
+            {
+                get
+                {
+                    return 51;
+                }
+                set
+                {
+                    string bar = "bar";
+                }
+            }
+        }
     }
 }

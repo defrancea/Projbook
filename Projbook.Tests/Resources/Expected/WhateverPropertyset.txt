@@ -2,8 +2,3 @@
 {
     string foo = "foo";
 }
-
-set
-{
-    string bar = "bar";
-}
