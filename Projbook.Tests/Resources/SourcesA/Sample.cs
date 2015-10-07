@@ -82,6 +82,18 @@ namespace NS2
                     string bar = "bar";
                 }
             }
+
+            public event Action Event
+            {
+                add
+                {
+                    // Add content
+                }
+                remove
+                {
+                    // Remove content
+                }
+            }
         }
     }
 }

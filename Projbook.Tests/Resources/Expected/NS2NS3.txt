@@ -44,5 +44,17 @@ namespace NS2.NS3
                 string bar = "bar";
             }
         }
+
+        public event Action Event
+        {
+            add
+            {
+                // Add content
+            }
+            remove
+            {
+                // Remove content
+            }
+        }
     }
 }
