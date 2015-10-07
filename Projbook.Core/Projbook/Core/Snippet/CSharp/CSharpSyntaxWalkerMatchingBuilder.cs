@@ -100,6 +100,10 @@ namespace Projbook.Core.Snippet.CSharp
                 visit: base.VisitPropertyDeclaration);
         }
 
+        /// <summary>
+        /// Visits an indexter declaration.
+        /// </summary>
+        /// <param name="node">The indexter declaration to visit.</param>
         public override void VisitIndexerDeclaration(IndexerDeclarationSyntax node)
         {
             // Compute suffix for representing generics
@@ -118,6 +122,21 @@ namespace Projbook.Core.Snippet.CSharp
                 exctractName: n => memberName,
                 targetNode: n => n,
                 visit: base.VisitIndexerDeclaration);
+        }
+
+        /// <summary>
+        /// Visits an event declaration.
+        /// </summary>
+        /// <param name="node">The event declaration to visit.</param>
+        public override void VisitEventDeclaration(EventDeclarationSyntax node)
+        {
+            // Visit
+            this.Visit<EventDeclarationSyntax>(
+                node: node,
+                typeParameterList: null,
+                exctractName: n => n.Identifier.ValueText,
+                targetNode: n => n,
+                visit: base.VisitEventDeclaration);
         }
 
         /// <summary>
@@ -150,6 +169,10 @@ namespace Projbook.Core.Snippet.CSharp
                 visit: base.VisitMethodDeclaration);
         }
 
+        /// <summary>
+        /// Visits a constructor declaration.
+        /// </summary>
+        /// <param name="node">The constructor declaration to visit.</param>
         public override void VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
         {
             // Visit
@@ -161,6 +184,10 @@ namespace Projbook.Core.Snippet.CSharp
                 visit: base.VisitConstructorDeclaration);
         }
 
+        /// <summary>
+        /// Visits a destructor declaration.
+        /// </summary>
+        /// <param name="node">The destructor declaration to visit.</param>
         public override void VisitDestructorDeclaration(DestructorDeclarationSyntax node)
         {
             // Visit

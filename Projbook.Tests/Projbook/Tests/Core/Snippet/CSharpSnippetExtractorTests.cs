@@ -98,6 +98,26 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Sample.cs set", "set.txt")]
         [TestCase("Sample.cs get", "get.txt")]
 
+        // Match event
+        [TestCase("Sample.cs NS2.NS2.NS3.D.Event", "Event.txt")]
+        [TestCase("Sample.cs NS2.NS3.D.Event", "Event.txt")]
+        [TestCase("Sample.cs D.Event", "Event.txt")]
+        [TestCase("Sample.cs Event", "Event.txt")]
+
+        // Match event adder
+        [TestCase("Sample.cs NS2.NS2.NS3.D.Event.add", "Eventadd.txt")]
+        [TestCase("Sample.cs NS2.NS3.D.Event.add", "Eventadd.txt")]
+        [TestCase("Sample.cs D.Event.add", "Eventadd.txt")]
+        [TestCase("Sample.cs Event.add", "Eventadd.txt")]
+        [TestCase("Sample.cs add", "Eventadd.txt")]
+
+        // Match event remover
+        [TestCase("Sample.cs NS2.NS2.NS3.D.Event.remove", "Eventremove.txt")]
+        [TestCase("Sample.cs NS2.NS3.D.Event.remove", "Eventremove.txt")]
+        [TestCase("Sample.cs D.Event.remove", "Eventremove.txt")]
+        [TestCase("Sample.cs Event.remove", "Eventremove.txt")]
+        [TestCase("Sample.cs remove", "Eventremove.txt")]
+
         // Match indexer setter
         [TestCase("Sample.cs NS2.NS2.NS3.D.[string,int].set", "Indexerset.txt")]
         [TestCase("Sample.cs NS2.NS3.D.[string,int].set", "Indexerset.txt")]
