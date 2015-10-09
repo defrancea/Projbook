@@ -56,12 +56,30 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="Resources\SourcesA\BlockOnly.cs" />
+    <Compile Include="Resources\SourcesA\Options.cs" />
     <Compile Include="Resources\SourcesA\Empty.cs" />
     <Compile Include="Resources\SourcesA\NeedCleanup.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Resources\SourcesA\Sample.cs" />
+    <Content Include="Resources\Expected\BlockOnlyEmptyMethod.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\ContentOnlyEventadd.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\ContentOnlyProperty.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\ContentOnlyMethod.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\ContentOnlyEvent.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\ContentOnlyClass.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Expected\BlockOnlyEventadd.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

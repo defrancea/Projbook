@@ -181,13 +181,65 @@ namespace Projbook.Core.Snippet.CSharp
                 return;
             }
 
-            // Compute the index of the first non empty line
+            // Compute the index of the first selected line
             int startPos = 0;
-            for (; startPos < lines.Length && lines[startPos].ToString().Trim().Length == 0; ++startPos) ;
+            if (CSharpExtractionMode.ContentOnly == extractionMode)
+            {
+                for (; startPos < lines.Length && !lines[startPos].ToString().Contains('{'); ++startPos);
+                
+                // Extract block code if any opening bracket has been found
+                if (startPos < lines.Length)
+                {
+                    int openingBracketPos = lines[startPos].IndexOf('{');
+                    if (openingBracketPos >= 0)
+                    {
+                        // Extract the code before the curly bracket
+                        if (lines[startPos].Length > openingBracketPos)
+                        {
+                            lines[startPos] = lines[startPos].Substring(openingBracketPos + 1);
+                        }
 
-            // Compute the index of the last non empty line
-            int endPos = lines.Length - 1;
-            for (; 0 <= endPos && lines[endPos].ToString().Trim().Length == 0; --endPos) ;
+                        // Skip the current line if empty
+                        if (string.IsNullOrWhiteSpace(lines[startPos]) && lines.Length > 1 + startPos)
+                        {
+                            ++startPos;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (; startPos < lines.Length && lines[startPos].ToString().Trim().Length == 0; ++startPos);
+            }
+
+            // Compute the index of the lastselected line
+            int endPos = -1 + lines.Length;
+            if (CSharpExtractionMode.ContentOnly == extractionMode)
+            {
+                for (; 0 <= endPos && !lines[endPos].ToString().Contains('}'); --endPos);
+
+                // Extract block code if any closing bracket has been found
+                if (0 <= endPos)
+                {
+                    int closingBracketPos = lines[endPos].IndexOf('}');
+                    if (closingBracketPos >= 0)
+                    {
+                        // Extract the code before the curly bracket
+                        if (lines[endPos].Length > closingBracketPos)
+                            lines[endPos] = lines[endPos].Substring(0, closingBracketPos).TrimEnd();
+                    }
+
+                    // Skip the current line if empty
+                    if (string.IsNullOrWhiteSpace(lines[endPos]) && lines.Length > -1 + endPos)
+                    {
+                        --endPos;
+                    }
+                }
+            }
+            else
+            {
+                for (; 0 <= endPos && lines[endPos].ToString().Trim().Length == 0; --endPos) ;
+            }
 
             // Compute the padding to remove for removing a part of the indentation
             int leftPadding = int.MaxValue;
@@ -215,7 +267,7 @@ namespace Projbook.Core.Snippet.CSharp
                 if (lines[i].Length > leftPadding)
                 {
                     string line = lines[i].Substring(leftPadding);
-                
+
                     // Process the snippet depending on the extraction mode
                     switch (extractionMode)
                     {
@@ -226,7 +278,7 @@ namespace Projbook.Core.Snippet.CSharp
                             {
                                 // Extract the code before the curly bracket
                                 if (line.Length > openingBracketPos)
-                                    line = line.Substring(0, openingBracketPos + 1);
+                                    line = line.Substring(0, 1 + openingBracketPos);
 
                                 // Replace the content and close the block
                                 line += string.Format("{0}    // ...{0}}}", Environment.NewLine);

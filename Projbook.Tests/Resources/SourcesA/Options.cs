@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace Projbook.Tests.Resources.SourcesA
 {
-    public class BlockOnly
+    public class Options
     {
         void Method()
         {
             // Some content
         }
+
+        void EmptyMethod(string i){}
 
         public int Property { get; set; }
 
@@ -23,7 +25,6 @@ namespace Projbook.Tests.Resources.SourcesA
             }
             remove
             {
-                // Something
             }
         }
     }

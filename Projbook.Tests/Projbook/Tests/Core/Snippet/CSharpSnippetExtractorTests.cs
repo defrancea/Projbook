@@ -181,14 +181,29 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("NeedCleanup.cs NeedCleanup", "NeedCleanupClass.txt")]
         [TestCase("Empty.cs", "Empty.txt")]
 
-        // Match property
-        [TestCase("BlockOnly.cs =BlockOnly", "BlockOnlyClass.txt")]
-        [TestCase("BlockOnly.cs =BlockOnly.Method", "BlockOnlyMethod.txt")]
-        [TestCase("BlockOnly.cs =BlockOnly.Property", "BlockOnlyProperty.txt")]
-        [TestCase("BlockOnly.cs =BlockOnly.Event", "BlockOnlyEvent.txt")]
-        [TestCase("BlockOnly.cs =BlockOnly.Event.add", "BlockOnlyEventadd.txt")]
-        [TestCase("BlockOnly.cs =Event.add", "BlockOnlyEventadd.txt")]
-        [TestCase("BlockOnly.cs =add", "BlockOnlyEventadd.txt")]
+        // Match block structure only
+        [TestCase("Options.cs =Options", "BlockOnlyClass.txt")]
+        [TestCase("Options.cs =Options.Method", "BlockOnlyMethod.txt")]
+        [TestCase("Options.cs =EmptyMethod", "BlockOnlyEmptyMethod.txt")]
+        [TestCase("Options.cs =Options.Property", "BlockOnlyProperty.txt")]
+        [TestCase("Options.cs =Options.Event", "BlockOnlyEvent.txt")]
+        [TestCase("Options.cs =Options.Event.add", "BlockOnlyEventadd.txt")]
+        [TestCase("Options.cs =Event.add", "BlockOnlyEventadd.txt")]
+        [TestCase("Options.cs =add", "BlockOnlyEventadd.txt")]
+        
+        // Match content only
+        [TestCase("Options.cs -Options", "ContentOnlyClass.txt")]
+        [TestCase("Options.cs -Options.Method", "ContentOnlyMethod.txt")]
+        [TestCase("Options.cs -Options.Property", "ContentOnlyProperty.txt")]
+        [TestCase("Options.cs -Options.Event", "ContentOnlyEvent.txt")]
+        [TestCase("Options.cs -Options.Event.add", "ContentOnlyEventadd.txt")]
+        [TestCase("Options.cs -Event.add", "ContentOnlyEventadd.txt")]
+        [TestCase("Options.cs -add", "ContentOnlyEventadd.txt")]
+
+        // Match empty content
+        [TestCase("Options.cs -remove", "Empty.txt")]
+        [TestCase("Options.cs -get", "Empty.txt")]
+        [TestCase("Options.cs -EmptyMethod", "Empty.txt")]
         public void ExtractSnippet(string pattern, string expectedFile)
         {
             // Run the extraction

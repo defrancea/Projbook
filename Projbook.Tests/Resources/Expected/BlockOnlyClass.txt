@@ -1,4 +1,4 @@
-﻿public class BlockOnly
+﻿public class Options
 {
     // ...
 }
