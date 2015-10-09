@@ -87,15 +87,16 @@ namespace Projbook.Core.Snippet.CSharp
             CSharpSyntaxMatchingNode node = syntaxMatchingBuilder.Root.Match(rule.MatchingChunks); // Todo: Raise error if the matching is null
             
             // Build a snippet for extracted syntax nodes
-            return this.BuildSnippet(node.MatchingSyntaxNodes);
+            return this.BuildSnippet(node.MatchingSyntaxNodes, rule.ExtractionMode);
         }
 
         /// <summary>
         /// Builds a snippet from extracted syntax nodes.
         /// </summary>
         /// <param name="nodes">The exctracted nodes.</param>
+        /// <param name="extractionMode">The extraction mode.</param>
         /// <returns>The built snippet.</returns>
-        private Model.Snippet BuildSnippet(SyntaxNode[] nodes)
+        private Model.Snippet BuildSnippet(SyntaxNode[] nodes, CSharpExtractionMode extractionMode)
         {
             // Data validation
             Ensure.That(() => nodes).IsNotNull();
@@ -112,10 +113,10 @@ namespace Projbook.Core.Snippet.CSharp
                     stringBuilder.AppendLine();
                     stringBuilder.AppendLine();
                 }
-
+                
                 // Write each snippet line
                 string[] lines = node.GetText().Lines.Select(x => x.ToString()).ToArray();
-                this.WriteAndCleanupSnippet(stringBuilder, lines);
+                this.WriteAndCleanupSnippet(stringBuilder, lines, extractionMode);
 
                 // Flag the first snippet as false
                 firstSnippet = false;
@@ -154,7 +155,8 @@ namespace Projbook.Core.Snippet.CSharp
                 }
             }
 
-            this.WriteAndCleanupSnippet(stringBuilder, lines.ToArray());
+            // Write the snippet
+            this.WriteAndCleanupSnippet(stringBuilder, lines.ToArray(), CSharpExtractionMode.FullMember);
 
             // Create the snippet from the exctracted code
             return new Model.Snippet(stringBuilder.ToString());
@@ -166,7 +168,8 @@ namespace Projbook.Core.Snippet.CSharp
         /// </summary>
         /// <param name="stringBuilder">The string builder used as output.</param>
         /// <param name="lines">The lines to process.</param>
-        private void WriteAndCleanupSnippet(StringBuilder stringBuilder, string[] lines)
+        /// <param name="extractionMode">The extraction mode.</param>
+        private void WriteAndCleanupSnippet(StringBuilder stringBuilder, string[] lines, CSharpExtractionMode extractionMode)
         {
             // Data validation
             Ensure.That(() => stringBuilder).IsNotNull();
@@ -193,7 +196,7 @@ namespace Projbook.Core.Snippet.CSharp
                 // Ignore empty lines in the middle of the snippet
                 if (!string.IsNullOrWhiteSpace(lines[i]))
                 {
-                    // Adjust the left padding with the available whilespace at the beginning of the line
+                    // Adjust the left padding with the available whitespace at the beginning of the line
                     leftPadding = Math.Min(leftPadding, lines[i].ToString().TakeWhile(Char.IsWhiteSpace).Count());
                 }
             }
@@ -211,9 +214,33 @@ namespace Projbook.Core.Snippet.CSharp
                 // Remove a part of the indentation padding
                 if (lines[i].Length > leftPadding)
                 {
-                    stringBuilder.Append(lines[i].Substring(leftPadding));
-                }
+                    string line = lines[i].Substring(leftPadding);
+                
+                    // Process the snippet depending on the extraction mode
+                    switch (extractionMode)
+                    {
+                        // Extract the block structure only
+                        case CSharpExtractionMode.BlockStructureOnly:
+                            int openingBracketPos = line.IndexOf('{');
+                            if (openingBracketPos >= 0)
+                            {
+                                // Extract the code before the curly bracket
+                                if (line.Length > openingBracketPos)
+                                    line = line.Substring(0, openingBracketPos + 1);
 
+                                // Replace the content and close the block
+                                line += string.Format("{0}    // ...{0}}}", Environment.NewLine);
+
+                                // Stop the iteration
+                                endPos = i;
+                            }
+                            break;
+                    }
+
+                    // Append the line
+                    stringBuilder.Append(line);
+                }
+                
                 // Flag the first line as false
                 firstLine = false;
             }

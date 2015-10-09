@@ -180,6 +180,15 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("NeedCleanup.cs", "NeedCleanup.txt")]
         [TestCase("NeedCleanup.cs NeedCleanup", "NeedCleanupClass.txt")]
         [TestCase("Empty.cs", "Empty.txt")]
+
+        // Match property
+        [TestCase("BlockOnly.cs =BlockOnly", "BlockOnlyClass.txt")]
+        [TestCase("BlockOnly.cs =BlockOnly.Method", "BlockOnlyMethod.txt")]
+        [TestCase("BlockOnly.cs =BlockOnly.Property", "BlockOnlyProperty.txt")]
+        [TestCase("BlockOnly.cs =BlockOnly.Event", "BlockOnlyEvent.txt")]
+        [TestCase("BlockOnly.cs =BlockOnly.Event.add", "BlockOnlyEventadd.txt")]
+        [TestCase("BlockOnly.cs =Event.add", "BlockOnlyEventadd.txt")]
+        [TestCase("BlockOnly.cs =add", "BlockOnlyEventadd.txt")]
         public void ExtractSnippet(string pattern, string expectedFile)
         {
             // Run the extraction
