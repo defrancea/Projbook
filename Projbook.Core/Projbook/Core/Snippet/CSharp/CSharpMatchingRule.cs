@@ -21,13 +21,18 @@ namespace Projbook.Core.Projbook.Core.Snippet.CSharp
         public string[] MatchingChunks { get; private set; }
 
         /// <summary>
+        /// The snippet extraction mode.
+        /// </summary>
+        public CSharpExtractionMode ExtractionMode { get; private set; }
+
+        /// <summary>
         /// Defines rule regex used to parse the snippet into chunks.
         /// Expected input format: Path/File.cs [My.Name.Space.Class.Method][(string, string)]
         /// * The first chunk is the file name and will be loaded in <seealso cref="TargetFile"/>
         /// * The optional second chunks are all full qualified name to the member separated by "."
         /// * The optional last chunk is the method parameters if matching a method.
         /// </summary>
-        private static Regex ruleRegex = new Regex(@"^\s*([^\s]+)(\s+([^(]+)?\s*(\([^)]*\s*\))?)?\s*$", RegexOptions.Compiled);
+        private static Regex ruleRegex = new Regex(@"^\s*([^\s]+)(\s+([-=])?([^(]+)?\s*(\([^)]*\s*\))?)?\s*$", RegexOptions.Compiled);
 
         /// <summary>
         /// Parses the token
@@ -48,8 +53,9 @@ namespace Projbook.Core.Projbook.Core.Snippet.CSharp
 
             // Retrieve values from the regex matching
             string file = match.Groups[1].Value;
-            string rawMember = match.Groups[3].Value;
-            string rawParameters = match.Groups[4].Value;
+            string extractionOption = match.Groups[3].Value;
+            string rawMember = match.Groups[4].Value;
+            string rawParameters = match.Groups[5].Value;
 
             // Build The matching chunk with extracted data
             List<string> matchingChunks = new List<string>();
@@ -60,11 +66,24 @@ namespace Projbook.Core.Projbook.Core.Snippet.CSharp
                 matchingChunks.Add(parameterChunk);
             }
 
+            // Read extraction mode
+            CSharpExtractionMode extractionMode = CSharpExtractionMode.FullMember;
+            switch (extractionOption)
+            {
+                case "-":
+                    extractionMode = CSharpExtractionMode.ContentOnly;
+                    break;
+                case "=":
+                    extractionMode = CSharpExtractionMode.BlockStructureOnly;
+                    break;
+            }
+
             // Build the matching rule based on the regex matching
             return new CSharpMatchingRule
             {
                 TargetFile = file,
-                MatchingChunks = matchingChunks.ToArray()
+                MatchingChunks = matchingChunks.ToArray(),
+                ExtractionMode = extractionMode
             };
         }
     }
