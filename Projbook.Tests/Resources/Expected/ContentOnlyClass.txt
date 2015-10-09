@@ -1,0 +1,19 @@
+﻿void Method()
+{
+    // Some content
+}
+
+void EmptyMethod(string i){}
+
+public int Property { get; set; }
+
+event Action Event
+{
+    add
+    {
+        // Something
+    }
+    remove
+    {
+    }
+}
