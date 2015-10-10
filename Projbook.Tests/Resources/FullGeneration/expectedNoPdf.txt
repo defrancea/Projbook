@@ -1,0 +1,42 @@
+﻿<Title>Test title</Title>
+    <IsHome>True</IsHome>
+    <Id>ResourcesFullGenerationPagefirstPagemd</Id>
+    <Title>First page title</Title>
+    <Content>
+<![CDATA[<a name="resources%2ffullgeneration%2fpage%2ffirstpage.md-foo"></a>
+<h1>Foo</h1>
+<a name="resources%2ffullgeneration%2fpage%2ffirstpage.md-sub-foo"></a>
+<h2>Sub-foo</h2>
+]]>
+    </Content>
+    <Anchors>
+        <Anchor>
+            <Value>resources%2ffullgeneration%2fpage%2ffirstpage.md-foo</Value>
+            <Level>1</Level>
+            <Label>Foo</Label>
+        </Anchor>
+        <Anchor>
+            <Value>resources%2ffullgeneration%2fpage%2ffirstpage.md-sub-foo</Value>
+            <Level>2</Level>
+            <Label>Sub-foo</Label>
+        </Anchor>
+    </Anchors>
+    <IsHome>False</IsHome>
+    <Id>ResourcesFullGenerationPagesecondPagemd</Id>
+    <Title>Second page title</Title>
+    <Content>
+<![CDATA[<a name="resources%2ffullgeneration%2fpage%2fsecondpage.md-bar"></a>
+<h1>Bar</h1>
+<pre><code class="language-csharp">public class Foo
+{
+}</code></pre>
+]]>
+    </Content>
+    <Anchors>
+        <Anchor>
+            <Value>resources%2ffullgeneration%2fpage%2fsecondpage.md-bar</Value>
+            <Level>1</Level>
+            <Label>Bar</Label>
+        </Anchor>
+    </Anchors>
+

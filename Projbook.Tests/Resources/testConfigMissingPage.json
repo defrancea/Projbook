@@ -1,0 +1,13 @@
+﻿{
+  "title": "Test title",
+  "pages": [
+    {
+      "path": "Resources/FullGeneration/Page/missing.md",
+      "title": "Missing"
+    },
+    {
+      "path": "Resources/FullGeneration/Page/secondPage.md",
+      "title": "Second page title"
+    }
+  ]
+}

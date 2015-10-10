@@ -1,6 +1,7 @@
 ﻿using CommonMark;
 using CommonMark.Syntax;
 using EnsureThat;
+using Projbook.Core.Exception;
 using Projbook.Core.Markdown;
 using Projbook.Core.Model.Configuration;
 using Projbook.Core.Projbook.Core;
@@ -85,8 +86,11 @@ namespace Projbook.Core
         /// <summary>
         /// Generates documentation.
         /// </summary>
-        public void Generate()
+        public Model.GenerationError[] Generate()
         {
+            // Initialize the list containing all generation errors
+            List<Model.GenerationError> generationError = new List<Model.GenerationError>();
+
             // Ensute output directory exists
             if (!this.OutputDirectory.Exists)
             {
@@ -95,7 +99,16 @@ namespace Projbook.Core
 
             // Read configuration
             ConfigurationLoader configurationLoader = new ConfigurationLoader();
-            Configuration configuration = configurationLoader.Load(this.ConfigFile);
+            Configuration configuration;
+            try
+            {
+                configuration = configurationLoader.Load(this.ConfigFile);
+            }
+            catch (System.Exception exception)
+            {
+                generationError.Add(new Model.GenerationError(this.ConfigFile.FullName, string.Format("Error during loading configuration: {0}", exception.Message)));
+                return generationError.ToArray();
+            }
             
             // Process all pages
             List<Model.Page> pages = new List<Model.Page>();
@@ -107,6 +120,16 @@ namespace Projbook.Core
 
                 // Load the document
                 Block document;
+                FileInfo fileInfo = new FileInfo(page.Path);
+
+                // Skip the page if doesn't exist
+                if (!fileInfo.Exists)
+                {
+                    generationError.Add(new Model.GenerationError(this.ConfigFile.FullName, string.Format("Error during loading configuration: Could not find file '{0}'", fileInfo.FullName)));
+                    continue;
+                }
+
+                // Process the page
                 using (StreamReader reader = new StreamReader(new FileStream(new FileInfo(page.Path).FullName, FileMode.Open)))
                 {
                     document = CommonMarkConverter.ProcessStage1(reader);
@@ -130,10 +153,25 @@ namespace Projbook.Core
                             node.Block.FencedCodeData.Info = snippetExtractor.Language;
 
                             // Inject snippet
-                            Model.Snippet snippet = snippetExtractor.Extract();
-                            StringContent code = new StringContent();
-                            code.Append(snippet.Content, 0, snippet.Content.Length);
-                            node.Block.StringContent = code;
+                            try
+                            {
+                                Model.Snippet snippet = snippetExtractor.Extract();
+                                StringContent code = new StringContent();
+                                code.Append(snippet.Content, 0, snippet.Content.Length);
+                                node.Block.StringContent = code;
+                            }
+                            catch (SnippetExtractionException snippetExtraction)
+                            {
+                                generationError.Add(new Model.GenerationError(
+                                    sourceFile: page.Path,
+                                    message: string.Format("{0}: {1}", snippetExtraction.Message, snippetExtraction.Pattern)));
+                            }
+                            catch (System.Exception exception)
+                            {
+                                generationError.Add(new Model.GenerationError(
+                                    sourceFile: page.Path,
+                                    message: exception.Message));
+                            }
                         }
                     }
                 }
@@ -162,13 +200,30 @@ namespace Projbook.Core
                     content: System.Text.Encoding.UTF8.GetString(documentStream.ToArray())));
                 first = false;
             }
-            
+
             // Standard generation
-            this.GenerateFile(this.TemplateFile.FullName, this.TemplateFile.FullName, configuration, pages);
+            try
+            {
+                this.GenerateFile(this.TemplateFile.FullName, this.TemplateFile.FullName, configuration, pages);
+            }
+            catch (System.Exception exception)
+            {
+                generationError.Add(new Model.GenerationError(this.TemplateFile.FullName, string.Format("Error during HTML generation: {0}", exception.Message)));
+            }
 
             // Pdf specific generation
             string pdfTemplate = this.TemplateFilePdf.Exists ? this.TemplateFilePdf.FullName : this.TemplateFile.FullName;
-            this.GenerateFile(pdfTemplate, this.TemplateFilePdf.FullName, configuration, pages);
+            try
+            {
+                this.GenerateFile(pdfTemplate, this.TemplateFilePdf.FullName, configuration, pages);
+            }
+            catch (System.Exception exception)
+            {
+                generationError.Add(new Model.GenerationError(pdfTemplate, string.Format("Error during PDF generation: {0}", exception.Message)));
+            }
+
+            // Return the generation errors
+            return generationError.ToArray();
         }
 
         private void GenerateFile(string templateName, string targetName, Configuration configuration, List<Model.Page> pages)

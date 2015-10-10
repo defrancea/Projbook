@@ -188,6 +188,9 @@
     <Content Include="Resources\Expected\OneClassSomewhere.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\FullGeneration\expectedNoPdf.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\FullGeneration\expected-pdf.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -195,6 +198,24 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Expected\NS.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\FullGeneration\testTemplateErrorInPdf-pdf.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\FullGeneration\testTemplateErrorInPdf.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\FullGeneration\testTemplateError-pdf.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\FullGeneration\testTemplateErrorNoPdf.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\FullGeneration\testTemplateNoPdf.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\FullGeneration\testTemplateError.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\FullGeneration\testTemplate-pdf.txt">
@@ -224,6 +245,12 @@
   <ItemGroup>
     <None Include="packages.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\testConfigMissingPage.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\testConfigError.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\testConfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

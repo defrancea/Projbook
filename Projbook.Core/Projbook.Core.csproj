@@ -82,8 +82,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Projbook\Core\ConfigurationLoader.cs" />
+    <Compile Include="Projbook\Core\Exception\SnippetExtractionException.cs" />
     <Compile Include="Projbook\Core\Markdown\InjectAnchorHtmlFormatter.cs" />
     <Compile Include="Projbook\Core\Model\Configuration\Page.cs" />
+    <Compile Include="Projbook\Core\Model\GenerationError.cs" />
     <Compile Include="Projbook\Core\Snippet\CSharp\CSharpExtractionMode.cs" />
     <Compile Include="Projbook\Core\Snippet\CSharp\CSharpSyntaxMatchingNode.cs" />
     <Compile Include="Projbook\Core\Model\Page.cs" />
