@@ -1,4 +1,5 @@
 ﻿using EnsureThat;
+using Projbook.Core.Exception;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -48,7 +49,7 @@ namespace Projbook.Core.Projbook.Core.Snippet.CSharp
             Match match = CSharpMatchingRule.ruleRegex.Match(pattern);
             if (!match.Success)
             {
-                return null; // Todo raise error
+                throw new SnippetExtractionException("Invalid extraction rule", pattern);
             }
 
             // Retrieve values from the regex matching

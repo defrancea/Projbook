@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Projbook.Core.Exception;
 using Projbook.Core.Snippet.CSharp;
 using System;
 using System.IO;
@@ -34,7 +35,7 @@ namespace Projbook.Tests.Core.Snippet
         /// Tests with invalid input.
         /// </summary>
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(SnippetExtractionException))]
         public void WrongInitEmpty()
         {
             new CSharpSnippetExtractor(null, new DirectoryInfo[] { new DirectoryInfo("Foo") });
@@ -222,6 +223,36 @@ namespace Projbook.Tests.Core.Snippet
             Assert.AreEqual(
                 System.Text.Encoding.UTF8.GetString(memoryStream.ToArray()).Replace("\r\n", Environment.NewLine),
                 snippet.Content.Replace("\r\n", Environment.NewLine));
+        }
+
+        /// <summary>
+        /// Tests extract snippet with invalid rule.
+        /// </summary>
+        /// <param name="pattern">The pattern.</param>
+        [Test]
+        [TestCase("abc abc(abc")]
+        [TestCase("")]
+        [TestCase(null)]
+        [ExpectedException(ExpectedException = typeof(SnippetExtractionException), ExpectedMessage = "Invalid extraction rule")]
+        public void ExtractSnippetInvalidRule(string pattern)
+        {
+            // Run the extraction
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor(pattern, this.SourceDirectory);
+            Projbook.Core.Model.Snippet snippet = extractor.Extract();
+        }
+
+        /// <summary>
+        /// Tests extract snippet with non matching member.
+        /// </summary>
+        /// <param name="pattern">The pattern.</param>
+        [Test]
+        [TestCase("Sample.cs DoesntExist")]
+        [ExpectedException(ExpectedException = typeof(SnippetExtractionException), ExpectedMessage = "Cannot find member")]
+        public void ExtractSnippetNotFound(string pattern)
+        {
+            // Run the extraction
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor(pattern, this.SourceDirectory);
+            Projbook.Core.Model.Snippet snippet = extractor.Extract();
         }
     }
 }

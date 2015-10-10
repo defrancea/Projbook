@@ -1,6 +1,7 @@
 ﻿using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Projbook.Core;
+using Projbook.Core.Model;
 
 namespace Projbook.Target
 {
@@ -41,10 +42,16 @@ namespace Projbook.Target
         {
             // Run generation
             ProjbookEngine projbookEngine = new ProjbookEngine(this.SourceDirectory, this.TemplateFile, this.ConfigurationFile, this.OutputDirectory);
-            projbookEngine.Generate();
+            GenerationError[] errors = projbookEngine.Generate();
+
+            // Report generation errors
+            foreach (GenerationError error in errors)
+            {
+                this.Log.LogError(string.Empty, string.Empty, string.Empty, error.SourceFile, -1, -1, -1, -1, error.Message);
+            }
 
             // Return output
-            return true;
+            return errors.Length <= 0;
         }
     }
 }

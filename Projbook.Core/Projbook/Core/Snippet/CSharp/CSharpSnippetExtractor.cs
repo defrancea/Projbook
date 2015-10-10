@@ -1,6 +1,7 @@
 ﻿using EnsureThat;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Projbook.Core.Exception;
 using Projbook.Core.Projbook.Core.Snippet.CSharp;
 using System;
 using System.Collections.Generic;
@@ -38,9 +39,12 @@ namespace Projbook.Core.Snippet.CSharp
         public CSharpSnippetExtractor(string pattern, params DirectoryInfo[] sourceDirectories)
         {
             // Data validation
-            Ensure.That(() => pattern).IsNotNullOrWhiteSpace();
             Ensure.That(() => sourceDirectories).IsNotNull();
             Ensure.That(() => sourceDirectories).HasItems();
+            if (string.IsNullOrWhiteSpace(pattern))
+            {
+                throw new SnippetExtractionException("Invalid extraction rule", pattern);
+            }
 
             // Initialize
             this.Pattern = pattern;
@@ -84,7 +88,11 @@ namespace Projbook.Core.Snippet.CSharp
             syntaxMatchingBuilder.Visit(root);
 
             // Match the rule from the syntax matching Trie
-            CSharpSyntaxMatchingNode node = syntaxMatchingBuilder.Root.Match(rule.MatchingChunks); // Todo: Raise error if the matching is null
+            CSharpSyntaxMatchingNode node = syntaxMatchingBuilder.Root.Match(rule.MatchingChunks);
+            if (null == node)
+            {
+                throw new SnippetExtractionException("Cannot find member", this.Pattern);
+            }
             
             // Build a snippet for extracted syntax nodes
             return this.BuildSnippet(node.MatchingSyntaxNodes, rule.ExtractionMode);

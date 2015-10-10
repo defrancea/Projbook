@@ -1,0 +1,19 @@
+﻿<Title>@Model.Title</Title>
+@foreach (var page in Model.Pages)
+{
+    <IsHome>@page.IsHome</IsHome>
+    <Id>@page.Id</Id>
+    <Title>@page.Title</Title>
+    <Content>
+<![CDATA[@page.Content]]>
+    </Content>
+    <Anchors>
+    @foreach (var anchor in page.Anchors)
+    {
+        <Anchor>
+            <Value>@anchor.Value</Value>
+            <Level>@anchor.Level</Level>
+            <Label>@anchor.Label</Label>
+        </Anchor>
+    </Anchors>
+}
