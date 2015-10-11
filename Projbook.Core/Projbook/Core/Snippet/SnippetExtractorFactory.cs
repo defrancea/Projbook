@@ -45,8 +45,11 @@ namespace Projbook.Core.Snippet
         /// <returns>The matching snippet extractor. If </returns>
         public ISnippetExtractor CreateExtractor(string snippetReference)
         {
-            // Data validation
-            Ensure.That(() => snippetReference).IsNotNullOrWhiteSpace();
+            // Return null if a code block doesn't have any details
+            if (string.IsNullOrWhiteSpace(snippetReference))
+            {
+                return null;
+            }
 
             // Match pattern
             Match match = regex.Match(snippetReference);
