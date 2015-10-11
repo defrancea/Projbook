@@ -919,8 +919,7 @@
       <!-- Turn all dependencies into NuGetDependency items with appropriate metadata. -->
       <ItemGroup Condition="'@(_PackageReference)' != ''">
         <NuGetDependency Include="@(_PackageReference)"
-                         Condition="!%(IsDevelopmentDependency)"
-                         RemoveMetadata="IsDevelopmentDependency;RequireReinstallation;VersionConstraint">
+                         RemoveMetadata="RequireReinstallation;VersionConstraint">
           <Version Condition="'%(_PackageReference.VersionConstraint)' != ''">%(_PackageReference.VersionConstraint)</Version>
         </NuGetDependency>
       </ItemGroup>
