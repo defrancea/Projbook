@@ -241,7 +241,8 @@
     </PropertyGroup>
 
     <!-- Assign a project configuration to each project reference if we're building a solution file. -->
-    <AssignProjectConfiguration
+    <Message Text="MSBuildProjectFullPath=$(MSBuildProjectFullPath)" Importance="high" />
+	<AssignProjectConfiguration
         ProjectReferences="@(ProjectReference)"
         CurrentProject="$(MSBuildProjectFullPath)"
         CurrentProjectConfiguration="$(Configuration)"
