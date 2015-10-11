@@ -131,7 +131,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
-    <Message Text="ProjectPath=$(ProjectPath)" Importance="high" />
     <Projbook ProjectPath="$(ProjectPath)" TemplateFile="$(TargetDir)template.html" ConfigurationFile="$(TargetDir)projbook.json" OutputDirectory="$(TargetDir)" />
     <Exec Command="$(SolutionDir)packages\wkhtmltopdf.msvc.64.exe.0.12.2.5\tools\wkhtmltopdf.exe $(TargetDir)template-pdf-generated.html $(TargetDir)template-pdf-generated.pdf" ContinueOnError="true" />
   </Target>
