@@ -28,6 +28,7 @@
     <LicenseUrl>https://github.com/defrancea/Projbook/blob/master/LICENSE</LicenseUrl>
     <Copyright></Copyright>
     <Tags></Tags>
+	<CurrentProject>$(MSBuildProjectFullPath)</CurrentProject>
   </PropertyGroup>
   <ItemGroup>
     <File Include="..\Projbook.Target\Projbook.targets">
