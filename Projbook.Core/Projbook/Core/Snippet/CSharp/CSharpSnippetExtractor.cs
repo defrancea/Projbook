@@ -61,8 +61,25 @@ namespace Projbook.Core.Snippet.CSharp
             // Parse the matching rule from the pattern
             CSharpMatchingRule rule = CSharpMatchingRule.Parse(this.Pattern);
 
+            // Look for the file in available source directories
+            FileInfo fileInfo = null;
+            foreach (DirectoryInfo directoryInfo in this.SourceDictionaries)
+            {
+                string filePath = Path.Combine(directoryInfo.FullName, rule.TargetFile);
+                if (File.Exists(filePath))
+                {
+                    fileInfo = new FileInfo(filePath);
+                    break;
+                }
+            }
+
+            // Raise an error if cannot find the file
+            if (null == fileInfo)
+            {
+                throw new SnippetExtractionException("Cannot find file in any referenced project", rule.TargetFile);
+            }
+
             // Load the file content
-            FileInfo fileInfo = new FileInfo(Path.Combine(this.SourceDictionaries[0].FullName, rule.TargetFile)); // Todo: More validation and class member parsin with Roslyn
             MemoryStream memoryStream = new MemoryStream();
             using (var fileReader = new StreamReader(new FileStream(fileInfo.FullName, FileMode.Open)))
             using (var fileWriter = new StreamWriter(memoryStream))

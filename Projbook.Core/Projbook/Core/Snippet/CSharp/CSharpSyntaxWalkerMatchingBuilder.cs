@@ -205,6 +205,14 @@ namespace Projbook.Core.Snippet.CSharp
         /// <param name="node">The parameter list to visit.</param>
         public override void VisitParameterList(ParameterListSyntax node)
         {
+            // Skip parameter list when the parent is a lambda
+            if (
+                SyntaxKind.SimpleLambdaExpression == node.Parent.Kind() ||
+                SyntaxKind.ParenthesizedLambdaExpression == node.Parent.Kind())
+            {
+                return;
+            }
+
             // Visit
             this.Visit<ParameterListSyntax>(
                 node: node,
