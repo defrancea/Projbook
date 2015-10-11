@@ -66,4 +66,4 @@ You can combine rules for extracting and processing many member with options. Th
 ```
 
 ## Page source
-Have a look to this documentation page [source](https://github.com/defrancea/Projbook/blob/master/Projbook.Documentation/Page/jumpstart.md).
+Have a look to this documentation page [source](https://raw.githubusercontent.com/defrancea/Projbook/master/Projbook.Documentation/Page/jumpstart.md).

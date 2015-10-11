@@ -52,4 +52,4 @@ The member matching follows this syntax `csharp[<fileName> <optionalOption><memb
 * `-`: Code content only, it will remove the code structure and will produce what's located inside the code block only
 
 ## Page source
-Have a look to this documentation page [source](https://github.com/defrancea/Projbook/blob/master/Projbook.Documentation/Page/reference.md).
+Have a look to this documentation page [source](https://raw.githubusercontent.com/defrancea/Projbook/master/Projbook.Documentation/Page/reference.md).
