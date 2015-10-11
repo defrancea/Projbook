@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projbook.Example", "Projboo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projbook.Documentation", "Projbook.Documentation\Projbook.Documentation.csproj", "{3D916A38-1298-4B12-BC34-9F73BAEF9974}"
 EndProject
-Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "Projbook.NuPkg", "Projbook.nupkg\Projbook.NuPkg.nuproj", "{61FE1D15-39A0-4757-AA4C-B375A66D29A9}"
+Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "Projbook.NuPkg", "Projbook.NuPkg\Projbook.NuPkg.nuproj", "{61FE1D15-39A0-4757-AA4C-B375A66D29A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
