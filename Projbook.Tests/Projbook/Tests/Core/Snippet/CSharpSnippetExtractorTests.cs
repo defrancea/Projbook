@@ -205,10 +205,13 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Options.cs -remove", "Empty.txt")]
         [TestCase("Options.cs -get", "Empty.txt")]
         [TestCase("Options.cs -EmptyMethod", "Empty.txt")]
+
+        // Get file from referenced project
+        [TestCase("Projbook/Core/ProjbookEngine.cs =ProjbookEngine.GenerateFile", "FromCore.txt")]
         public void ExtractSnippet(string pattern, string expectedFile)
         {
             // Run the extraction
-            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor(pattern, this.SourceDirectory);
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor(pattern, this.SourceDirectories);
             Projbook.Core.Model.Snippet snippet = extractor.Extract();
 
             // Load the expected file content
@@ -237,7 +240,7 @@ namespace Projbook.Tests.Core.Snippet
         public void ExtractSnippetInvalidRule(string pattern)
         {
             // Run the extraction
-            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor(pattern, this.SourceDirectory);
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor(pattern, this.SourceDirectories);
             Projbook.Core.Model.Snippet snippet = extractor.Extract();
         }
 
@@ -251,7 +254,7 @@ namespace Projbook.Tests.Core.Snippet
         public void ExtractSnippetNotFound(string pattern)
         {
             // Run the extraction
-            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor(pattern, this.SourceDirectory);
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor(pattern, this.SourceDirectories);
             Projbook.Core.Model.Snippet snippet = extractor.Extract();
         }
     }

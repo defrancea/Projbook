@@ -26,7 +26,7 @@ namespace Projbook.Tests.Core
         public void FullGeneration(string templateFileName, string expectedHtmlFileName, string expectedPdfFileName, string generatedHtmlFileName, string generatedPdfFileName)
         {
             // Perform generation
-            GenerationError[] errors = new ProjbookEngine("../..", "Resources/FullGeneration/" + templateFileName, "Resources/testConfig.json", ".").Generate();
+            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", "Resources/FullGeneration/" + templateFileName, "Resources/testConfig.json", ".").Generate();
 
             // Read expected ouput
             string expectedContent = this.LoadFile("Resources/FullGeneration/" + expectedHtmlFileName);
@@ -59,7 +59,7 @@ namespace Projbook.Tests.Core
         public void FullGenerationErrorTemplate(string templateFileName, string firstErrorFile, string secondErrorFile)
         {
             // Perform generation
-            GenerationError[] errors = new ProjbookEngine("../..", "Resources/FullGeneration/" + templateFileName, "Resources/testConfig.json", ".").Generate();
+            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", "Resources/FullGeneration/" + templateFileName, "Resources/testConfig.json", ".").Generate();
 
             // Assert result
             Assert.IsNotNull(errors);
@@ -80,7 +80,7 @@ namespace Projbook.Tests.Core
         public void FullGenerationErrorInPdfTemplate(string templateFileName, string errorFile)
         {
             // Perform generation
-            GenerationError[] errors = new ProjbookEngine("../..", "Resources/FullGeneration/" + templateFileName, "Resources/testConfig.json", ".").Generate();
+            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", "Resources/FullGeneration/" + templateFileName, "Resources/testConfig.json", ".").Generate();
 
             // Assert result
             Assert.IsNotNull(errors);
@@ -101,7 +101,7 @@ namespace Projbook.Tests.Core
         public void FullGenerationErrorInConfiguration(string configFile, string errorMessage)
         {
             // Perform generation
-            GenerationError[] errors = new ProjbookEngine("../..", "Resources/FullGeneration/testTemplate.txt", "Resources/" + configFile, ".").Generate();
+            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", "Resources/FullGeneration/testTemplate.txt", "Resources/" + configFile, ".").Generate();
 
             // Assert result
             Assert.IsNotNull(errors);

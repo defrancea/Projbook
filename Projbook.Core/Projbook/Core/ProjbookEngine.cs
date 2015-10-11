@@ -22,10 +22,10 @@ namespace Projbook.Core
     public class ProjbookEngine
     {
         /// <summary>
-        /// Source directory where source code is.
-        /// Snippets are will be looked up from this location.
+        /// The csproj file of the documentation project.
+        /// Snippets location will be determined from the file's director and project references.
         /// </summary>
-        public DirectoryInfo SourceDirectory { get; private set; }
+        public FileInfo CsprojFile { get; private set; }
 
         /// <summary>
         /// The documentation template using razor syntax, see documentation for model structure.
@@ -55,27 +55,27 @@ namespace Projbook.Core
         /// <summary>
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
         /// </summary>
-        /// <param name="sourceDirectoryPath">Initializes the required <see cref="SourceDirectory"/>.</param>
+        /// <param name="csprojFile">Initializes the required <see cref="CsprojFile"/>.</param>
         /// <param name="templateFilePath">Initializes the required <see cref="TemplateFile"/>.</param>
         /// <param name="configFile">Initializes the required <see cref="ConfigFile"/>.</param>
         /// <param name="outputDirectoryPath">Initializes the required <see cref="OutputDirectory"/>.</param>
-        public ProjbookEngine(string sourceDirectoryPath, string templateFilePath, string configFile, string outputDirectoryPath)
+        public ProjbookEngine(string csprojFile, string templateFilePath, string configFile, string outputDirectoryPath)
         {
             // Data validation
-            Ensure.That(() => sourceDirectoryPath).IsNotNullOrWhiteSpace();
+            Ensure.That(() => csprojFile).IsNotNullOrWhiteSpace();
             Ensure.That(() => templateFilePath).IsNotNullOrWhiteSpace();
             Ensure.That(() => configFile).IsNotNullOrWhiteSpace();
             Ensure.That(() => outputDirectoryPath).IsNotNullOrWhiteSpace();
-            Ensure.That(Directory.Exists(sourceDirectoryPath), string.Format("Could not find '{0}' directory", sourceDirectoryPath)).IsTrue();
+            Ensure.That(File.Exists(csprojFile), string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
             Ensure.That(File.Exists(templateFilePath), string.Format("Could not find '{0}' file", templateFilePath)).IsTrue();
             Ensure.That(File.Exists(configFile), string.Format("Could not find '{0}' file", configFile)).IsTrue();
 
             // Initialize
-            this.SourceDirectory = new DirectoryInfo(sourceDirectoryPath);
+            this.CsprojFile = new FileInfo(csprojFile);
             this.TemplateFile = new FileInfo(templateFilePath);
             this.ConfigFile = new FileInfo(configFile);
             this.OutputDirectory = new DirectoryInfo(outputDirectoryPath);
-            this.snippetExtractorFactory = new SnippetExtractorFactory(this.SourceDirectory);
+            this.snippetExtractorFactory = new SnippetExtractorFactory(this.CsprojFile);
 
             // Compute and initialize pdf template
             string templateDirectory = Path.GetDirectoryName(templateFilePath);
@@ -226,6 +226,13 @@ namespace Projbook.Core
             return generationError.ToArray();
         }
 
+        /// <summary>
+        /// Generates a file.
+        /// </summary>
+        /// <param name="templateName">The template name use as input.</param>
+        /// <param name="targetName">The target name used as output.</param>
+        /// <param name="configuration">The configuration to inject.</param>
+        /// <param name="pages">The pages to inject.</param>
         private void GenerateFile(string templateName, string targetName, Configuration configuration, List<Model.Page> pages)
         {
             // Generate final documentation from the template using razor engine

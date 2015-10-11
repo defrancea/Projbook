@@ -25,7 +25,7 @@ namespace Projbook.Tests.Core.Snippet
         {
             // Initialize extractor
             base.Setup();
-            this.SnippetExtractorFactory = new SnippetExtractorFactory(this.SourceDirectory);
+            this.SnippetExtractorFactory = new SnippetExtractorFactory(this.CsprojFile);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Projbook.Tests.Core.Snippet
         [ExpectedException(typeof(ArgumentException))]
         public void WrongInitSourceEmpty()
         {
-            new SnippetExtractorFactory(new DirectoryInfo[0]);
+            new SnippetExtractorFactory(new FileInfo(""));
         }
 
         /// <summary>

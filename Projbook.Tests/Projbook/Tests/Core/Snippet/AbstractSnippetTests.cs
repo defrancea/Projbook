@@ -10,9 +10,14 @@ namespace Projbook.Tests.Core.Snippet
     public abstract class AbstractSnippetTests
     {
         /// <summary>
-        /// The source directory.
+        /// The csproj file.
         /// </summary>
-        protected DirectoryInfo SourceDirectory { get; private set; }
+        protected FileInfo CsprojFile { get; private set; }
+
+        /// <summary>
+        /// The source directories.
+        /// </summary>
+        protected DirectoryInfo[] SourceDirectories { get; private set; }
 
         /// <summary>
         /// Initializes the test.
@@ -24,7 +29,11 @@ namespace Projbook.Tests.Core.Snippet
             string testAssemblyLocation = Assembly.GetAssembly(typeof(AbstractSnippetTests)).Location;
             string testAssemblyDirectory = Path.GetDirectoryName(testAssemblyLocation);
             string testSourceLocation = Path.GetFullPath(Path.Combine(testAssemblyDirectory, "..", ".."));
-            this.SourceDirectory = new DirectoryInfo(Path.Combine(testSourceLocation, "Resources", "SourcesA"));
+            this.CsprojFile = new FileInfo(Path.Combine(testSourceLocation, "Projbook.Tests.csproj"));
+            this.SourceDirectories = new DirectoryInfo[] {
+                new DirectoryInfo(Path.Combine(testSourceLocation, "Resources", "SourcesA")),
+                new DirectoryInfo(Path.Combine(testAssemblyDirectory, "..", "..", "..", "Projbook.Core"))
+            };
         }
     }
 }

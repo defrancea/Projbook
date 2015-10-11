@@ -1,8 +1,11 @@
 ﻿using EnsureThat;
 using Projbook.Core.Snippet.CSharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace Projbook.Core.Snippet
 {
@@ -12,9 +15,9 @@ namespace Projbook.Core.Snippet
     public class SnippetExtractorFactory
     {
         /// <summary>
-        /// All source directories where snippets could possibly be.
+        /// The csproj file.
         /// </summary>
-        public DirectoryInfo[] SourceDictionaries { get; private set; }
+        public FileInfo CsprojFile { get; private set; }
 
         /// <summary>
         /// Regex extracting the language and snippet extraction pattern.
@@ -24,15 +27,15 @@ namespace Projbook.Core.Snippet
         /// <summary>
         /// Initializes a new instance of <see cref="SnippetExtractorFactory"/>.
         /// </summary>
-        /// <param name="sourceDirectories">Initializes the required <see cref="SourceDictionaries"/>.</param>
-        public SnippetExtractorFactory(params DirectoryInfo[] sourceDirectories)
+        /// <param name="csprojFile">Initializes the required <see cref="SourceDictionaries"/>.</param>
+        public SnippetExtractorFactory(FileInfo csprojFile)
         {
             // Data validation
-            Ensure.That(() => sourceDirectories).IsNotNull();
-            Ensure.That(() => sourceDirectories).HasItems();
+            Ensure.That(() => csprojFile).IsNotNull();
+            Ensure.That(csprojFile.Exists, string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
 
             // Initialize
-            this.SourceDictionaries = sourceDirectories;
+            this.CsprojFile = csprojFile;
         }
 
         /// <summary>
@@ -57,7 +60,7 @@ namespace Projbook.Core.Snippet
                 switch (language)
                 {
                     case "csharp":
-                        return new CSharpSnippetExtractor(pattern, this.SourceDictionaries);
+                        return new CSharpSnippetExtractor(pattern, this.ExtractSourceDirectories(this.CsprojFile));
                     default:
                         throw new NotSupportedException(string.Format("Could not create extractor for '{0}': language unknown", language));
                 }
@@ -68,6 +71,40 @@ namespace Projbook.Core.Snippet
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Extracts source directories from the csproj file.
+        /// The extected directory info list is the csproj's directory and all project references.
+        /// </summary>
+        /// <param name="csprojFile"></param>
+        /// <returns></returns>
+        private DirectoryInfo[] ExtractSourceDirectories(FileInfo csprojFile)
+        {
+            // Data validation
+            Ensure.That(() => csprojFile).IsNotNull();
+            Ensure.That(csprojFile.Exists, string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
+
+            // Initialize the extracted directories
+            List<DirectoryInfo> extractedSourceDirectories = new List<DirectoryInfo>();
+
+            // Add the csproj's directory
+            DirectoryInfo projectDirectory = new DirectoryInfo(Path.GetDirectoryName(csprojFile.FullName));
+            extractedSourceDirectories.Add(projectDirectory);
+
+            // Extract project reference path
+            XNamespace msbuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
+            XDocument csprojDocument = XDocument.Load(csprojFile.FullName);
+            IEnumerable<DirectoryInfo> referenceDirectories = csprojDocument
+                .Element(msbuildNamespace + "Project")
+                .Elements(msbuildNamespace + "ItemGroup")
+                .Elements(msbuildNamespace + "ProjectReference")
+                .Select(x => Path.GetDirectoryName(x.Attribute("Include").Value))
+                .Select(x => new DirectoryInfo(Path.GetFullPath(Path.Combine(projectDirectory.FullName, x))));
+            extractedSourceDirectories.AddRange(referenceDirectories);
+
+            // Returne the extracted directories
+            return extractedSourceDirectories.ToArray();
         }
     }
 }
