@@ -36,7 +36,7 @@ The member matching follows this syntax `csharp[<fileName> <optionalOption><memb
 * `csharp[File.cs <Constructor>]`: Match any constructor
 * `csharp[File.cs <Constructor>(string,int)]`: Match any constructor with two parameters of type string and int
 
-### Destructor
+### Destructors
 * `csharp[File.cs ClassName.<Destructor>]`: Match any destructor of the class `ClassName`
 * `csharp[File.cs <Destructor>]`: Match any destructor
 
