@@ -7,6 +7,7 @@ git config user.email "defrancea@gmail.com"
 
 # The first and only commit to this new Git repo contains all the
 # files present with the commit message "Deploy to GitHub Pages".
+git branch -D gh-pages
 git checkout --orphan gh-pages
 git rm -rf .
 cp ./Projbook.Documentation/bin/Release/template-generated.html index.html
