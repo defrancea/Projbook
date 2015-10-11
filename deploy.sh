@@ -10,10 +10,11 @@ git config user.email "defrancea@gmail.com"
 git checkout --orphan gh-pages
 git rm -rf .
 cp ./Projbook.Documentation/bin/Release/template-generated.html index.html
-cp ./Projbook.Documentation/bin/Release/template-pdf-generated.pdf projbook.pdf
-cp -R ./Projbook.Documentation/bin\Release/Content Content
-cp -R ./Projbook.Documentation/bin\Release/Scripts Scripts
+cp -R ./Projbook.Documentation/bin/Release/Content Content
+cp -R ./Projbook.Documentation/bin/Release/Scripts Scripts
 git add index.html
+git add Content
+git add Scripts
 git commit -m "Deploy Documentation"
 
 # Force push from the current repo's master branch to the remote
