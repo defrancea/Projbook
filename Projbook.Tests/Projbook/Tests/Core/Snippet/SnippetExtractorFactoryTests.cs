@@ -52,10 +52,9 @@ namespace Projbook.Tests.Core.Snippet
         /// Tests extract CreateExstractor.
         /// </summary>
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void CreateEmpty()
         {
-            this.SnippetExtractorFactory.CreateExtractor(null);
+            Assert.IsNull(this.SnippetExtractorFactory.CreateExtractor(null));
         }
 
         /// <summary>
