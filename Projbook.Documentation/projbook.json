@@ -1,13 +1,13 @@
 ﻿{
-  "title": "Sample document",
+  "title": "Projbook",
   "pages": [
     {
-      "path": "Page/source.md",
-      "title": "Souce"
+      "title": "Jump start",
+      "path": "Page/jumpstart.md"
     },
     {
-      "path": "Page/second.md",
-      "title": "Second page"
+      "title": "Reference",
+      "path": "Page/reference.md"
     }
   ]
 }
