@@ -17,15 +17,15 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <Id>Projbook</Id>
-    <Version>1.0.0-alpha1</Version>
+    <Version>0.1.10</Version>
     <Title>Projbook</Title>
-    <Authors>Alain Defrance</Authors>
-    <Owners>Alain Defrance</Owners>
+    <Authors>Alain Defrance, Greg Mialon</Authors>
+    <Owners>Alain Defrance, Greg Mialon</Owners>
     <Summary>Projbook</Summary>
     <Description>Generate project documentation using Markdown amd allow integrating code snippet from the source code being built. Code snippet are always up-to-date.</Description>
     <ReleaseNotes></ReleaseNotes>
-    <ProjectUrl></ProjectUrl>
-    <LicenseUrl></LicenseUrl>
+    <ProjectUrl>https://github.com/defrancea/Projbook</ProjectUrl>
+    <LicenseUrl>https://github.com/defrancea/Projbook/blob/master/LICENSE</LicenseUrl>
     <Copyright></Copyright>
     <Tags></Tags>
   </PropertyGroup>
@@ -36,37 +36,37 @@
   </ItemGroup>
   <ItemGroup>
     <File Include="..\Projbook.Target\bin\$(Configuration)\CommonMark.dll">
-      <TargetPath>lib\net45</TargetPath>
+      <TargetPath>tools</TargetPath>
     </File>
     <File Include="..\Projbook.Target\bin\$(Configuration)\EnsureThat.vDinasour.dll">
-      <TargetPath>lib\net45</TargetPath>
+      <TargetPath>tools</TargetPath>
     </File>
     <File Include="..\Projbook.Target\bin\$(Configuration)\Microsoft.CodeAnalysis.CSharp.dll">
-      <TargetPath>lib\net45</TargetPath>
+      <TargetPath>tools</TargetPath>
     </File>
     <File Include="..\Projbook.Target\bin\$(Configuration)\Microsoft.CodeAnalysis.dll">
-      <TargetPath>lib\net45</TargetPath>
+      <TargetPath>tools</TargetPath>
     </File>
     <File Include="..\Projbook.Target\bin\$(Configuration)\Newtonsoft.Json.dll">
-      <TargetPath>lib\net45</TargetPath>
+      <TargetPath>tools</TargetPath>
     </File>
     <File Include="..\Projbook.Target\bin\$(Configuration)\Projbook.Core.dll">
-      <TargetPath>lib\net45</TargetPath>
+      <TargetPath>tools</TargetPath>
     </File>
     <File Include="..\Projbook.Target\bin\$(Configuration)\Projbook.Target.dll">
-      <TargetPath>lib\net45</TargetPath>
+      <TargetPath>tools</TargetPath>
     </File>
     <File Include="..\Projbook.Target\bin\$(Configuration)\RazorEngine.dll">
-      <TargetPath>lib\net45</TargetPath>
+      <TargetPath>tools</TargetPath>
     </File>
     <File Include="..\Projbook.Target\bin\$(Configuration)\System.Collections.Immutable.dll">
-      <TargetPath>lib\net45</TargetPath>
+      <TargetPath>tools</TargetPath>
     </File>
     <File Include="..\Projbook.Target\bin\$(Configuration)\System.Reflection.Metadata.dll">
-      <TargetPath>lib\net45</TargetPath>
+      <TargetPath>tools</TargetPath>
     </File>
     <File Include="..\Projbook.Target\bin\$(Configuration)\System.Web.Razor.dll">
-      <TargetPath>lib\net45</TargetPath>
+      <TargetPath>tools</TargetPath>
     </File>
   </ItemGroup>
   <Import Project="$(MSBuildProjbookExtensionsPath)Tools\NuProj\NuProj.targets" />

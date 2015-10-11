@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -128,9 +130,15 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\packages\Projbook.0.1.8\tools\Projbook.targets" />
   <Target Name="AfterBuild">
     <Projbook ProjectPath="$(ProjectPath)" TemplateFile="$(TargetDir)template.html" ConfigurationFile="$(TargetDir)projbook.json" OutputDirectory="$(TargetDir)" />
     <Exec Command="$(SolutionDir)packages\wkhtmltopdf.msvc.64.exe.0.12.2.5\tools\wkhtmltopdf.exe $(TargetDir)template-pdf-generated.html $(TargetDir)template-pdf-generated.pdf" ContinueOnError="true" />
+  </Target>
+  <Import Project="..\packages\Projbook.0.1.10\build\Projbook.targets" Condition="Exists('..\packages\Projbook.0.1.10\build\Projbook.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Projbook.0.1.10\build\Projbook.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Projbook.0.1.10\build\Projbook.targets'))" />
   </Target>
 </Project>
