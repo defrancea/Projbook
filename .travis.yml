@@ -6,3 +6,4 @@ install:
 script:
   - xbuild /p:Configuration=Release Projbook.sln
   - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Projbook.Tests/bin/Release/Projbook.Tests.dll
+  - script: bash ./deploy.sh
