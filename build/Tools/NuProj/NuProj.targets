@@ -240,25 +240,6 @@
       <AddSyntheticProjectReferencesForSolutionDependencies Condition="'$(AddSyntheticProjectReferencesForSolutionDependencies)' == '' and '$(BuildingInsideVisualStudio)' != 'true'">true</AddSyntheticProjectReferencesForSolutionDependencies>
     </PropertyGroup>
 
-    <!-- Assign a project configuration to each project reference if we're building a solution file. -->
-    <Message Text="MSBuildProjectFullPath=$(MSBuildProjectFullPath)" Importance="high" />
-	<AssignProjectConfiguration
-        ProjectReferences="@(ProjectReference)"
-        CurrentProjectConfiguration="$(Configuration)"
-        CurrentProjectPlatform="$(Platform)"
-        DefaultToVcxPlatformMapping="$(DefaultToVcxPlatformMapping)"
-        VcxToDefaultPlatformMapping="$(VcxToDefaultPlatformMapping)"
-        OutputType="$(OutputType)"
-        ResolveConfigurationPlatformUsingMappings="false"
-        SolutionConfigurationContents="$(CurrentSolutionConfigurationContents)"
-        AddSyntheticProjectReferencesForSolutionDependencies="$(AddSyntheticProjectReferencesForSolutionDependencies)"
-        OnlyReferenceAndBuildProjectsEnabledInSolutionConfiguration = "$(OnlyReferenceAndBuildProjectsEnabledInSolutionConfiguration)"
-        ShouldUnsetParentConfigurationAndPlatform = "$(ShouldUnsetParentConfigurationAndPlatform)" >
-
-      <Output TaskParameter="AssignedProjects" ItemName="ProjectReferenceWithConfiguration"/>
-      <Output TaskParameter="UnassignedProjects" ItemName="ProjectReferenceWithConfiguration"/>
-    </AssignProjectConfiguration>
-
     <ItemGroup>
       <ProjectReferenceWithConfiguration>
         <BuildReference Condition="'%(ProjectReferenceWithConfiguration.BuildReference)' == ''">true</BuildReference>
