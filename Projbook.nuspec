@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Projbook</id>
+    <version>0.1.10</version>
+    <title>Projbook</title>
+    <authors>Alain Defrance</authors>
+    <owners>Alain Defrance</owners>
+    <licenseUrl>https://github.com/defrancea/Projbook/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/defrancea/Projbook</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Generate project documentation using Markdown amd allow integrating code snippet from the source code being built. Code snippet are always up-to-date.</description>
+    <summary>Projbook</summary>
+  </metadata>
+  <files>
+    <file src="Projbook.Target/Projbook.targets" target="build" exclude="" />
+    <file src="Projbook.Target/bin/Release/CommonMark.dll" target="tools" exclude="" />
+    <file src="Projbook.Target/bin/Release/EnsureThat.vDinasour.dll" target="tools" exclude="" />
+    <file src="Projbook.Target/bin/Release/Microsoft.CodeAnalysis.CSharp.dll" target="tools" exclude="" />
+    <file src="Projbook.Target/bin/Release/Microsoft.CodeAnalysis.dll" target="tools" exclude="" />
+    <file src="Projbook.Target/bin/Release/Newtonsoft.Json.dll" target="tools" exclude="" />
+    <file src="Projbook.Target/bin/Release/Projbook.Core.dll" target="tools" exclude="" />
+    <file src="Projbook.Target/bin/Release/Projbook.Target.dll" target="tools" exclude="" />
+    <file src="Projbook.Target/bin/Release/RazorEngine.dll" target="tools" exclude="" />
+    <file src="Projbook.Target/bin/Release/System.Collections.Immutable.dll" target="tools" exclude="" />
+    <file src="Projbook.Target/bin/Release/System.Reflection.Metadata.dll" target="tools" exclude="" />
+    <file src="Projbook.Target/bin/Release/System.Web.Razor.dll" target="tools" exclude="" />
+  </files>
+</package>
