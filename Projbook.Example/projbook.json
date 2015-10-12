@@ -2,12 +2,12 @@
   "title": "Sample document",
   "pages": [
     {
-      "path": "Page/source.md",
-      "title": "Souce"
+      "title": "First page",
+      "path": "Page/page1.md"
     },
     {
-      "path": "Page/second.md",
-      "title": "Second page"
+      "title": "Second page",
+      "path": "Page/page2.md"
     }
   ]
 }

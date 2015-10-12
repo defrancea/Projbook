@@ -44,6 +44,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Page\page2.md" />
+    <None Include="Page\page1.md" />
     <None Include="projbook.json" />
   </ItemGroup>
   <ItemGroup>

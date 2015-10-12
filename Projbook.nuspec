@@ -28,5 +28,11 @@
     <file src="Projbook.Target/bin/Release/System.Collections.Immutable.dll" target="tools" exclude="" />
     <file src="Projbook.Target/bin/Release/System.Reflection.Metadata.dll" target="tools" exclude="" />
     <file src="Projbook.Target/bin/Release/System.Web.Razor.dll" target="tools" exclude="" />
+    <file src="Projbook.Example/projbook.json" target="content" exclude="" />
+    <file src="Projbook.Example/template.html" target="content" exclude="" />
+    <file src="Projbook.Example/template-pdf.html" target="content" exclude="" />
+    <file src="Projbook.Example/Content/prism.css" target="content/Content" exclude="" />
+    <file src="Projbook.Example/Content/projbook.css" target="content/Content" exclude="" />
+    <file src="Projbook.Example/Scripts/prism.js" target="content/Scripts" exclude="" />
   </files>
 </package>
