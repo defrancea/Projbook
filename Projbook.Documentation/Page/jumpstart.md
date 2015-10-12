@@ -3,7 +3,7 @@
 2. Add [Projbook](https://www.nuget.org/packages/Projbook) using nuget
 3. Create your pages in markdown format in `Page` folder
 4. Update `projbook.json` file in order to include and order your documentation pages:
-```csharp[projbook.json]
+```json[projbook.json]
 ```
 5. Build the documentation project
 6. The generated documentation will be available in your `TargetDir`
@@ -33,6 +33,10 @@ While using code block it's possible to reference a csharp file using `csharp[Pa
 
 If nothing else is defined, the whole file content will be extracted:
 ```csharp[Code/SampleClass.cs]
+```
+Using csharp as syntax allows to extract specific members (see below), however any syntax could be used for extracting a file content.
+It's valid to extract the same file as txt using `txt[Code/SampleClass.cs]` but the syntax highlighting will be lost:
+```text[Code/SampleClass.cs]
 ```
 
 ### Member selector
