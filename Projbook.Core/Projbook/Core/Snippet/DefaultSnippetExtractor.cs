@@ -1,101 +1,138 @@
-﻿using EnsureThat;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Projbook.Core.Exception;
-using Projbook.Core.Projbook.Core.Snippet.CSharp;
-using System;
-using System.IO;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
+using EnsureThat;
+using Projbook.Core.Exception;
+using Projbook.Core.Projbook.Core.Snippet.CSharp;
 
-namespace Projbook.Core.Snippet.CSharp
+namespace Projbook.Core.Snippet
 {
     /// <summary>
     /// Extractor in charge of browsing source directories. load file content and extract requested member.
     /// </summary>
-    public class CSharpSnippetExtractor : DefaultSnippetExtractor
+    public class DefaultSnippetExtractor : ISnippetExtractor
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="CSharpSnippetExtractor"/>.
+        /// The language handled by the extractor.
+        /// </summary>
+        public string Language { get; private set; }
+
+        /// <summary>
+        /// All source directories where snippets could possibly be.
+        /// </summary>
+        public DirectoryInfo[] SourceDictionaries { get; private set; }
+
+        /// <summary>
+        /// Snippet extraction pattern.
+        /// </summary>
+        public string Pattern { get; private set; }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="DefaultSnippetExtractor"/>.
         /// </summary>
         /// <param name="language">Initializes the required <see cref="Language"/>.</param>
         /// <param name="pattern">Initializes the required <see cref="Pattern"/>.</param>
         /// <param name="sourceDirectories">Initializes the required <see cref="SourceDictionaries"/>.</param>
-        public CSharpSnippetExtractor(string language, string pattern, params DirectoryInfo[] sourceDirectories)
-            : base (language, pattern, sourceDirectories)
-        {
-        }
-
-        /// <summary>
-        /// Extracts a snippet from a given rule pattern.
-        /// </summary>
-        /// <param name="rule">The rule to parse and extract snippet from.</param>
-        /// <returns>The extracted snippet.</returns>
-        public override Model.Snippet Extract()
-        {
-            // Parse the matching rule from the pattern
-            CSharpMatchingRule rule = CSharpMatchingRule.Parse(this.Pattern);
-
-            // Return the entire code if no member is specified
-            if (rule.MatchingChunks.Length <= 0)
-            {
-                return base.Extract();
-            }
-
-            // Load file content
-            string sourceCode = base.LoadFile(rule.TargetFile);
-
-            // Build a syntax tree from the source code
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceCode);
-            SyntaxNode root = tree.GetRoot();
-
-            // Visit the syntax tree for generating a Trie for pattern matching
-            CSharpSyntaxWalkerMatchingBuilder syntaxMatchingBuilder = new CSharpSyntaxWalkerMatchingBuilder();
-            syntaxMatchingBuilder.Visit(root);
-
-            // Match the rule from the syntax matching Trie
-            CSharpSyntaxMatchingNode node = syntaxMatchingBuilder.Root.Match(rule.MatchingChunks);
-            if (null == node)
-            {
-                throw new SnippetExtractionException("Cannot find member", this.Pattern);
-            }
-            
-            // Build a snippet for extracted syntax nodes
-            return this.BuildSnippet(node.MatchingSyntaxNodes, rule.ExtractionMode);
-        }
-
-        /// <summary>
-        /// Builds a snippet from extracted syntax nodes.
-        /// </summary>
-        /// <param name="nodes">The exctracted nodes.</param>
-        /// <param name="extractionMode">The extraction mode.</param>
-        /// <returns>The built snippet.</returns>
-        private Model.Snippet BuildSnippet(SyntaxNode[] nodes, CSharpExtractionMode extractionMode)
+        public DefaultSnippetExtractor(string language, string pattern, params DirectoryInfo[] sourceDirectories)
         {
             // Data validation
-            Ensure.That(() => nodes).IsNotNull();
-            Ensure.That(() => nodes).HasItems();
-
-            // Extract code from each snippets
-            StringBuilder stringBuilder = new StringBuilder();
-            bool firstSnippet = true;
-            foreach (SyntaxNode node in nodes)
+            Ensure.That(() => sourceDirectories).IsNotNull();
+            Ensure.That(() => sourceDirectories).HasItems();
+            if (string.IsNullOrWhiteSpace(pattern))
             {
-                // Write line return between each snippet
-                if (!firstSnippet)
-                {
-                    stringBuilder.AppendLine();
-                    stringBuilder.AppendLine();
-                }
-                
-                // Write each snippet line
-                string[] lines = node.GetText().Lines.Select(x => x.ToString()).ToArray();
-                this.WriteAndCleanupSnippet(stringBuilder, lines, extractionMode);
-
-                // Flag the first snippet as false
-                firstSnippet = false;
+                throw new SnippetExtractionException("Invalid extraction rule", pattern);
             }
-            
+
+            // Initialize
+            this.Language = language;
+            this.Pattern = pattern;
+            this.SourceDictionaries = sourceDirectories;
+        }
+
+        /// <summary>
+        /// Extracts a snippet.
+        /// </summary>
+        /// <returns>The extracted snippet.</returns>
+        public virtual Model.Snippet Extract()
+        {
+            // Extract file content
+            string sourceCode = this.LoadFile(this.Pattern);
+
+            // Return the entire code
+            return this.BuildSnippet(sourceCode);
+        }
+        
+        /// <summary>
+        /// Loads a file from the file name.
+        /// </summary>
+        /// <param name="fileName">The file name to load.</param>
+        /// <returns>The file's content.</returns>
+        protected string LoadFile(string fileName)
+        {
+            // Look for the file in available source directories
+            FileInfo fileInfo = null;
+            foreach (DirectoryInfo directoryInfo in this.SourceDictionaries)
+            {
+                string filePath = Path.Combine(directoryInfo.FullName, fileName);
+                if (File.Exists(filePath))
+                {
+                    fileInfo = new FileInfo(filePath);
+                    break;
+                }
+            }
+
+            // Raise an error if cannot find the file
+            if (null == fileInfo)
+            {
+                throw new SnippetExtractionException("Cannot find file in any referenced project", this.Pattern);
+            }
+
+            // Load the file content
+            MemoryStream memoryStream = new MemoryStream();
+            using (var fileReader = new StreamReader(new FileStream(fileInfo.FullName, FileMode.Open)))
+            using (var fileWriter = new StreamWriter(memoryStream))
+            {
+                fileWriter.Write(fileReader.ReadToEnd());
+            }
+
+            // Read the code snippet from the file
+            return Encoding.UTF8.GetString(memoryStream.ToArray());
+        }
+
+        /// <summary>
+        /// Builds a snippet from a full file content.
+        /// </summary>
+        /// <param name="fileContent">The file content.</param>
+        /// <returns>The built snippet.</returns>
+        private Model.Snippet BuildSnippet(string fileContent)
+        {
+            // Data validation
+            Ensure.That(() => fileContent).IsNotNull();
+
+            // Extract each lines
+            StringBuilder stringBuilder = new StringBuilder();
+            List<string> lines = new List<string>();
+            using (StringReader stringReader = new StringReader(fileContent))
+            {
+                while (true)
+                {
+                    string line = stringReader.ReadLine();
+                    if (null != line)
+                    {
+                        lines.Add(line);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            // Write the snippet
+            this.WriteAndCleanupSnippet(stringBuilder, lines.ToArray(), CSharpExtractionMode.FullMember);
+
             // Create the snippet from the exctracted code
             return new Model.Snippet(stringBuilder.ToString());
         }
@@ -123,8 +160,8 @@ namespace Projbook.Core.Snippet.CSharp
             int startPos = 0;
             if (CSharpExtractionMode.ContentOnly == extractionMode)
             {
-                for (; startPos < lines.Length && !lines[startPos].ToString().Contains('{'); ++startPos);
-                
+                for (; startPos < lines.Length && !lines[startPos].ToString().Contains('{'); ++startPos) ;
+
                 // Extract block code if any opening bracket has been found
                 if (startPos < lines.Length)
                 {
@@ -147,14 +184,14 @@ namespace Projbook.Core.Snippet.CSharp
             }
             else
             {
-                for (; startPos < lines.Length && lines[startPos].ToString().Trim().Length == 0; ++startPos);
+                for (; startPos < lines.Length && lines[startPos].ToString().Trim().Length == 0; ++startPos) ;
             }
 
             // Compute the index of the lastselected line
             int endPos = -1 + lines.Length;
             if (CSharpExtractionMode.ContentOnly == extractionMode)
             {
-                for (; 0 <= endPos && !lines[endPos].ToString().Contains('}'); --endPos);
+                for (; 0 <= endPos && !lines[endPos].ToString().Contains('}'); --endPos) ;
 
                 // Extract block code if any closing bracket has been found
                 if (0 <= endPos)
@@ -230,7 +267,7 @@ namespace Projbook.Core.Snippet.CSharp
                     // Append the line
                     stringBuilder.Append(line);
                 }
-                
+
                 // Flag the first line as false
                 firstLine = false;
             }

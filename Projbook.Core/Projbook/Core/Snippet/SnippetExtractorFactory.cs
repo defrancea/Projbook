@@ -22,7 +22,7 @@ namespace Projbook.Core.Snippet
         /// <summary>
         /// Regex extracting the language and snippet extraction pattern.
         /// </summary>
-        private static Regex regex = new Regex(@"^(.+)\[(.+)\]$", RegexOptions.Compiled);
+        private static Regex regex = new Regex(@"^(.+)?\[(.+)\]$", RegexOptions.Compiled);
 
         /// <summary>
         /// Initializes a new instance of <see cref="SnippetExtractorFactory"/>.
@@ -63,9 +63,9 @@ namespace Projbook.Core.Snippet
                 switch (language)
                 {
                     case "csharp":
-                        return new CSharpSnippetExtractor(pattern, this.ExtractSourceDirectories(this.CsprojFile));
+                        return new CSharpSnippetExtractor(language, pattern, this.ExtractSourceDirectories(this.CsprojFile));
                     default:
-                        throw new NotSupportedException(string.Format("Could not create extractor for '{0}': language unknown", language));
+                        return new DefaultSnippetExtractor(language, pattern, this.ExtractSourceDirectories(this.CsprojFile));
                 }
             }
 

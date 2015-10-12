@@ -92,6 +92,7 @@
     <Compile Include="Projbook\Core\Model\Configuration\Configuration.cs" />
     <Compile Include="Projbook\Core\Model\Snippet.cs" />
     <Compile Include="Projbook\Core\Snippet\CSharp\CSharpSyntaxWalkerMatchingBuilder.cs" />
+    <Compile Include="Projbook\Core\Snippet\DefaultSnippetExtractor.cs" />
     <Compile Include="Projbook\Core\Snippet\ISnippetExtractor.cs" />
     <Compile Include="Projbook\Core\Snippet\CSharp\CSharpSnippetExtractor.cs" />
     <Compile Include="Projbook\Core\ProjbookEngine.cs" />
