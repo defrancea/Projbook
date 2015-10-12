@@ -132,7 +132,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Projbook.1.0.0-alpha1\build\Projbook.targets" Condition="Exists('..\packages\Projbook.1.0.0-alpha1\build\Projbook.targets')" />
   <Target Name="AfterBuild">
-    <Projbook ProjectPath="$(ProjectDir)$(ProjectFileName)" TemplateFile="$(TargetDir)template.html" ConfigurationFile="$(TargetDir)projbook.json" OutputDirectory="$(TargetDir)" />
+    <Projbook ProjectPath="$(MSBuildProjectFullPath)" TemplateFile="$(TargetDir)template.html" ConfigurationFile="$(TargetDir)projbook.json" OutputDirectory="$(TargetDir)" />
     <Exec Command="..\packages\wkhtmltopdf.msvc.64.exe.0.12.2.5\tools\wkhtmltopdf.exe $(TargetDir)template-pdf-generated.html $(TargetDir)template-pdf-generated.pdf" ContinueOnError="true" />
   </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
