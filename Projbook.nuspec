@@ -9,7 +9,7 @@
     <licenseUrl>https://github.com/defrancea/Projbook/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/defrancea/Projbook</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Generate project documentation using Markdown amd allow integrating code snippet from the source code being built. Code snippet are always up-to-date.</description>
+    <description>Generate project documentation using Markdown and allow integrating code snippet from the source code being built. Code snippet are always up-to-date.</description>
     <summary>Projbook</summary>
   </metadata>
   <files>
