@@ -1,10 +1,6 @@
 #!/bin/bash
 set -e # exit with nonzero exit code if anything fails
 
-# deploy to nuget
-nuget pack Projbook.nuspec -OutputDirectory Projbook.Target/bin/Release/ -Version ${TRAVIS_TAG}
-nuget push Projbook.Target/bin/Release/Projbook.${TRAVIS_TAG}.nupkg ${NUGET_KEY} > /dev/null 2>&1
-
 # inside this git repo we'll pretend to be a new user
 git config user.name "Travis CI"
 git config user.email "defrancea@gmail.com"
@@ -26,3 +22,6 @@ git commit -m "Deploy Documentation"
 # will be lost, since we are overwriting it.) We redirect any output to
 # /dev/null to hide any sensitive credential data that might otherwise be exposed.
 git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" gh-pages > /dev/null 2>&1
+
+# Come back to master
+git checkout master
