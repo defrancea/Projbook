@@ -24,4 +24,4 @@ git commit -m "Deploy Documentation"
 git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" gh-pages > /dev/null 2>&1
 
 # Checkout master
-git checkout master
+git checkout ${TRAVIS_BRANCH}
