@@ -3,7 +3,7 @@
 2. Add [Projbook](https://www.nuget.org/packages/Projbook) using nuget
 3. Create your pages in markdown format in `Page` folder
 4. Update `projbook.json` file in order to include and order your documentation pages:
-```json[projbook.json]
+```csharp[projbook.json]
 ```
 5. Build the documentation project
 6. The generated documentation will be available in your `TargetDir`
