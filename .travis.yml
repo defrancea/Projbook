@@ -6,6 +6,7 @@ install:
 script:
   - xbuild /p:Configuration=Release Projbook.sln
   - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Projbook.Tests/bin/Release/Projbook.Tests.dll
+  - bash ./deploy-doc.sh
   - bash ./post-build.sh
 deploy:
   provider: script
@@ -13,5 +14,3 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-script:
-  - bash ./deploy-doc.sh
