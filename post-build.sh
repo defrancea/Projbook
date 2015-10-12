@@ -1,2 +1,2 @@
 #!/bin/bash
-chmod +x deploy.sh
+chmod +x deploy-nuget.sh
