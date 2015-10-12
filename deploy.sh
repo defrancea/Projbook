@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e # exit with nonzero exit code if anything fails
 
+# deploy to nuget
+nuget pack Projbook.nuspec -OutputDirectory Projbook.Target/bin/Release/ -Symbols -Version ${TRAVIS_TAG}
+nuget push Projbook.Target/bin/Release/Projbook.${TRAVIS_TAG}.nupkg ${NUGET_KEY} > /dev/null 2>&1
+
 # inside this git repo we'll pretend to be a new user
 git config user.name "Travis CI"
 git config user.email "defrancea@gmail.com"

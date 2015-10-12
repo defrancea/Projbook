@@ -13,11 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		.travis.yml = .travis.yml
+		deploy.sh = deploy.sh
 		LICENSE = LICENSE
 		Projbook.nuspec = Projbook.nuspec
 		README.md = README.md
-		deploy-doc.sh = deploy-doc.sh
-		deploy-nuget.sh = deploy-nuget.sh
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projbook.Example", "Projbook.Example\Projbook.Example.csproj", "{5A63A20B-E388-4E91-BDA7-80C8D88FDB98}"
