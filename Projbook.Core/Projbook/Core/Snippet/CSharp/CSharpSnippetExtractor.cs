@@ -18,32 +18,30 @@ namespace Projbook.Core.Snippet.CSharp
         /// <summary>
         /// Initializes a new instance of <see cref="CSharpSnippetExtractor"/>.
         /// </summary>
-        /// <param name="language">Initializes the required <see cref="Language"/>.</param>
-        /// <param name="pattern">Initializes the required <see cref="Pattern"/>.</param>
         /// <param name="sourceDirectories">Initializes the required <see cref="SourceDictionaries"/>.</param>
-        public CSharpSnippetExtractor(string language, string pattern, params DirectoryInfo[] sourceDirectories)
-            : base (language, pattern, sourceDirectories)
+        public CSharpSnippetExtractor(params DirectoryInfo[] sourceDirectories)
+            : base (sourceDirectories)
         {
         }
 
         /// <summary>
         /// Extracts a snippet from a given rule pattern.
         /// </summary>
-        /// <param name="rule">The rule to parse and extract snippet from.</param>
+        /// <param name="memberPattern">The mem.</param>
         /// <returns>The extracted snippet.</returns>
-        public override Model.Snippet Extract()
+        public override Model.Snippet Extract(string filePath, string memberPattern)
         {
-            // Parse the matching rule from the pattern
-            CSharpMatchingRule rule = CSharpMatchingRule.Parse(this.Pattern);
-
             // Return the entire code if no member is specified
-            if (rule.MatchingChunks.Length <= 0)
+            if (string.IsNullOrWhiteSpace(memberPattern))
             {
-                return base.Extract();
+                return base.Extract(filePath, memberPattern);
             }
 
+            // Parse the matching rule from the pattern
+            CSharpMatchingRule rule = CSharpMatchingRule.Parse(memberPattern);
+
             // Load file content
-            string sourceCode = base.LoadFile(rule.TargetFile);
+            string sourceCode = base.LoadFile(filePath);
 
             // Build a syntax tree from the source code
             SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceCode);
@@ -57,7 +55,7 @@ namespace Projbook.Core.Snippet.CSharp
             CSharpSyntaxMatchingNode node = syntaxMatchingBuilder.Root.Match(rule.MatchingChunks);
             if (null == node)
             {
-                throw new SnippetExtractionException("Cannot find member", this.Pattern);
+                throw new SnippetExtractionException("Cannot find member", filePath);
             }
             
             // Build a snippet for extracted syntax nodes

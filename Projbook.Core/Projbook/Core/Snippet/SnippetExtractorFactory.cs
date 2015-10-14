@@ -1,10 +1,8 @@
 ﻿using EnsureThat;
 using Projbook.Core.Snippet.CSharp;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace Projbook.Core.Snippet
@@ -18,11 +16,6 @@ namespace Projbook.Core.Snippet
         /// The csproj file.
         /// </summary>
         public FileInfo CsprojFile { get; private set; }
-
-        /// <summary>
-        /// Regex extracting the language and snippet extraction pattern.
-        /// </summary>
-        private static Regex regex = new Regex(@"^(.+)?\[(.+)\]$", RegexOptions.Compiled);
 
         /// <summary>
         /// Initializes a new instance of <see cref="SnippetExtractorFactory"/>.
@@ -41,38 +34,23 @@ namespace Projbook.Core.Snippet
         /// <summary>
         /// Creates a new instance of <see cref="ISnippetExtractor"/> according to the snippet extraction rule.
         /// </summary>
-        /// <param name="snippetReference"></param>
-        /// <returns>The matching snippet extractor. If </returns>
-        public ISnippetExtractor CreateExtractor(string snippetReference)
+        /// <param name="snippetExtractionRule">The snippet extraction rule.</param>
+        /// <returns>The matching snippet extractor.</returns>
+        public ISnippetExtractor CreateExtractor(SnippetExtractionRule snippetExtractionRule)
         {
-            // Return null if a code block doesn't have any details
-            if (string.IsNullOrWhiteSpace(snippetReference))
+            // Return null if the extraction rule is null
+            if (null == snippetExtractionRule)
             {
                 return null;
             }
 
-            // Match pattern
-            Match match = regex.Match(snippetReference);
-            if (match.Success)
+            // Initialize the proper extracted depending on the language
+            switch (snippetExtractionRule.Language)
             {
-                // Retrieve code language and rule
-                string language = match.Groups[1].Value;
-                string pattern = match.Groups[2].Value;
-
-                // Initialize the proper extracted depending on the language
-                switch (language)
-                {
-                    case "csharp":
-                        return new CSharpSnippetExtractor(language, pattern, this.ExtractSourceDirectories(this.CsprojFile));
-                    default:
-                        return new DefaultSnippetExtractor(language, pattern, this.ExtractSourceDirectories(this.CsprojFile));
-                }
-            }
-
-            // No match found
-            else
-            {
-                return null;
+                case "csharp":
+                    return new CSharpSnippetExtractor(this.ExtractSourceDirectories(this.CsprojFile));
+                default:
+                    return new DefaultSnippetExtractor(this.ExtractSourceDirectories(this.CsprojFile));
             }
         }
 

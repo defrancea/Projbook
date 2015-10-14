@@ -6,14 +6,11 @@
     public interface ISnippetExtractor
     {
         /// <summary>
-        /// The language handled by the extractor.
-        /// </summary>
-        string Language { get; }
-
-        /// <summary>
         /// Extracts a snippet.
         /// </summary>
+        /// <param name="filePath">The file path.</param>
+        /// <param name="pattern">The extraction pattern.</param>
         /// <returns>The extracted snippet.</returns>
-        Model.Snippet Extract();
+        Model.Snippet Extract(string filePath, string pattern);
     }
 }

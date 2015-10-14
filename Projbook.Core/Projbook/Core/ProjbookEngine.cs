@@ -142,20 +142,21 @@ namespace Projbook.Core
                     // Filter fenced code
                     if (node.Block != null && node.Block.Tag == BlockTag.FencedCode)
                     {
-                        // Extract snippet
+                        // Buil extraction rule
                         string fencedCode = node.Block.FencedCodeData.Info;
-                        ISnippetExtractor snippetExtractor = this.snippetExtractorFactory.CreateExtractor(fencedCode);
-
+                        SnippetExtractionRule snippetExtractionRule = SnippetExtractionRule.Parse(fencedCode);
+                        
                         // Extract and inject snippet and the factory were able to create an extractor
-                        if (null != snippetExtractor)
+                        if (null != snippetExtractionRule)
                         {
                             // Cleanup Projbook specific syntax
-                            node.Block.FencedCodeData.Info = snippetExtractor.Language;
+                            node.Block.FencedCodeData.Info = snippetExtractionRule.Language;
 
                             // Inject snippet
                             try
                             {
-                                Model.Snippet snippet = snippetExtractor.Extract();
+                                ISnippetExtractor snippetExtractor = this.snippetExtractorFactory.CreateExtractor(snippetExtractionRule);
+                                Model.Snippet snippet = snippetExtractor.Extract(snippetExtractionRule.FileName, snippetExtractionRule.Pattern);
                                 StringContent code = new StringContent();
                                 code.Append(snippet.Content, 0, snippet.Content.Length);
                                 node.Block.StringContent = code;

@@ -15,50 +15,34 @@ namespace Projbook.Core.Snippet
     public class DefaultSnippetExtractor : ISnippetExtractor
     {
         /// <summary>
-        /// The language handled by the extractor.
-        /// </summary>
-        public string Language { get; private set; }
-
-        /// <summary>
         /// All source directories where snippets could possibly be.
         /// </summary>
         public DirectoryInfo[] SourceDictionaries { get; private set; }
 
         /// <summary>
-        /// Snippet extraction pattern.
-        /// </summary>
-        public string Pattern { get; private set; }
-
-        /// <summary>
         /// Initializes a new instance of <see cref="DefaultSnippetExtractor"/>.
         /// </summary>
-        /// <param name="language">Initializes the required <see cref="Language"/>.</param>
-        /// <param name="pattern">Initializes the required <see cref="Pattern"/>.</param>
         /// <param name="sourceDirectories">Initializes the required <see cref="SourceDictionaries"/>.</param>
-        public DefaultSnippetExtractor(string language, string pattern, params DirectoryInfo[] sourceDirectories)
+        public DefaultSnippetExtractor(params DirectoryInfo[] sourceDirectories)
         {
             // Data validation
             Ensure.That(() => sourceDirectories).IsNotNull();
             Ensure.That(() => sourceDirectories).HasItems();
-            if (string.IsNullOrWhiteSpace(pattern))
-            {
-                throw new SnippetExtractionException("Invalid extraction rule", pattern);
-            }
 
             // Initialize
-            this.Language = language;
-            this.Pattern = pattern;
             this.SourceDictionaries = sourceDirectories;
         }
 
         /// <summary>
         /// Extracts a snippet.
         /// </summary>
+        /// <param name="filePath">The file path.</param>
+        /// <param name="pattern">The extraction pattern, never used for this implementation.</param>
         /// <returns>The extracted snippet.</returns>
-        public virtual Model.Snippet Extract()
+        public virtual Model.Snippet Extract(string filePath, string pattern)
         {
             // Extract file content
-            string sourceCode = this.LoadFile(this.Pattern);
+            string sourceCode = this.LoadFile(filePath);
 
             // Return the entire code
             return this.BuildSnippet(sourceCode);
@@ -67,18 +51,18 @@ namespace Projbook.Core.Snippet
         /// <summary>
         /// Loads a file from the file name.
         /// </summary>
-        /// <param name="fileName">The file name to load.</param>
+        /// <param name="filePath">The file path to load.</param>
         /// <returns>The file's content.</returns>
-        protected string LoadFile(string fileName)
+        protected string LoadFile(string filePath)
         {
             // Look for the file in available source directories
             FileInfo fileInfo = null;
             foreach (DirectoryInfo directoryInfo in this.SourceDictionaries)
             {
-                string filePath = Path.Combine(directoryInfo.FullName, fileName);
-                if (File.Exists(filePath))
+                string fullFilePath = Path.Combine(directoryInfo.FullName, filePath ?? string.Empty);
+                if (File.Exists(fullFilePath))
                 {
-                    fileInfo = new FileInfo(filePath);
+                    fileInfo = new FileInfo(fullFilePath);
                     break;
                 }
             }
@@ -86,7 +70,7 @@ namespace Projbook.Core.Snippet
             // Raise an error if cannot find the file
             if (null == fileInfo)
             {
-                throw new SnippetExtractionException("Cannot find file in any referenced project", this.Pattern);
+                throw new SnippetExtractionException("Cannot find file in any referenced project", filePath);
             }
 
             // Load the file content

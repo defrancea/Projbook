@@ -65,7 +65,9 @@ namespace Projbook.Tests.Core.Snippet
         public void CreateExtractorUnknownLanguage()
         {
             // Process
-            Assert.IsNull(this.SnippetExtractorFactory.CreateExtractor("foo"));
+            DefaultSnippetExtractor extractor = this.SnippetExtractorFactory.CreateExtractor(SnippetExtractionRule.Parse("foo [File.cs]")) as DefaultSnippetExtractor;
+            Assert.IsNotNull(extractor);
+            Assert.IsTrue(extractor is DefaultSnippetExtractor);
         }
 
         /// <summary>
@@ -76,7 +78,7 @@ namespace Projbook.Tests.Core.Snippet
         public void CreateExtractorKnownLanguageNoSnippet()
         {
             // Process
-            Assert.IsNull(this.SnippetExtractorFactory.CreateExtractor("csharp"));
+            Assert.IsNull(this.SnippetExtractorFactory.CreateExtractor(SnippetExtractionRule.Parse("csharp")));
         }
 
         /// <summary>
@@ -87,7 +89,7 @@ namespace Projbook.Tests.Core.Snippet
         public void CreateExtractorKnownLanguageCSharpEmptySnippet()
         {
             // Process
-            Assert.IsNull(this.SnippetExtractorFactory.CreateExtractor("csharp[]"));
+            Assert.IsNull(this.SnippetExtractorFactory.CreateExtractor(SnippetExtractionRule.Parse("csharp []")));
         }
 
         /// <summary>
@@ -98,9 +100,8 @@ namespace Projbook.Tests.Core.Snippet
         public void CreateExtractorKnownLanguageCSharpSnippet()
         {
             // Process
-            CSharpSnippetExtractor extractor = this.SnippetExtractorFactory.CreateExtractor("csharp[File.cs]") as CSharpSnippetExtractor;
+            CSharpSnippetExtractor extractor = this.SnippetExtractorFactory.CreateExtractor(SnippetExtractionRule.Parse("csharp [File.cs]")) as CSharpSnippetExtractor;
             Assert.IsNotNull(extractor);
-            Assert.AreEqual("File.cs", extractor.Pattern);
         }
     }
 }

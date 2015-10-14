@@ -16,10 +16,10 @@ namespace Projbook.Tests.Core.Snippet
         /// Tests with invalid input.
         /// </summary>
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void WrongInitSourceDefaultDirectories()
         {
-            new DefaultSnippetExtractor("txt", "content.txt");
+            new DefaultSnippetExtractor(null);
         }
         /// <summary>
         /// Tests with invalid input.
@@ -28,40 +28,36 @@ namespace Projbook.Tests.Core.Snippet
         [ExpectedException(typeof(ArgumentException))]
         public void WrongInitSourceEmptyDirectories()
         {
-            new DefaultSnippetExtractor("txt", "content.txt", new DirectoryInfo[0]);
+            new DefaultSnippetExtractor(new DirectoryInfo[0]);
         }
 
         /// <summary>
         /// Tests with invalid input.
         /// </summary>
+        /// <param name="filePath">The file path to test.</param>
         [Test]
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("   ")]
         [ExpectedException(typeof(SnippetExtractionException))]
-        public void WrongInitEmpty()
+        public void WrongInitEmpty(string filePath)
         {
-            new DefaultSnippetExtractor("txt", null, new DirectoryInfo[] { new DirectoryInfo("Foo") });
-            new DefaultSnippetExtractor("txt", string.Empty, new DirectoryInfo[] { new DirectoryInfo("Foo") });
-            new DefaultSnippetExtractor("txt", "   ", new DirectoryInfo[] { new DirectoryInfo("Foo") });
+            new DefaultSnippetExtractor(new DirectoryInfo("Foo")).Extract(filePath, string.Empty);
         }
 
         /// <summary>
         /// Tests extract snippet.
         /// </summary>
-        /// <param name="language">The language.</param>
-        /// <param name="pattern">The pattern.</param>
-        /// <param name="expectedFile">The expected file.</param>
         [Test]
-        [TestCase("txt", "content.txt", "content.txt")]
-        [TestCase("", "content.txt", "content.txt")]
-        [TestCase(null, "content.txt", "content.txt")]
-        public void ExtractSnippet(string language, string pattern, string expectedFile)
+        public void ExtractSnippet()
         {
             // Run the extraction
-            DefaultSnippetExtractor extractor = new DefaultSnippetExtractor("txt", pattern, this.SourceDirectories);
-            Projbook.Core.Model.Snippet snippet = extractor.Extract();
+            DefaultSnippetExtractor extractor = new DefaultSnippetExtractor(this.SourceDirectories);
+            Projbook.Core.Model.Snippet snippet = extractor.Extract("content.txt", null);
 
             // Load the expected file content
             MemoryStream memoryStream = new MemoryStream();
-            using (var fileReader = new StreamReader(new FileStream(Path.GetFullPath(Path.Combine("Resources", "Expected", expectedFile)), FileMode.Open)))
+            using (var fileReader = new StreamReader(new FileStream(Path.GetFullPath(Path.Combine("Resources", "Expected", "content.txt")), FileMode.Open)))
             using (var fileWriter = new StreamWriter(memoryStream))
             {
                 fileWriter.Write(fileReader.ReadToEnd());
