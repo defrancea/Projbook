@@ -16,6 +16,12 @@ namespace Projbook.Core.Snippet.CSharp
     public class CSharpSnippetExtractor : DefaultSnippetExtractor
     {
         /// <summary>
+        /// Represents the matching trie used for member matching.
+        /// Because of the cost of building the Trie, this value is lazy loaded and kept for future usages.
+        /// </summary>
+        private CSharpSyntaxMatchingNode syntaxTrie;
+
+        /// <summary>
         /// Initializes a new instance of <see cref="CSharpSnippetExtractor"/>.
         /// </summary>
         /// <param name="sourceDirectories">Initializes the required <see cref="SourceDictionaries"/>.</param>
@@ -40,26 +46,33 @@ namespace Projbook.Core.Snippet.CSharp
             // Parse the matching rule from the pattern
             CSharpMatchingRule rule = CSharpMatchingRule.Parse(memberPattern);
 
-            // Load file content
-            string sourceCode = base.LoadFile(filePath);
+            // Load the trie for pattern matching
+            if (null == this.syntaxTrie)
+            {
+                // Load file content
+                string sourceCode = base.LoadFile(filePath);
 
-            // Build a syntax tree from the source code
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceCode);
-            SyntaxNode root = tree.GetRoot();
+                // Build a syntax tree from the source code
+                SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceCode);
+                SyntaxNode root = tree.GetRoot();
 
-            // Visit the syntax tree for generating a Trie for pattern matching
-            CSharpSyntaxWalkerMatchingBuilder syntaxMatchingBuilder = new CSharpSyntaxWalkerMatchingBuilder();
-            syntaxMatchingBuilder.Visit(root);
+                // Visit the syntax tree for generating a Trie for pattern matching
+                CSharpSyntaxWalkerMatchingBuilder syntaxMatchingBuilder = new CSharpSyntaxWalkerMatchingBuilder();
+                syntaxMatchingBuilder.Visit(root);
+
+                // Retrieve the Trie root
+                this.syntaxTrie = syntaxMatchingBuilder.Root;
+            }
 
             // Match the rule from the syntax matching Trie
-            CSharpSyntaxMatchingNode node = syntaxMatchingBuilder.Root.Match(rule.MatchingChunks);
-            if (null == node)
+            CSharpSyntaxMatchingNode matchingTrie = syntaxTrie.Match(rule.MatchingChunks);
+            if (null == matchingTrie)
             {
                 throw new SnippetExtractionException("Cannot find member", filePath);
             }
-            
+
             // Build a snippet for extracted syntax nodes
-            return this.BuildSnippet(node.MatchingSyntaxNodes, rule.ExtractionMode);
+            return this.BuildSnippet(matchingTrie.MatchingSyntaxNodes, rule.ExtractionMode);
         }
 
         /// <summary>

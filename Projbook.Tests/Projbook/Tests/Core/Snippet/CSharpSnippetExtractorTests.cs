@@ -1,7 +1,9 @@
 ﻿using NUnit.Framework;
 using Projbook.Core.Exception;
+using Projbook.Core.Snippet;
 using Projbook.Core.Snippet.CSharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Projbook.Tests.Core.Snippet
@@ -12,6 +14,11 @@ namespace Projbook.Tests.Core.Snippet
     [TestFixture]
     public class CSharpSnippetExtractorTests : AbstractSnippetTests
     {
+        /// <summary>
+        /// Use a cache for unit testing in order to speed up execution and simulate an actual usage.
+        /// </summary>
+        private Dictionary<string, ISnippetExtractor> extractorCache = new Dictionary<string, ISnippetExtractor>();
+
         /// <summary>
         /// Tests with invalid input.
         /// </summary>
@@ -216,7 +223,13 @@ namespace Projbook.Tests.Core.Snippet
         public void ExtractSnippet(string fileName, string pattern, string expectedFile)
         {
             // Run the extraction
-            Projbook.Core.Model.Snippet snippet = new CSharpSnippetExtractor(this.SourceDirectories).Extract(fileName, pattern);
+            ISnippetExtractor snippetExtractor;
+            if (!this.extractorCache.TryGetValue(fileName, out snippetExtractor))
+            {
+                snippetExtractor = new CSharpSnippetExtractor(this.SourceDirectories);
+                this.extractorCache[fileName] = snippetExtractor;
+            }
+            Projbook.Core.Model.Snippet snippet = snippetExtractor.Extract(fileName, pattern);
 
             // Load the expected file content
             MemoryStream memoryStream = new MemoryStream();

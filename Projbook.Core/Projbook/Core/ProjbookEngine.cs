@@ -53,6 +53,11 @@ namespace Projbook.Core
         private SnippetExtractorFactory snippetExtractorFactory;
 
         /// <summary>
+        /// Extractor cache that is bound to a snippet file name.
+        /// </summary>
+        private Dictionary<string, ISnippetExtractor> extractorCache = new Dictionary<string, ISnippetExtractor>();
+        
+        /// <summary>
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
         /// </summary>
         /// <param name="csprojFile">Initializes the required <see cref="CsprojFile"/>.</param>
@@ -155,7 +160,15 @@ namespace Projbook.Core
                             // Inject snippet
                             try
                             {
-                                ISnippetExtractor snippetExtractor = this.snippetExtractorFactory.CreateExtractor(snippetExtractionRule);
+                                // Retrieve the extractor instance
+                                ISnippetExtractor snippetExtractor;
+                                if (!this.extractorCache.TryGetValue(snippetExtractionRule.FileName, out snippetExtractor))
+                                {
+                                    snippetExtractor = this.snippetExtractorFactory.CreateExtractor(snippetExtractionRule);
+                                    this.extractorCache[snippetExtractionRule.FileName] = snippetExtractor;
+                                }
+
+                                // Extract the snippet
                                 Model.Snippet snippet = snippetExtractor.Extract(snippetExtractionRule.FileName, snippetExtractionRule.Pattern);
                                 StringContent code = new StringContent();
                                 code.Append(snippet.Content, 0, snippet.Content.Length);
