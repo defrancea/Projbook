@@ -49,6 +49,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Install.ps1" />
+    <None Include="Projbook.props">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Projbook.targets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>

@@ -18,6 +18,7 @@
   </metadata>
   <files>
     <file src="Projbook.Target/Projbook.targets" target="build" exclude="" />
+    <file src="Projbook.Target/Projbook.props" target="build" exclude="" />
     <file src="Projbook.Target/Install.ps1" target="tools" exclude="" />
     <file src="Projbook.Target/bin/Release/CommonMark.dll" target="tools" exclude="" />
     <file src="Projbook.Target/bin/Release/EnsureThat.vDinasour.dll" target="tools" exclude="" />
