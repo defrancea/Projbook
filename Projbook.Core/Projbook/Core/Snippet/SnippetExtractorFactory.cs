@@ -1,5 +1,6 @@
 ﻿using EnsureThat;
 using Projbook.Core.Snippet.CSharp;
+using Projbook.Core.Snippet.Xml;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,6 +50,8 @@ namespace Projbook.Core.Snippet
             {
                 case "csharp":
                     return new CSharpSnippetExtractor(this.ExtractSourceDirectories(this.CsprojFile));
+                case "xml":
+                    return new XmlSnippetExtractor(this.ExtractSourceDirectories(this.CsprojFile));
                 default:
                     return new DefaultSnippetExtractor(this.ExtractSourceDirectories(this.CsprojFile));
             }

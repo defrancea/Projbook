@@ -1,0 +1,4 @@
+﻿<FirstLevelNoNamespace />
+
+<FirstLevelNoNamespace
+  WithSome="Attribute" />

@@ -65,6 +65,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Projbook\Tests\Core\Snippet\XmlSnippetExtractorTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\DefaultSnippetExtractorTests.cs" />
     <Compile Include="Resources\SourcesA\Options.cs" />
     <Compile Include="Resources\SourcesA\Empty.cs" />
@@ -109,6 +110,30 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Expected\Eventadd.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\SecondLevel.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\SampleXmlNoNamespaceWholeFile.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\FirstLevel.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\SecondLevelWithMNamespace.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\FirstLevelWithNNamespace.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\ProjectCoreXml.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\FirstLevelNoNamespace.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\SampleXmlWholeFile.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Expected\GenericMethod.txt">
@@ -247,6 +272,12 @@
     <Compile Include="Projbook\Tests\Core\Snippet\SnippetExtractorFactoryTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\CSharpSnippetExtractorTests.cs" />
     <Content Include="Resources\SourcesA\content.txt" />
+    <Content Include="Resources\SourcesA\SampleNoNamespace.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\SourcesA\Sample.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Resources\FullGeneration\Page\secondPage.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
