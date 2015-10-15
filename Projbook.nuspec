@@ -13,11 +13,12 @@
     <summary>Projbook</summary>
     <dependencies>
       <dependency id="bootstrap" version="3.3.5" />
+      <dependency id="wkhtmltopdf.msvc.64.exe" version="0.12.2.5" />
     </dependencies>
   </metadata>
   <files>
     <file src="Projbook.Target/Projbook.targets" target="build" exclude="" />
-    <file src="Projbook.Target/Install.ps1" target="build" exclude="" />
+    <file src="Projbook.Target/Install.ps1" target="tools" exclude="" />
     <file src="Projbook.Target/bin/Release/CommonMark.dll" target="tools" exclude="" />
     <file src="Projbook.Target/bin/Release/EnsureThat.vDinasour.dll" target="tools" exclude="" />
     <file src="Projbook.Target/bin/Release/Microsoft.CodeAnalysis.CSharp.dll" target="tools" exclude="" />
