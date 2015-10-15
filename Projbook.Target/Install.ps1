@@ -19,3 +19,7 @@ $contentFolder.ProjectItems.Item("bootstrap.min.css").Properties.Item("CopyToOut
 $scriptsFolder.ProjectItems.Item("prism.js").Properties.Item("CopyToOutputDirectory").Value = 2
 $scriptsFolder.ProjectItems.Item("bootstrap.min.js").Properties.Item("CopyToOutputDirectory").Value = 2
 $scriptsFolder.ProjectItems.Item("jquery-1.9.1.min.js").Properties.Item("CopyToOutputDirectory").Value = 2
+
+# Delete files from wkhtmltopdf
+$project.ProjectItems.Item("readme.txt").Delete()
+$project.ProjectItems.Item("wkhtmltopdf.exe").Remove()
