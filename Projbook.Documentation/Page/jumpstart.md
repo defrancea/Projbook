@@ -57,7 +57,7 @@ You can combine rules for extracting and processing many member with options. Th
 ```
 
 ## Extract Xml file content
-It is also possible to extract xml content by using XPath as query language, for example, we can export all Import tag in the Projbook's documentation project by using `xml[Projbook.Documentation.csproj] //Import`
+It is also possible to extract xml content by using XPath as query language, for example, we can export all Import tag in the Projbook's documentation project by using `xml[Projbook.Documentation.csproj] //Import`:
 ```xml[Projbook.Documentation.csproj] //Import
 ```
 
