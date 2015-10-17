@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/defrancea/Projbook</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Generate project documentation using Markdown and allow integrating code snippet from the source code being built. Code snippet are always up-to-date.</description>
-    <summary>Projbook</summary>
+    <summary>Generate project documentation using Markdown and allow integrating code snippet from the source code being built. Code snippet are always up-to-date.</summary>
     <dependencies>
       <dependency id="bootstrap" version="3.3.5" />
       <dependency id="wkhtmltopdf.msvc.64.exe" version="0.12.2.5" />
