@@ -15,7 +15,7 @@
 
     <!-- Prism -->
     <script src="Scripts/prism.js"></script>
-    <link href="Content/prism.css" rel="stylesheet" />
+    <link href="Content/prism.css" rel="stylesheet"/>
 
     <!-- Projbook -->
     <link href="Content/projbook.css" rel="stylesheet">
@@ -39,8 +39,7 @@
                         <ul class="dropdown-menu">
                             @foreach (var page in @Model.Pages)
                             {
-                            <li class="@(page.IsHome ? " active"
-                                "" )"><a href="#@page.Id" data-toggle="tab">@page.Title</a></li>
+                                <li class="@(page.IsHome ? "active" : "")"><a href="#@page.Id" data-toggle="tab">@page.Title</a></li>
                             }
                         </ul>
                     </li>
@@ -52,29 +51,28 @@
         <div class="tab-content">
             @foreach (var page in @Model.Pages)
             {
-            <div class="tab-pane @(page.IsHome ? " active"
-                 "" )" id="@page.Id">
-                <div class="row">
-                    <div class="col-md-3 sidebar-outer">
-                        <div class="sidebar">
-                            @{
-                            int i = 1;
-                            <ul class="nav nav-list">
-                                @foreach (var anchor in @page.Anchors)
-                                {
-                                <li>
-                                    <a href="#@anchor.Value">@(new string('-', anchor.Level - 1).Replace("-", "&nbsp;&nbsp;")) @anchor.Label</a>
-                                </li>
+                <div class="tab-pane @(page.IsHome ? "active" : "")" id="@page.Id">
+                    <div class="row">
+                        <div class="col-md-3 sidebar-outer">
+                            <div class="sidebar">
+                                @{
+                                int i = 1;
+                                <ul class="nav nav-list">
+                                    @foreach (var anchor in @page.Anchors)
+                                    {
+                                    <li>
+                                        <a href="#@anchor.Value">@(new string('-', anchor.Level - 1).Replace("-", "&nbsp;&nbsp;")) @anchor.Label</a>
+                                    </li>
+                                    }
+                                </ul>
                                 }
-                            </ul>
-                            }
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            @page.Content
                         </div>
                     </div>
-                    <div class="col-md-9">
-                        @page.Content
-                    </div>
                 </div>
-            </div>
             }
         </div>
     </div>
