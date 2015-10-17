@@ -111,7 +111,7 @@ namespace Projbook.Core.Markdown
                 }
 
                 // Write anchor
-                this.Write(string.Format(@"<a name=""{0}""></a>", anchor));
+                this.Write(string.Format(@"<a class=""anchor"" name=""{0}""></a>", anchor));
 
                 // Keep track of the created anchor
                 anchors[anchor] = new Anchor(

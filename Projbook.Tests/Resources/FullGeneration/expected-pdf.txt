@@ -3,9 +3,9 @@
     <Id>ResourcesFullGenerationPagefirstPagemd</Id>
     <Title>First page title</Title>
     <Content>
-<![CDATA[<a name="resources%2ffullgeneration%2fpage%2ffirstpage.md-foo"></a>
+<![CDATA[<a class="anchor" name="resources%2ffullgeneration%2fpage%2ffirstpage.md-foo"></a>
 <h1>Foo</h1>
-<a name="resources%2ffullgeneration%2fpage%2ffirstpage.md-sub-foo"></a>
+<a class="anchor" name="resources%2ffullgeneration%2fpage%2ffirstpage.md-sub-foo"></a>
 <h2>Sub-foo</h2>
 ]]>
     </Content>
@@ -25,7 +25,7 @@
     <Id>ResourcesFullGenerationPagesecondPagemd</Id>
     <Title>Second page title</Title>
     <Content>
-<![CDATA[<a name="resources%2ffullgeneration%2fpage%2fsecondpage.md-bar"></a>
+<![CDATA[<a class="anchor" name="resources%2ffullgeneration%2fpage%2fsecondpage.md-bar"></a>
 <h1>Bar</h1>
 <pre><code class="language-csharp">public class Foo
 {
