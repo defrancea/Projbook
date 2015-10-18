@@ -12,7 +12,7 @@ $project.ProjectItems.Item("template-pdf.html").Properties.Item("CopyToOutputDir
 # Copy files in Content folder
 $contentFolder.ProjectItems.Item("prism.css").Properties.Item("CopyToOutputDirectory").Value = 2
 $contentFolder.ProjectItems.Item("projbook.css").Properties.Item("CopyToOutputDirectory").Value = 2
-$contentFolder.ProjectItems.Item("bootstrap-theme.css").Properties.Item("CopyToOutputDirectory").Value = 2
+$contentFolder.ProjectItems.Item("bootstrap-theme.min.css").Properties.Item("CopyToOutputDirectory").Value = 2
 $contentFolder.ProjectItems.Item("bootstrap.min.css").Properties.Item("CopyToOutputDirectory").Value = 2
 
 # Copy files in Scripts folder
