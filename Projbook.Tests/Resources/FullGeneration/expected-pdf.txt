@@ -3,20 +3,20 @@
     <Id>ResourcesFullGenerationPagefirstPagemd</Id>
     <Title>First page title</Title>
     <Content>
-<![CDATA[<a class="anchor" name="resources%2ffullgeneration%2fpage%2ffirstpage.md-foo"></a>
+<![CDATA[<a class="anchor" name="ResourcesFullGenerationPagefirstPagemd.foo"></a>
 <h1>Foo</h1>
-<a class="anchor" name="resources%2ffullgeneration%2fpage%2ffirstpage.md-sub-foo"></a>
+<a class="anchor" name="ResourcesFullGenerationPagefirstPagemd.sub-foo"></a>
 <h2>Sub-foo</h2>
 ]]>
     </Content>
     <Anchors>
         <Anchor>
-            <Value>resources%2ffullgeneration%2fpage%2ffirstpage.md-foo</Value>
+            <Value>ResourcesFullGenerationPagefirstPagemd.foo</Value>
             <Level>1</Level>
             <Label>Foo</Label>
         </Anchor>
         <Anchor>
-            <Value>resources%2ffullgeneration%2fpage%2ffirstpage.md-sub-foo</Value>
+            <Value>ResourcesFullGenerationPagefirstPagemd.sub-foo</Value>
             <Level>2</Level>
             <Label>Sub-foo</Label>
         </Anchor>
@@ -25,7 +25,7 @@
     <Id>ResourcesFullGenerationPagesecondPagemd</Id>
     <Title>Second page title</Title>
     <Content>
-<![CDATA[<a class="anchor" name="resources%2ffullgeneration%2fpage%2fsecondpage.md-bar"></a>
+<![CDATA[<a class="anchor" name="ResourcesFullGenerationPagesecondPagemd.bar"></a>
 <h1>Bar</h1>
 <pre><code class="language-csharp">public class Foo
 {
@@ -34,7 +34,7 @@
     </Content>
     <Anchors>
         <Anchor>
-            <Value>resources%2ffullgeneration%2fpage%2fsecondpage.md-bar</Value>
+            <Value>ResourcesFullGenerationPagesecondPagemd.bar</Value>
             <Level>1</Level>
             <Label>Bar</Label>
         </Anchor>

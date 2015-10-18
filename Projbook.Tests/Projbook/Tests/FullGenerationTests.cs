@@ -43,6 +43,8 @@ namespace Projbook.Tests.Core
             // Assert result
             Assert.IsNotNull(errors);
             Assert.AreEqual(0, errors.Length);
+            Console.WriteLine(expectedContent);
+            Console.WriteLine(generatedContent);
             Assert.AreEqual(expectedContent, generatedContent);
             Assert.AreEqual(expectedPdfContent, generatedPdfContent);
         }
