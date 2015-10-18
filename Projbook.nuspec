@@ -37,6 +37,7 @@
     <file src="Projbook.Example/Content/prism.css" target="content/Content" exclude="" />
     <file src="Projbook.Example/Content/projbook.css" target="content/Content" exclude="" />
     <file src="Projbook.Example/Scripts/prism.js" target="content/Scripts" exclude="" />
+    <file src="Projbook.Example/Scripts/projbook.js" target="content/Scripts" exclude="" />
     <file src="Projbook.Example/Page/page1.md" target="content/Page" exclude="" />
     <file src="Projbook.Example/Page/page2.md" target="content/Page" exclude="" />
   </files>

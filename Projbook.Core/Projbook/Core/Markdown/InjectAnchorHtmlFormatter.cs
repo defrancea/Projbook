@@ -87,10 +87,8 @@ namespace Projbook.Core.Markdown
                 }
 
                 // Compute the anchor value
-                string anchor = string.Format("{0}-{1}", this.ContextName, headerContent).ToLower();
-
-                // Encode for url usage
-                anchor = HttpUtility.UrlEncode(anchor);
+                string anchor = HttpUtility.UrlEncode(headerContent.ToLower());
+                anchor = string.Format("{0}.{1}", this.ContextName, anchor);
 
                 // Detect anchor conflict
                 if (anchors.ContainsKey(anchor))

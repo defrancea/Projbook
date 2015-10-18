@@ -123,6 +123,9 @@ namespace Projbook.Core
                 // Declare formatter
                 InjectAnchorHtmlFormatter formatter = null;
 
+                // Compute the page id used as a tab id and page prefix for bookmarking
+                string pageId = page.Path.Replace(".", string.Empty).Replace("/", string.Empty);
+
                 // Load the document
                 Block document;
                 FileInfo fileInfo = new FileInfo(page.Path);
@@ -194,7 +197,7 @@ namespace Projbook.Core
                 CommonMarkSettings.Default.OutputDelegate =
                     (d, output, settings) =>
                     {
-                        formatter = new InjectAnchorHtmlFormatter(page.Path, output, settings);
+                        formatter = new InjectAnchorHtmlFormatter(pageId, output, settings);
                         formatter.WriteDocument(d);
                     };
 
@@ -207,7 +210,7 @@ namespace Projbook.Core
 
                 // Add new page
                 pages.Add(new Model.Page(
-                    id: page.Path.Replace(".", string.Empty).Replace("/", string.Empty),
+                    id: pageId,
                     title: page.Title,
                     isHome: first,
                     anchor: formatter.Anchors,
