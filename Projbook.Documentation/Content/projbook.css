@@ -3,6 +3,13 @@
   padding-bottom: 30px;
 }
 
+a.anchor {
+    display: block;
+    position: relative;
+    top: -70px;
+    visibility: hidden;
+}
+
 .theme-dropdown .dropdown-menu {
   position: static;
   display: block;
@@ -20,6 +27,7 @@
 .sidebar-outer {
     position: relative;
 }
+
 @media (min-width: 768px) {
     .sidebar {
         position: fixed;
