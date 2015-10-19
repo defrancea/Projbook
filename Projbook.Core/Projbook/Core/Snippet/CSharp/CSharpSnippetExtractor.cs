@@ -68,7 +68,7 @@ namespace Projbook.Core.Snippet.CSharp
             CSharpSyntaxMatchingNode matchingTrie = syntaxTrie.Match(rule.MatchingChunks);
             if (null == matchingTrie)
             {
-                throw new SnippetExtractionException("Cannot find member", filePath);
+                throw new SnippetExtractionException("Cannot find member", string.Format("{0} {1}", filePath, memberPattern));
             }
 
             // Build a snippet for extracted syntax nodes
