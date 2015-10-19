@@ -185,7 +185,7 @@ namespace Projbook.Core.Snippet.CSharp
             // Print each matching syntax node
             foreach (var matchingSyntaxNode in this.MatchingSyntaxNodes)
             {
-                stringBuilder.AppendLine(string.Format("{0}[{1}]", new string('-', level), matchingSyntaxNode.GetType().Name, "pouetpouet"));
+                stringBuilder.AppendLine(string.Format("{0}[{1}]", new string('-', level), matchingSyntaxNode.GetType().Name));
             }
 
             // Recurse to children
