@@ -38,6 +38,7 @@ namespace Projbook.Core.Projbook.Core.Snippet.CSharp
         public static CSharpMatchingRule Parse(string pattern)
         {
             // Try to match the regex
+            pattern = Regex.Replace(pattern, @"\s", string.Empty);
             Match match = CSharpMatchingRule.ruleRegex.Match(pattern);
             if (!match.Success || string.IsNullOrWhiteSpace(match.Groups[0].Value))
             {
@@ -52,10 +53,9 @@ namespace Projbook.Core.Projbook.Core.Snippet.CSharp
             // Build The matching chunk with extracted data
             List<string> matchingChunks = new List<string>();
             matchingChunks.AddRange(rawMember.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries));
-            string parameterChunk = Regex.Replace(rawParameters, @"\s", string.Empty);
-            if (parameterChunk.Length >= 1)
+            if (rawParameters.Length >= 1)
             {
-                matchingChunks.Add(parameterChunk);
+                matchingChunks.Add(rawParameters);
             }
 
             // Read extraction mode

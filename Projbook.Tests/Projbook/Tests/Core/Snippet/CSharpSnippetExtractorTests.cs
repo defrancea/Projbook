@@ -132,10 +132,10 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Sample.cs", "remove", "Eventremove.txt")]
 
         // Match indexer setter
-        [TestCase("Sample.cs", "NS2.NS2.NS3.D.[string,int].set", "Indexerset.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.D.[string,int].set", "Indexerset.txt")]
-        [TestCase("Sample.cs", "D.[string,int].set", "Indexerset.txt")]
-        [TestCase("Sample.cs", "[string,int].set", "Indexerset.txt")]
+        [TestCase("Sample.cs", "NS2.NS2.NS3.D.[string, int].set", "Indexerset.txt")]
+        [TestCase("Sample.cs", "NS2.NS3.D.[string, int].set", "Indexerset.txt")]
+        [TestCase("Sample.cs", "D.[string, int].set", "Indexerset.txt")]
+        [TestCase("Sample.cs", "[string, int].set", "Indexerset.txt")]
 
         // Match method with overloads
         [TestCase("Sample.cs", "NS.OneClassSomewhere.Foo", "Foo.txt")]
@@ -172,15 +172,15 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Sample.cs", "<Destructor>", "Destructor.txt")]
 
         // Match generic class
-        [TestCase("Sample.cs", "NS2.NS2.NS3.C{T,U}", "GenericClass.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.C{T,U}", "GenericClass.txt")]
-        [TestCase("Sample.cs", "C{T,U}", "GenericClass.txt")]
+        [TestCase("Sample.cs", "NS2.NS2.NS3.C{T, U}", "GenericClass.txt")]
+        [TestCase("Sample.cs", "NS2.NS3.C{T, U}", "GenericClass.txt")]
+        [TestCase("Sample.cs", "C{T, U}", "GenericClass.txt")]
 
         // Match generic method
-        [TestCase("Sample.cs", "NS2.NS2.NS3.C{T,U}.CMethod{X,Y}", "GenericMethod.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.C{T,U}.CMethod{X,Y}", "GenericMethod.txt")]
-        [TestCase("Sample.cs", "C{T,U}.CMethod{X,Y}", "GenericMethod.txt")]
-        [TestCase("Sample.cs", "CMethod{X,Y}", "GenericMethod.txt")]
+        [TestCase("Sample.cs", "NS2.NS2.NS3.C{T, U}.CMethod{X, Y}", "GenericMethod.txt")]
+        [TestCase("Sample.cs", "NS2.NS3.C{T, U}.CMethod{X, Y}", "GenericMethod.txt")]
+        [TestCase("Sample.cs", "C{T, U}.CMethod{X, Y}", "GenericMethod.txt")]
+        [TestCase("Sample.cs", "CMethod{X, Y}", "GenericMethod.txt")]
 
         // Aggregate namespaces
         [TestCase("Sample.cs", "NS2.NS3", "NS2NS3.txt")]
