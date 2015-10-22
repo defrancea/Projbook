@@ -29,6 +29,7 @@
             <div class="page-header">
                 <h1>@(page.Title)</h1>
             </div>
+            @(page.PreSectionContent)
             @foreach (var section in page.Sections)
             {
             <div id="@(section.Id)">
