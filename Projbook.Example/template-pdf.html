@@ -7,6 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
+    <!-- Title -->
     <title>@Model.Title</title>
 
     <!-- Bootstrap -->
@@ -15,27 +16,30 @@
 
     <!-- Prism -->
     <script src="Scripts/prism.js"></script>
-    <link href="Content/prism.css" rel="stylesheet"/>
+    <link href="Content/prism.css" rel="stylesheet" />
 
     <!-- Projbook -->
     <link href="Content/projbook.css" rel="stylesheet">
 </head>
 <body role="document">
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">@Model.Title</a>
-            </div>
-        </div>
-    </nav>
     <div class="container">
-        @foreach (var page in @Model.Pages)
+        @foreach (var page in Model.Pages)
         {
-            <h1>@page.Title</h1>
-            <p>@page.Content</p>
+        <section id="@(page.Id)">
+            <div class="page-header">
+                <h1>@(page.Title)</h1>
+            </div>
+            @foreach (var section in page.Sections)
+            {
+            <div id="@(section.Id)">
+                @(section.Content)
+            </div>
+            }
+        </section>
         }
     </div>
     <script src="Scripts/jquery-1.9.1.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/projbook.js"></script>
 </body>
 </html>
