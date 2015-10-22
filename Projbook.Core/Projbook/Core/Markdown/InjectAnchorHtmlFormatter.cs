@@ -2,10 +2,8 @@
 using CommonMark.Formatters;
 using CommonMark.Syntax;
 using EnsureThat;
-using Projbook.Core.Model;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Web;
 
@@ -27,7 +25,7 @@ namespace Projbook.Core.Markdown
         /// <summary>
         /// Identifier used as injected value for splitting page section.
         /// </summary>
-        public string PageSlippingIdentifier { get; private set; }
+        public string PageSplittingIdentifier { get; private set; }
 
         /// <summary>
         /// Internal dictionary to resolve section conflicts.
@@ -40,7 +38,7 @@ namespace Projbook.Core.Markdown
         /// Initializes a new instance of <see cref="InjectAnchorHtmlFormatter"/>.
         /// </summary>
         /// <param name="contextName">Initializes the required <see cref="ContextName"/></param>
-        /// <param name="pageSlippingIdentifier">Initializes the required <see cref="PageSlippingIdentifier"/></param>
+        /// <param name="pageSlippingIdentifier">Initializes the required <see cref="PageSplittingIdentifier"/></param>
         /// <param name="target">Initializes the required text writter used as output.</param>
         /// <param name="settings">Initializes the required common mark settings used by the formatting.</param>
         public InjectAnchorHtmlFormatter(string contextName, string pageSlippingIdentifier, TextWriter target, CommonMarkSettings settings)
@@ -52,7 +50,7 @@ namespace Projbook.Core.Markdown
 
             // Initialize
             this.ContextName = contextName;
-            this.PageSlippingIdentifier = pageSlippingIdentifier;
+            this.PageSplittingIdentifier = pageSlippingIdentifier;
         }
 
         /// <summary>
@@ -99,7 +97,7 @@ namespace Projbook.Core.Markdown
                 }
 
                 // Write anchor
-                this.Write(string.Format(@"<!--{0} [{1}]({2})-->", this.PageSlippingIdentifier, headerContent, sectionId));
+                this.Write(string.Format(@"<!--{0} [{1}]({2})-->", this.PageSplittingIdentifier, headerContent, sectionId));
                 sectionConflict[sectionId] = 1;
             }
 
