@@ -68,8 +68,8 @@ namespace Projbook.Tests.Core
             Assert.AreEqual(2, errors.Length);
             Assert.IsTrue(errors[0].SourceFile.EndsWith(firstErrorFile));
             Assert.IsTrue(errors[1].SourceFile.EndsWith(secondErrorFile));
-            Assert.AreEqual(@"Error during HTML generation: (17:4) - Encountered end tag ""Anchors"" with no matching start tag.  Are your start/end tags properly balanced?", errors[0].Message);
-            Assert.AreEqual(@"Error during PDF generation: (17:4) - Encountered end tag ""Anchors"" with no matching start tag.  Are your start/end tags properly balanced?", errors[1].Message);
+            Assert.AreEqual(@"Error during HTML generation: (16:1) - Encountered end tag ""Sections"" with no matching start tag.  Are your start/end tags properly balanced?", errors[0].Message);
+            Assert.AreEqual(@"Error during PDF generation: (16:1) - Encountered end tag ""Sections"" with no matching start tag.  Are your start/end tags properly balanced?", errors[1].Message);
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Projbook.Tests.Core
             Assert.IsNotNull(errors);
             Assert.AreEqual(1, errors.Length);
             Assert.IsTrue(errors[0].SourceFile.EndsWith(errorFile));
-            Assert.AreEqual(@"Error during PDF generation: (17:4) - Encountered end tag ""Anchors"" with no matching start tag.  Are your start/end tags properly balanced?", errors[0].Message);
+            Assert.AreEqual(@"Error during PDF generation: (16:1) - Encountered end tag ""Sections"" with no matching start tag.  Are your start/end tags properly balanced?", errors[0].Message);
         }
 
         /// <summary>

@@ -65,11 +65,13 @@ namespace Projbook.Tests.Core
         {
             Configuration configuration = this.ConfigurationLoader.Load(new FileInfo(Path.Combine("Resources", "testConfig.json")));
             Assert.AreEqual("Test title", configuration.Title);
-            Assert.AreEqual(2, configuration.Pages.Length);
+            Assert.AreEqual(3, configuration.Pages.Length);
             Assert.AreEqual("Resources/FullGeneration/Page/firstPage.md", configuration.Pages[0].Path);
             Assert.AreEqual("First page title", configuration.Pages[0].Title);
             Assert.AreEqual("Resources/FullGeneration/Page/secondPage.md", configuration.Pages[1].Path);
             Assert.AreEqual("Second page title", configuration.Pages[1].Title);
+            Assert.AreEqual("Resources/FullGeneration/Page/thirdPage.md", configuration.Pages[2].Path);
+            Assert.AreEqual("Third page title", configuration.Pages[2].Title);
         }
     }
 }

@@ -25,33 +25,34 @@ namespace Projbook.Core.Markdown
         public string ContextName { get; private set; }
 
         /// <summary>
-        /// Anchor array resulting of the injection processing.
-        /// Each anchor correspond to a markdown header that is usable as hyperlink target.
+        /// Identifier used as injected value for splitting page section.
         /// </summary>
-        public Anchor[] Anchors { get { return anchors.Values.ToArray(); } }
-        private Dictionary<string, Anchor> anchors = new Dictionary<string, Anchor>();
+        public string PageSlippingIdentifier { get; private set; }
 
         /// <summary>
-        /// Internal dictionary to resolve anchor conflicts.
+        /// Internal dictionary to resolve section conflicts.
         /// In case of no conflict the dictionary will remaings empty, however any conflict will create a slot with an integer representing the next available index.
-        /// Everytime we meet a conflict, the anchor generation will increment the index and use it as suffix.
+        /// Everytime we meet a conflict, the section generation will increment the index and use it as suffix.
         /// </summary>
-        private Dictionary<string, int> anchorConflicts = new Dictionary<string, int>();
+        private Dictionary<string, int> sectionConflict = new Dictionary<string, int>();
 
         /// <summary>
         /// Initializes a new instance of <see cref="InjectAnchorHtmlFormatter"/>.
         /// </summary>
         /// <param name="contextName">Initializes the required <see cref="ContextName"/></param>
+        /// <param name="pageSlippingIdentifier">Initializes the required <see cref="PageSlippingIdentifier"/></param>
         /// <param name="target">Initializes the required text writter used as output.</param>
         /// <param name="settings">Initializes the required common mark settings used by the formatting.</param>
-        public InjectAnchorHtmlFormatter(string contextName, TextWriter target, CommonMarkSettings settings)
+        public InjectAnchorHtmlFormatter(string contextName, string pageSlippingIdentifier, TextWriter target, CommonMarkSettings settings)
             : base(target, settings)
         {
             // Data validation
             Ensure.That(() => contextName).IsNotNullOrWhiteSpace();
+            Ensure.That(() => pageSlippingIdentifier).IsNotNullOrWhiteSpace();
 
             // Initialize
             this.ContextName = contextName;
+            this.PageSlippingIdentifier = pageSlippingIdentifier;
         }
 
         /// <summary>
@@ -87,35 +88,19 @@ namespace Projbook.Core.Markdown
                 }
 
                 // Compute the anchor value
-                string anchor = HttpUtility.UrlEncode(headerContent.ToLower());
-                anchor = string.Format("{0}.{1}", this.ContextName, anchor);
+                string sectionId = HttpUtility.UrlEncode(headerContent.ToLower());
+                sectionId = string.Format("{0}.{1}", this.ContextName, sectionId);
 
                 // Detect anchor conflict
-                if (anchors.ContainsKey(anchor))
+                if (sectionConflict.ContainsKey(sectionId))
                 {
-                    // Compute an index to resolve conflicts
-                    int index;
-                    if (anchorConflicts.ContainsKey(anchor))
-                    {
-                        index = ++anchorConflicts[anchor];
-                    }
-                    else
-                    {
-                        index = anchorConflicts[anchor] = 2;
-                    }
-
                     // Append the index
-                    anchor = string.Format("{0}-{1}", anchor, index);
+                    sectionId = string.Format("{0}-{1}", sectionId, ++sectionConflict[sectionId]);
                 }
 
                 // Write anchor
-                this.Write(string.Format(@"<a class=""anchor"" name=""{0}""></a>", anchor));
-
-                // Keep track of the created anchor
-                anchors[anchor] = new Anchor(
-                    label: headerContent,
-                    level: block.HeaderLevel,
-                    value: anchor);
+                this.Write(string.Format(@"<!--{0} [{1}]({2})-->", this.PageSlippingIdentifier, headerContent, sectionId));
+                sectionConflict[sectionId] = 1;
             }
 
             // Trigger parent rendering for the default html rendering

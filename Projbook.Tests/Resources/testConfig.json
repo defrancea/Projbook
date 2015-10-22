@@ -8,6 +8,10 @@
     {
       "path": "Resources/FullGeneration/Page/secondPage.md",
       "title": "Second page title"
+    },
+    {
+      "path": "Resources/FullGeneration/Page/thirdPage.md",
+      "title": "Third page title"
     }
   ]
 }

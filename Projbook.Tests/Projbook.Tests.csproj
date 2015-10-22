@@ -278,6 +278,9 @@
     <Content Include="Resources\SourcesA\Sample.xml">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Resources\FullGeneration\Page\thirdPage.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\FullGeneration\Page\secondPage.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

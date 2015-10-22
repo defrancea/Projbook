@@ -1,19 +1,18 @@
 ﻿<Title>@Model.Title - PDF</Title>
 @foreach (var page in Model.Pages)
 {
-    <IsHome>@page.IsHome</IsHome>
     <Id>@page.Id</Id>
     <Title>@page.Title</Title>
-    <Content>
-<![CDATA[@page.Content]]>
-    </Content>
-    <Anchors>
-    @foreach (var anchor in page.Anchors)
+	<PreSectionContent><![CDATA[@(page.PreSectionContent)]]></PreSectionContent>
+	<Sections>
+    @foreach (var section in page.Sections)
     {
-        <Anchor>
-            <Value>@anchor.Value</Value>
-            <Level>@anchor.Level</Level>
-            <Label>@anchor.Label</Label>
-        </Anchor>
-    </Anchors>
+        <Section>
+			<Id>@(section.Id)</Id>
+			<Title>@(section.Title)</Title>
+			<Content>
+				<![CDATA[@(section.Content)]]>
+			</Content>
+        </Section>
+	</Sections>
 }

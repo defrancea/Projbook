@@ -10,8 +10,10 @@ using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using RazorEngine.Text;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Projbook.Core
 {
@@ -56,7 +58,19 @@ namespace Projbook.Core
         /// Extractor cache that is bound to a snippet file name.
         /// </summary>
         private Dictionary<string, ISnippetExtractor> extractorCache = new Dictionary<string, ISnippetExtractor>();
-        
+
+        /// <summary>
+        /// Represents a string defining the identifier to separate sections.
+        /// This identifier is injected but the formatted before each section.
+        /// It can then be used as an identifier to split the page content into sections.
+        /// </summary>
+        private string sectionSplittingIdentifier;
+
+        /// <summary>
+        /// The regex to parse sections information injected by the formatter.
+        /// </summary>
+        private Regex regex;
+
         /// <summary>
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
         /// </summary>
@@ -81,6 +95,10 @@ namespace Projbook.Core
             this.ConfigFile = new FileInfo(configFile);
             this.OutputDirectory = new DirectoryInfo(outputDirectoryPath);
             this.snippetExtractorFactory = new SnippetExtractorFactory(this.CsprojFile);
+            this.sectionSplittingIdentifier = Guid.NewGuid().ToString();
+            this.regex = new Regex(
+                string.Format(@"<!--{0} \[([^\]]*)\]\(([^\)]*)\)-->(.+?)(?=<!--{0} |$)", this.sectionSplittingIdentifier),
+                RegexOptions.Compiled | RegexOptions.Singleline);
 
             // Compute and initialize pdf template
             string templateDirectory = Path.GetDirectoryName(templateFilePath);
@@ -117,12 +135,8 @@ namespace Projbook.Core
             
             // Process all pages
             List<Model.Page> pages = new List<Model.Page>();
-            bool first = true;
             foreach (Page page in configuration.Pages)
             {
-                // Declare formatter
-                InjectAnchorHtmlFormatter formatter = null;
-
                 // Compute the page id used as a tab id and page prefix for bookmarking
                 string pageId = page.Path.Replace(".", string.Empty).Replace("/", string.Empty);
 
@@ -194,12 +208,7 @@ namespace Projbook.Core
                 }
 
                 // Setup custom formatter
-                CommonMarkSettings.Default.OutputDelegate =
-                    (d, output, settings) =>
-                    {
-                        formatter = new InjectAnchorHtmlFormatter(pageId, output, settings);
-                        formatter.WriteDocument(d);
-                    };
+                CommonMarkSettings.Default.OutputDelegate = (d, o, s) => new InjectAnchorHtmlFormatter(pageId, this.sectionSplittingIdentifier, o, s).WriteDocument(d);
 
                 // Write to output
                 MemoryStream documentStream = new MemoryStream();
@@ -208,14 +217,47 @@ namespace Projbook.Core
                     CommonMarkConverter.ProcessStage3(document, writer);
                 }
 
+                // Initialize the pre section content
+                string preSectionContent = string.Empty;
+
+                // Retrieve page content
+                string pageContent = System.Text.Encoding.UTF8.GetString(documentStream.ToArray());
+
+                // Build section list
+                List<Model.Section> sections = new List<Model.Section>();
+                Match match = regex.Match(pageContent);
+                bool matched = false;
+                while(match.Success)
+                {
+                    // Initialize the pre section part from 0 to the first matching index for the first matching
+                    if (!matched)
+                    {
+                        preSectionContent = pageContent.Substring(0, match.Groups[0].Index);
+                    }
+
+                    // Create a new section and add to the known list
+                    sections.Add(new Model.Section(
+                        id: match.Groups[1].Value,
+                        title: match.Groups[2].Value,
+                        content: match.Groups[3].Value));
+
+                    // Mode to the next match
+                    match = match.NextMatch();
+                    matched = true;
+                }
+
+                // If nothing has been matching simple consider the whole input as pre section content
+                if (!matched)
+                {
+                    preSectionContent = pageContent;
+                }
+
                 // Add new page
                 pages.Add(new Model.Page(
                     id: pageId,
                     title: page.Title,
-                    isHome: first,
-                    anchor: formatter.Anchors,
-                    content: System.Text.Encoding.UTF8.GetString(documentStream.ToArray())));
-                first = false;
+                    preSectionContent: preSectionContent,
+                    sections: sections.ToArray()));
             }
 
             // Standard generation

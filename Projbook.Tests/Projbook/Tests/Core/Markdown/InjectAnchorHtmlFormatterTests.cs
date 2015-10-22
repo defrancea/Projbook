@@ -41,7 +41,7 @@ namespace Projbook.Tests.Core
             
             // Initialize formatter
             this.Formatter =
-                new InjectAnchorHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default);
+                new InjectAnchorHtmlFormatter("page", "UT", this.StreamWriter, CommonMarkSettings.Default);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Projbook.Tests.Core
         [ExpectedException(typeof(ArgumentException))]
         public void WrongInit(string contextName)
         {
-            new InjectAnchorHtmlFormatter(contextName, this.StreamWriter, CommonMarkSettings.Default);
+            new InjectAnchorHtmlFormatter(contextName, "UT", this.StreamWriter, CommonMarkSettings.Default);
         }
 
         /// <summary>
@@ -69,8 +69,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.IsFalse(output.StartsWith(@"<a class=""anchor"" name="""));
-            Assert.AreEqual(0, this.Formatter.Anchors.Length);
+            Assert.AreEqual(@"<p></p>" + Environment.NewLine, output);
         }
 
         /// <summary>
@@ -85,11 +84,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.IsTrue(output.StartsWith(@"<a class=""anchor"" name=""page.unknown"">"));
-            Assert.AreEqual(1, this.Formatter.Anchors.Length);
-            Assert.AreEqual("page.unknown", this.Formatter.Anchors[0].Value);
-            Assert.AreEqual("unknown", this.Formatter.Anchors[0].Label);
-            Assert.AreEqual(0, this.Formatter.Anchors[0].Level);
+            Assert.AreEqual(string.Format(@"<!--UT [unknown](page.unknown)-->{0}<h0></h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -105,11 +100,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.IsTrue(output.StartsWith(@"<a class=""anchor"" name=""page.title"">"));
-            Assert.AreEqual(1, this.Formatter.Anchors.Length);
-            Assert.AreEqual("page.title", this.Formatter.Anchors[0].Value);
-            Assert.AreEqual("title", this.Formatter.Anchors[0].Label);
-            Assert.AreEqual(0, this.Formatter.Anchors[0].Level);
+            Assert.AreEqual(string.Format(@"<!--UT [title](page.title)-->{0}<h0>title</h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -125,11 +116,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.IsTrue(output.StartsWith(@"<a class=""anchor"" name=""page.unknown"">"));
-            Assert.AreEqual(1, this.Formatter.Anchors.Length);
-            Assert.AreEqual("page.unknown", this.Formatter.Anchors[0].Value);
-            Assert.AreEqual("unknown", this.Formatter.Anchors[0].Label);
-            Assert.AreEqual(42, this.Formatter.Anchors[0].Level);
+            Assert.AreEqual(string.Format(@"<!--UT [unknown](page.unknown)-->{0}<h42></h42>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -145,11 +132,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.IsTrue(output.StartsWith(@"<a class=""anchor"" name=""page.title"">"));
-            Assert.AreEqual(1, this.Formatter.Anchors.Length);
-            Assert.AreEqual("page.title", this.Formatter.Anchors[0].Value);
-            Assert.AreEqual("Title", this.Formatter.Anchors[0].Label);
-            Assert.AreEqual(0, this.Formatter.Anchors[0].Level);
+            Assert.AreEqual(string.Format(@"<!--UT [Title](page.title)-->{0}<h0>Title</h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -165,11 +148,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.IsTrue(output.StartsWith(@"<a class=""anchor"" name=""page.this+is+a+%26+super+content+en+fran%c3%a7ais"">"));
-            Assert.AreEqual(1, this.Formatter.Anchors.Length);
-            Assert.AreEqual("page.this+is+a+%26+super+content+en+fran%c3%a7ais", this.Formatter.Anchors[0].Value);
-            Assert.AreEqual("This is a & super content en Français", this.Formatter.Anchors[0].Label);
-            Assert.AreEqual(0, this.Formatter.Anchors[0].Level);
+            Assert.AreEqual(string.Format(@"<!--UT [This is a & super content en Français](page.this+is+a+%26+super+content+en+fran%c3%a7ais)-->{0}<h0>This is a &amp; super content en Français</h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -190,15 +169,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.IsTrue(output.Contains(@"<a class=""anchor"" name=""page.title"">"));
-            Assert.IsTrue(output.Contains(@"<a class=""anchor"" name=""page.title-2"">"));
-            Assert.AreEqual(2, this.Formatter.Anchors.Length);
-            Assert.AreEqual("page.title", this.Formatter.Anchors[0].Value);
-            Assert.AreEqual("Title", this.Formatter.Anchors[0].Label);
-            Assert.AreEqual(0, this.Formatter.Anchors[0].Level);
-            Assert.AreEqual("page.title-2", this.Formatter.Anchors[1].Value);
-            Assert.AreEqual("Title", this.Formatter.Anchors[1].Label);
-            Assert.AreEqual(0, this.Formatter.Anchors[1].Level);
+            Assert.AreEqual(string.Format(@"<!--UT [Title](page.title)-->{0}<h0>Title<!--UT [Title](page.title-2)-->{0}<h0>Title</h0>{0}</h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -219,15 +190,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.IsTrue(output.Contains(@"<a class=""anchor"" name=""page.one%2ftitle"">"));
-            Assert.IsTrue(output.Contains(@"<a class=""anchor"" name=""page.one%2ftitle-2"">"));
-            Assert.AreEqual(2, this.Formatter.Anchors.Length);
-            Assert.AreEqual("page.one%2ftitle", this.Formatter.Anchors[0].Value);
-            Assert.AreEqual("One/Title", this.Formatter.Anchors[0].Label);
-            Assert.AreEqual(0, this.Formatter.Anchors[0].Level);
-            Assert.AreEqual("page.one%2ftitle-2", this.Formatter.Anchors[1].Value);
-            Assert.AreEqual("One/Title", this.Formatter.Anchors[1].Label);
-            Assert.AreEqual(0, this.Formatter.Anchors[1].Level);
+            Assert.AreEqual(string.Format(@"<!--UT [One/Title](page.one%2ftitle)-->{0}<h0>One/Title<!--UT [One/Title](page.one%2ftitle-2)-->{0}<h0>One/Title</h0>{0}</h0>{0}", Environment.NewLine), output);
         }
 
         // Tests with chained inline header.
@@ -243,11 +206,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.IsTrue(output.StartsWith(@"<a class=""anchor"" name=""page.title+in+many+siblings"">"));
-            Assert.AreEqual(1, this.Formatter.Anchors.Length);
-            Assert.AreEqual("page.title+in+many+siblings", this.Formatter.Anchors[0].Value);
-            Assert.AreEqual("Title in many siblings", this.Formatter.Anchors[0].Label);
-            Assert.AreEqual(0, this.Formatter.Anchors[0].Level);
+            Assert.AreEqual(string.Format(@"<!--UT [Title in many siblings](page.title+in+many+siblings)-->{0}<h0>Title in many siblings</h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
