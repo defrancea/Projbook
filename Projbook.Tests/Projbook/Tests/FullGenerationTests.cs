@@ -40,11 +40,15 @@ namespace Projbook.Tests.Core
             // Read generated pdf ouput
             string generatedPdfContent = this.LoadFile(generatedPdfFileName);
 
+            // Remove line return for cross platform platform testing
+            expectedContent = expectedContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+            expectedPdfContent = expectedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+            generatedContent = generatedContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+            generatedPdfContent = generatedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+
             // Assert result
             Assert.IsNotNull(errors);
             Assert.AreEqual(0, errors.Length);
-            Console.WriteLine(expectedContent);
-            Console.WriteLine(generatedContent);
             Assert.AreEqual(expectedContent, generatedContent);
             Assert.AreEqual(expectedPdfContent, generatedPdfContent);
         }

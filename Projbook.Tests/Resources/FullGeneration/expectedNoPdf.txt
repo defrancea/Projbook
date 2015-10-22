@@ -1,24 +1,20 @@
 ﻿<Title>Test title</Title>
     <Id>ResourcesFullGenerationPagefirstPagemd</Id>
     <Title>First page title</Title>
-	<PreSectionContent><![CDATA[<p>Before section</p>
-]]></PreSectionContent>
+	<PreSectionContent><![CDATA[<p>Before section</p>]]></PreSectionContent>
 	<Sections>
         <Section>
 			<Id>ResourcesFullGenerationPagefirstPagemd-foo</Id>
 			<Title>Foo</Title>
 			<Content>
-				<![CDATA[
-<h1>Foo</h1>
-]]>
+				<![CDATA[<h1>Foo</h1>]]>
 			</Content>
         </Section>
         <Section>
 			<Id>ResourcesFullGenerationPagefirstPagemd-sub-foo</Id>
 			<Title>Sub-foo</Title>
 			<Content>
-				<![CDATA[
-<h2>Sub-foo</h2>]]>
+				<![CDATA[<h2>Sub-foo</h2>]]>
 			</Content>
         </Section>
 	</Sections>
@@ -30,11 +26,10 @@
 			<Id>ResourcesFullGenerationPagesecondPagemd-bar</Id>
 			<Title>Bar</Title>
 			<Content>
-				<![CDATA[
-<h1>Bar</h1>
+				<![CDATA[<h1>Bar</h1>
 <pre><code class="language-csharp">public class Foo
 {
-}</code></pre>]]>
+}</code></pre>]]>
 			</Content>
         </Section>
 	</Sections>
@@ -44,4 +39,3 @@
 ]]></PreSectionContent>
 	<Sections>
 	</Sections>
-
