@@ -7,6 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
+    <!-- Title -->
     <title>@Model.Title</title>
 
     <!-- Bootstrap -->
@@ -15,69 +16,51 @@
 
     <!-- Prism -->
     <script src="Scripts/prism.js"></script>
-    <link href="Content/prism.css" rel="stylesheet"/>
+    <link href="Content/prism.css" rel="stylesheet" />
 
     <!-- Projbook -->
     <link href="Content/projbook.css" rel="stylesheet">
 </head>
 <body role="document">
-    <a class="anchor" name="top"></a>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">@Model.Title</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle active" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pages <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            @foreach (var page in @Model.Pages)
+    <div class="container">
+        <div class="row">
+
+            <!--Nav Bar -->
+            <nav class="col-md-3 bs-docs-sidebar">
+                <ul id="sidebar" class="nav nav-stacked fixed">
+                    @foreach (var page in Model.Pages)
+                    {
+                    <li>
+                        <a href="#@(page.Id)">@(page.Title)</a>
+                        <ul class="nav nav-stacked">
+                            @foreach (var section in page.Sections)
                             {
-                                <li class="@(page.IsHome ? "active" : "")"><a href="#@page.Id" data-toggle="tab">@page.Title</a></li>
+                            <li><a href="#@(section.Id)">@(section.Title)</a></li>
                             }
                         </ul>
                     </li>
+                    }
                 </ul>
-            </div>
-        </div>
-    </nav>
-    <div class="container">
-        <div class="tab-content">
-            @foreach (var page in @Model.Pages)
-            {
-                <div class="tab-pane @(page.IsHome ? "active" : "")" id="@page.Id">
-                    <div class="row">
-                        <div class="col-md-3 sidebar-outer">
-                            <div class="sidebar">
-                                @{
-                                int i = 1;
-                                <ul class="nav nav-list">
-                                    @foreach (var anchor in @page.Anchors)
-                                    {
-                                    <li>
-                                        <a href="#@anchor.Value">@(new string('-', anchor.Level - 1).Replace("-", "&nbsp;&nbsp;")) @anchor.Label</a>
-                                    </li>
-                                    }
-                                </ul>
-                                }
-                            </div>
-                        </div>
-                        <div class="col-md-9">
-                            <div class="page-header">
-                                <h1>@page.Title</h1>
-                            </div>
-                            @page.Content
-                        </div>
+            </nav>
+
+            <!--Main Content -->
+            <div class="col-md-9">
+                @foreach (var page in Model.Pages)
+                {
+                <section id="@(page.Id)">
+                    <div class="page-header">
+                        <h1>@(page.Title)</h1>
                     </div>
-                </div>
-            }
+                    @(page.PreSectionContent)
+                    @foreach (var section in page.Sections)
+                    {
+                    <div id="@(section.Id)">
+                        @(section.Content)
+                    </div>
+                    }
+                </section>
+                }
+            </div>
         </div>
     </div>
     <script src="Scripts/jquery-1.9.1.min.js"></script>
