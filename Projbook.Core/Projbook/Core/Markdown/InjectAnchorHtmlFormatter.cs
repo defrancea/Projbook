@@ -87,7 +87,8 @@ namespace Projbook.Core.Markdown
 
                 // Compute the anchor value
                 string sectionId = HttpUtility.UrlEncode(headerContent.ToLower());
-                sectionId = string.Format("{0}.{1}", this.ContextName, sectionId);
+                sectionId = string.Format("{0}-{1}", this.ContextName, sectionId)
+                    .Replace('+', '-');
 
                 // Detect anchor conflict
                 if (sectionConflict.ContainsKey(sectionId))

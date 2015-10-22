@@ -84,7 +84,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [unknown](page.unknown)-->{0}<h0></h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<!--UT [unknown](page-unknown)-->{0}<h0></h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [title](page.title)-->{0}<h0>title</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<!--UT [title](page-title)-->{0}<h0>title</h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [unknown](page.unknown)-->{0}<h42></h42>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<!--UT [unknown](page-unknown)-->{0}<h42></h42>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [Title](page.title)-->{0}<h0>Title</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<!--UT [Title](page-title)-->{0}<h0>Title</h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [This is a & super content en Français](page.this+is+a+%26+super+content+en+fran%c3%a7ais)-->{0}<h0>This is a &amp; super content en Français</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<!--UT [This is a & super content en Français](page-this-is-a-%26-super-content-en-fran%c3%a7ais)-->{0}<h0>This is a &amp; super content en Français</h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [Title](page.title)-->{0}<h0>Title<!--UT [Title](page.title-2)-->{0}<h0>Title</h0>{0}</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<!--UT [Title](page-title)-->{0}<h0>Title<!--UT [Title](page-title-2)-->{0}<h0>Title</h0>{0}</h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [One/Title](page.one%2ftitle)-->{0}<h0>One/Title<!--UT [One/Title](page.one%2ftitle-2)-->{0}<h0>One/Title</h0>{0}</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<!--UT [One/Title](page-one%2ftitle)-->{0}<h0>One/Title<!--UT [One/Title](page-one%2ftitle-2)-->{0}<h0>One/Title</h0>{0}</h0>{0}", Environment.NewLine), output);
         }
 
         // Tests with chained inline header.
@@ -206,7 +206,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [Title in many siblings](page.title+in+many+siblings)-->{0}<h0>Title in many siblings</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<!--UT [Title in many siblings](page-title-in-many-siblings)-->{0}<h0>Title in many siblings</h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>

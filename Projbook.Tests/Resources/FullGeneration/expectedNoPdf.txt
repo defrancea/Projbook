@@ -5,8 +5,8 @@
 ]]></PreSectionContent>
 	<Sections>
         <Section>
-			<Id>Foo</Id>
-			<Title>ResourcesFullGenerationPagefirstPagemd.foo</Title>
+			<Id>ResourcesFullGenerationPagefirstPagemd-foo</Id>
+			<Title>Foo</Title>
 			<Content>
 				<![CDATA[
 <h1>Foo</h1>
@@ -14,8 +14,8 @@
 			</Content>
         </Section>
         <Section>
-			<Id>Sub-foo</Id>
-			<Title>ResourcesFullGenerationPagefirstPagemd.sub-foo</Title>
+			<Id>ResourcesFullGenerationPagefirstPagemd-sub-foo</Id>
+			<Title>Sub-foo</Title>
 			<Content>
 				<![CDATA[
 <h2>Sub-foo</h2>]]>
@@ -27,8 +27,8 @@
 	<PreSectionContent><![CDATA[]]></PreSectionContent>
 	<Sections>
         <Section>
-			<Id>Bar</Id>
-			<Title>ResourcesFullGenerationPagesecondPagemd.bar</Title>
+			<Id>ResourcesFullGenerationPagesecondPagemd-bar</Id>
+			<Title>Bar</Title>
 			<Content>
 				<![CDATA[
 <h1>Bar</h1>

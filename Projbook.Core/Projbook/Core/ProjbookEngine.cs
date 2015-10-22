@@ -237,8 +237,8 @@ namespace Projbook.Core
 
                     // Create a new section and add to the known list
                     sections.Add(new Model.Section(
-                        id: match.Groups[1].Value,
-                        title: match.Groups[2].Value,
+                        id: match.Groups[2].Value,
+                        title: match.Groups[1].Value,
                         content: match.Groups[3].Value));
 
                     // Mode to the next match
