@@ -1,0 +1,13 @@
+﻿{
+  "title": "Sample document",
+  "pages": [
+    {
+      "title": "First page",
+      "path": "Page/page1.md"
+    },
+    {
+      "title": "Second page",
+      "path": "Page/page2.md"
+    }
+  ]
+}

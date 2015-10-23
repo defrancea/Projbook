@@ -1,0 +1,17 @@
+﻿{
+  "title": "Test title",
+  "pages": [
+    {
+      "path": "Resources/FullGeneration/Page/firstPage.md",
+      "title": "First page title"
+    },
+    {
+      "path": "Resources/FullGeneration/Page/secondPage.md",
+      "title": "Second page title"
+    },
+    {
+      "path": "Resources/FullGeneration/Page/thirdPage.md",
+      "title": "Third page title"
+    }
+  ]
+}

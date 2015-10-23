@@ -1,0 +1,13 @@
+﻿{
+  "title": "Projbook",
+  "pages": [
+    {
+      "title": "Jump start",
+      "path": "Page/jumpstart.md"
+    },
+    {
+      "title": "Reference",
+      "path": "Page/reference.md"
+    }
+  ]
+}

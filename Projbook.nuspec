@@ -11,35 +11,37 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Generate project documentation using Markdown and allow integrating code snippet from the source code being built. Code snippet are always up-to-date.</description>
     <summary>Generate project documentation using Markdown and allow integrating code snippet from the source code being built. Code snippet are always up-to-date.</summary>
+    <tags>Snippet PDF Markdown Documentation</tags>
+    <iconUrl>https://raw.githubusercontent.com/defrancea/Projbook/master/Projbook.png</iconUrl>
     <dependencies>
       <dependency id="bootstrap" version="3.3.5" />
       <dependency id="wkhtmltopdf.msvc.64.exe" version="0.12.2.5" />
     </dependencies>
   </metadata>
   <files>
-    <file src="Projbook.Target/Projbook.targets" target="build" exclude="" />
-    <file src="Projbook.Target/Projbook.props" target="build" exclude="" />
-    <file src="Projbook.Target/Install.ps1" target="tools" exclude="" />
-    <file src="Projbook.Target/bin/Release/CommonMark.dll" target="tools" exclude="" />
-    <file src="Projbook.Target/bin/Release/EnsureThat.vDinasour.dll" target="tools" exclude="" />
-    <file src="Projbook.Target/bin/Release/Microsoft.CodeAnalysis.CSharp.dll" target="tools" exclude="" />
-    <file src="Projbook.Target/bin/Release/Microsoft.CodeAnalysis.dll" target="tools" exclude="" />
-    <file src="Projbook.Target/bin/Release/Newtonsoft.Json.dll" target="tools" exclude="" />
-    <file src="Projbook.Target/bin/Release/Projbook.Core.dll" target="tools" exclude="" />
-    <file src="Projbook.Target/bin/Release/Projbook.Target.dll" target="tools" exclude="" />
-    <file src="Projbook.Target/bin/Release/RazorEngine.dll" target="tools" exclude="" />
-    <file src="Projbook.Target/bin/Release/System.Collections.Immutable.dll" target="tools" exclude="" />
-    <file src="Projbook.Target/bin/Release/System.Reflection.Metadata.dll" target="tools" exclude="" />
-    <file src="Projbook.Target/bin/Release/System.Web.Razor.dll" target="tools" exclude="" />
-    <file src="Projbook.Example/projbook.json" target="content" exclude="" />
-    <file src="Projbook.Example/template.html" target="content" exclude="" />
-    <file src="Projbook.Example/template-pdf.html" target="content" exclude="" />
-    <file src="Projbook.Example/Content/prism.css" target="content/Content" exclude="" />
-    <file src="Projbook.Example/Content/projbook.css" target="content/Content" exclude="" />
-    <file src="Projbook.Example/Scripts/prism.js" target="content/Scripts" exclude="" />
-    <file src="Projbook.Example/Scripts/projbook.js" target="content/Scripts" exclude="" />
-    <file src="Projbook.Example/Page/page1.md" target="content/Page" exclude="" />
-    <file src="Projbook.Example/Page/page2.md" target="content/Page" exclude="" />
-    <file src="Projbook.Example/Code/SampleClass.cs" target="content/Code" exclude="" />
+    <file src="resources/Projbook.targets" target="build" exclude="" />
+    <file src="resources/Projbook.props" target="build" exclude="" />
+    <file src="resources/Install.ps1" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/CommonMark.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/EnsureThat.vDinasour.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/Microsoft.CodeAnalysis.CSharp.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/Microsoft.CodeAnalysis.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/Newtonsoft.Json.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/Projbook.Core.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/Projbook.Target.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/RazorEngine.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/System.Collections.Immutable.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/System.Reflection.Metadata.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/System.Web.Razor.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Example/projbook.json" target="content" exclude="" />
+    <file src="src/Projbook.Example/template.html" target="content" exclude="" />
+    <file src="src/Projbook.Example/template-pdf.html" target="content" exclude="" />
+    <file src="src/Projbook.Example/Content/prism.css" target="content/Content" exclude="" />
+    <file src="src/Projbook.Example/Content/projbook.css" target="content/Content" exclude="" />
+    <file src="src/Projbook.Example/Scripts/prism.js" target="content/Scripts" exclude="" />
+    <file src="src/Projbook.Example/Scripts/projbook.js" target="content/Scripts" exclude="" />
+    <file src="src/Projbook.Example/Page/page1.md" target="content/Page" exclude="" />
+    <file src="src/Projbook.Example/Page/page2.md" target="content/Page" exclude="" />
+    <file src="src/Projbook.Example/Code/SampleClass.cs" target="content/Code" exclude="" />
   </files>
 </package>
