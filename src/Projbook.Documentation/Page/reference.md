@@ -58,4 +58,4 @@ The member matching follows this syntax `csharp[<fileName>] <xpath>`.
 * `<xpath>`: The XPath query performing the member selection, see [XPath reference](https://msdn.microsoft.com/en-us/library/ms256115)
 
 ## Page source
-Have a look to this documentation page [source](https://raw.githubusercontent.com/defrancea/Projbook/master/Projbook.Documentation/Page/reference.md).
+Have a look to this documentation page [source](https://raw.githubusercontent.com/defrancea/Projbook/master/src/Projbook.Documentation/Page/reference.md).
