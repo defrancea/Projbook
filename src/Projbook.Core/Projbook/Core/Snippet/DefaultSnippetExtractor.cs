@@ -70,7 +70,8 @@ namespace Projbook.Core.Snippet
             // Raise an error if cannot find the file
             if (null == fileInfo)
             {
-                throw new SnippetExtractionException("Cannot find file in any referenced project", filePath);
+                string availablePath = string.Join(";", this.SourceDictionaries.Select(x => x.FullName));
+                throw new SnippetExtractionException(string.Format("Cannot find file in any referenced project ({0})", availablePath), filePath);
             }
 
             // Load the file content
