@@ -57,6 +57,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Page\template.md" />
     <None Include="Page\reference.md" />
     <None Include="Page\jumpstart.md" />
     <None Include="projbook.json">
@@ -65,6 +66,10 @@
     <None Include="Scripts\jquery-1.9.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Projbook.Core\Projbook.Core.csproj">
+      <Project>{f0cd4edc-5873-4d81-9458-7cfba3e49fe5}</Project>
+      <Name>Projbook.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Projbook.Target\Projbook.Target.csproj">
       <Project>{52e19351-ba8d-493a-bc28-de7e13c4c473}</Project>
       <Name>Projbook.Target</Name>

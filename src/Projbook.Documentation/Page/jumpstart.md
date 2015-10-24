@@ -61,5 +61,5 @@ It is also possible to extract xml content by using XPath as query language, for
 ```xml[Projbook.Documentation.csproj] //Import
 ```
 
-## Page source
-Have a look to this documentation page [source](https://raw.githubusercontent.com/defrancea/Projbook/master/src/Projbook.Documentation/Page/jumpstart.md).
+## Source example
+Have a look to this documentation pages as example [source](https://github.com/defrancea/Projbook/tree/master/src/Projbook.Documentation/Page)

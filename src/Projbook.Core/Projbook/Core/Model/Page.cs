@@ -23,7 +23,7 @@ namespace Projbook.Core.Model
         public string PreSectionContent { get; private set; }
 
         /// <summary>
-        /// The page content.
+        /// The page sections.
         /// </summary>
         public Section[] Sections { get; private set; }
 
