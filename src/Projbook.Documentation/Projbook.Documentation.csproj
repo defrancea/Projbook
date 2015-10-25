@@ -72,10 +72,6 @@
       <Project>{f0cd4edc-5873-4d81-9458-7cfba3e49fe5}</Project>
       <Name>Projbook.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Projbook.Target\Projbook.Target.csproj">
-      <Project>{52e19351-ba8d-493a-bc28-de7e13c4c473}</Project>
-      <Name>Projbook.Target</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
