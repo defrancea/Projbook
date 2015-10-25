@@ -84,7 +84,7 @@ namespace Projbook.Core.Snippet
                 .Elements(msbuildNamespace + "ItemGroup")
                 .Elements(msbuildNamespace + "ProjectReference")
                 .Select(x => Path.GetDirectoryName(x.Attribute("Include").Value))
-                .Select(x => new DirectoryInfo(Path.GetFullPath(Path.Combine(projectDirectory.FullName, x.Replace(@"\", "/")))));
+                .Select(x => new DirectoryInfo(Path.GetFullPath(Path.Combine(projectDirectory.FullName, x))));
             extractedSourceDirectories.AddRange(referenceDirectories);
 
             // Returne the extracted directories
