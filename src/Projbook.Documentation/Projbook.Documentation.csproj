@@ -66,12 +66,6 @@
     <None Include="Scripts\jquery-1.9.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Projbook.Core\Projbook.Core.csproj">
-      <Project>{f0cd4edc-5873-4d81-9458-7cfba3e49fe5}</Project>
-      <Name>Projbook.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
