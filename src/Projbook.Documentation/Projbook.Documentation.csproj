@@ -118,5 +118,11 @@
     <Error Condition="!Exists('..\packages\Projbook.0.1.17\build\Projbook.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Projbook.0.1.17\build\Projbook.props'))" />
     <Error Condition="!Exists('..\packages\Projbook.0.1.17\build\Projbook.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Projbook.0.1.17\build\Projbook.targets'))" />
   </Target>
-  <Import Project="..\packages\Projbook.0.1.17\build\Projbook.targets" Condition="Exists('..\packages\Projbook.0.1.17\build\Projbook.targets')" />
+  <UsingTask TaskName="Projbook" AssemblyFile="..\packages\Projbook.0.1.17\tools\Projbook.Target.dll" />
+  <ImportGroup />
+  <Target Name="AfterBuild">
+    <Message Text="$(ProjbookBoundProject)" Importance="high" />
+    <Projbook ProjectPath="$(ProjbookBoundProject)" TemplateFile="$(TargetDir)template.html" ConfigurationFile="$(TargetDir)projbook.json" OutputDirectory="$(TargetDir)" />
+    <Exec Command="..\packages\wkhtmltopdf.msvc.64.exe.0.12.2.5\tools\wkhtmltopdf.exe $(TargetDir)template-pdf-generated.html $(TargetDir)template-pdf-generated.pdf" ContinueOnError="true" />
+  </Target>
 </Project>
