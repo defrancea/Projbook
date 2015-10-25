@@ -3,8 +3,7 @@ using Projbook.Core.Snippet.CSharp;
 using Projbook.Core.Snippet.Xml;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Xml.Linq;
+using System.Xml;
 
 namespace Projbook.Core.Snippet
 {
@@ -77,15 +76,17 @@ namespace Projbook.Core.Snippet
             extractedSourceDirectories.Add(projectDirectory);
 
             // Extract project reference path
-            XNamespace msbuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
-            XDocument csprojDocument = XDocument.Load(csprojFile.FullName);
-            IEnumerable<DirectoryInfo> referenceDirectories = csprojDocument
-                .Element(msbuildNamespace + "Project")
-                .Elements(msbuildNamespace + "ItemGroup")
-                .Elements(msbuildNamespace + "ProjectReference")
-                .Select(x => Path.GetDirectoryName(x.Attribute("Include").Value))
-                .Select(x => new DirectoryInfo(Path.GetFullPath(Path.Combine(projectDirectory.FullName, x))));
-            extractedSourceDirectories.AddRange(referenceDirectories);
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.Load(csprojFile.FullName);
+            XmlNamespaceManager xmlNamespaceManager = new XmlNamespaceManager(xmlDocument.NameTable);
+            xmlNamespaceManager.AddNamespace("msbuild", "http://schemas.microsoft.com/developer/msbuild/2003");
+            XmlNodeList xmlNodes = xmlDocument.SelectNodes("//msbuild:ProjectReference", xmlNamespaceManager);
+            for (int i = 0; i < xmlNodes.Count; ++i)
+            {
+                XmlNode xmlNode = xmlNodes.Item(i);
+                string includeValue = xmlNode.Attributes["Include"].Value;
+                extractedSourceDirectories.Add(new DirectoryInfo(Path.GetFullPath(Path.Combine(projectDirectory.FullName, Path.GetDirectoryName(includeValue)))));
+            }
 
             // Returne the extracted directories
             return extractedSourceDirectories.ToArray();
