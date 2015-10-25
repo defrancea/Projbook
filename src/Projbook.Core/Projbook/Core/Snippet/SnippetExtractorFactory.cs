@@ -85,7 +85,7 @@ namespace Projbook.Core.Snippet
             {
                 XmlNode xmlNode = xmlNodes.Item(i);
                 string includeValue = xmlNode.Attributes["Include"].Value;
-                extractedSourceDirectories.Add(new DirectoryInfo(Path.GetFullPath(Path.Combine(projectDirectory.FullName, Path.GetDirectoryName(includeValue)))));
+                extractedSourceDirectories.Add(new DirectoryInfo(Path.GetDirectoryName(Path.GetFullPath(Path.Combine(projectDirectory.FullName, includeValue)))));
             }
 
             // Returne the extracted directories
