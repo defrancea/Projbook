@@ -85,7 +85,15 @@ namespace Projbook.Core.Snippet
             {
                 XmlNode xmlNode = xmlNodes.Item(i);
                 string includeValue = xmlNode.Attributes["Include"].Value;
-                extractedSourceDirectories.Add(new DirectoryInfo(Path.GetDirectoryName(Path.GetFullPath(Path.Combine(projectDirectory.FullName, includeValue)))));
+                string combinedPath = Path.Combine(projectDirectory.FullName, includeValue);
+
+                // The combinedPath can contains both forward and backslash path chunk.
+                // In linux environment we can end up having "/..\" in the path which make the GetDirectoryName method bugging (returns empty).
+                // For this reason we need to make sure that the combined path uses forward slashes
+                combinedPath = combinedPath.Replace(@"\", "/");
+
+                // Add the combined path
+                extractedSourceDirectories.Add(new DirectoryInfo(Path.GetDirectoryName(Path.GetFullPath(combinedPath))));
             }
 
             // Returne the extracted directories
