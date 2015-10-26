@@ -15,17 +15,24 @@ The model is usable using the `@Model` variable using razor and contains top lev
 * `Model.Pages`: An array of Page (mode details below)
 
 ### Pages
-The `Page` class contains following members that can be used in templates:
-* Id
-* Title
-* PreSectionContent
-* Sections
+The `Page` class contains following members that can be used in templates
+```csharp[Projbook/Core/Model/Page.cs] Page.Id
+```
+```csharp[Projbook/Core/Model/Page.cs] Page.Title
+```
+```csharp[Projbook/Core/Model/Page.cs] Page.PreSectionContent
+```
+```csharp[Projbook/Core/Model/Page.cs] Page.Sections
+```
 
 ### Sections
-The `Section` class contains following members that can be used in templates:
-* Id
-* Title
-* Content
+The `Section` class contains following members that can be used in templates
+```csharp[Projbook/Core/Model/Section.cs] Section.Id
+```
+```csharp[Projbook/Core/Model/Section.cs] Section.Title
+```
+```csharp[Projbook/Core/Model/Section.cs] Section.Content
+```
 
 ## Source example
 Have a look to this documentation template [source](https://github.com/defrancea/Projbook/blob/master/src/Projbook.Documentation/template.html)
