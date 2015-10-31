@@ -193,7 +193,9 @@ namespace Projbook.Tests.Core
             Assert.AreEqual(string.Format(@"<!--UT [One/Title](page-one%2ftitle)-->{0}<h0>One/Title<!--UT [One/Title](page-one%2ftitle-2)-->{0}<h0>One/Title</h0>{0}</h0>{0}", Environment.NewLine), output);
         }
 
-        // Tests with chained inline header.
+        /// <summary>
+        /// Tests with chained inline header.
+        /// </summary>
         [Test]
         [TestCase]
         public void WriteChainedInlineHeader()
@@ -207,6 +209,134 @@ namespace Projbook.Tests.Core
 
             // Assert
             Assert.AreEqual(string.Format(@"<!--UT [Title in many siblings](page-title-in-many-siblings)-->{0}<h0>Title in many siblings</h0>{0}", Environment.NewLine), output);
+        }
+
+        /// <summary>
+        /// Tests with simple table.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WriteSimpleTable()
+        {
+            // Process
+            Block block = new Block(BlockTag.Paragraph, 0);
+            block.InlineContent = new Inline("header 1 | header 2");
+            block.InlineContent.NextSibling = new Inline("---- | ----");
+            block.InlineContent.NextSibling.NextSibling = new Inline("value 1 | value 2");
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"<table class=""table""><tr><th class=""text-left"">header 1</th><th class=""text-left"">header 2</th></tr><tr><td class=""text-left"">value 1</td><td class=""text-left"">value 2</td></tr></table></p>{0}", Environment.NewLine), output);
+        }
+
+        /// <summary>
+        /// Tests with simple table.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WriteManyRowTable()
+        {
+            // Process
+            Block block = new Block(BlockTag.Paragraph, 0);
+            block.InlineContent = new Inline("header 1 | header 2");
+            block.InlineContent.NextSibling = new Inline("---- | ----");
+            block.InlineContent.NextSibling.NextSibling = new Inline("value 1 | value 2");
+            block.InlineContent.NextSibling.NextSibling.NextSibling = new Inline("value 3 | value 4");
+            block.InlineContent.NextSibling.NextSibling.NextSibling.NextSibling = new Inline("value 5 | value 6");
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"<table class=""table""><tr><th class=""text-left"">header 1</th><th class=""text-left"">header 2</th></tr><tr><td class=""text-left"">value 1</td><td class=""text-left"">value 2</td></tr><tr><td class=""text-left"">value 3</td><td class=""text-left"">value 4</td></tr><tr><td class=""text-left"">value 5</td><td class=""text-left"">value 6</td></tr></table></p>{0}", Environment.NewLine), output);
+        }
+
+        /// <summary>
+        /// Tests with table with border.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WriteBorderedTable()
+        {
+            // Process
+            Block block = new Block(BlockTag.Paragraph, 0);
+            block.InlineContent = new Inline("| header 1 | header 2 |");
+            block.InlineContent.NextSibling = new Inline("| ---- | ---- |");
+            block.InlineContent.NextSibling.NextSibling = new Inline("| value 1 | value 2 |");
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"<table class=""table""><tr><th class=""text-left"">header 1</th><th class=""text-left"">header 2</th></tr><tr><td class=""text-left"">value 1</td><td class=""text-left"">value 2</td></tr></table></p>{0}", Environment.NewLine), output);
+        }
+
+        /// <summary>
+        /// Tests with table align.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WriteTableAlign()
+        {
+            // Process
+            Block block = new Block(BlockTag.Paragraph, 0);
+            block.InlineContent = new Inline("| header 1 | header 2 | header 3 |");
+            block.InlineContent.NextSibling = new Inline("| :--- | :--: | ---: |");
+            block.InlineContent.NextSibling.NextSibling = new Inline("| value 1 | value 2 | value 3 |");
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"<table class=""table""><tr><th class=""text-left"">header 1</th><th class=""text-left"">header 2</th><th class=""text-left"">header 3</th></tr><tr><td class=""text-left"">value 1</td><td class=""text-center"">value 2</td><td class=""text-right"">value 3</td></tr></table></p>{0}", Environment.NewLine), output);
+        }
+
+        /// <summary>
+        /// Tests table with partial delimited.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WritePartialDelimiterTable()
+        {
+            // Process
+            Block block = new Block(BlockTag.Paragraph, 0);
+            block.InlineContent = new Inline("| header 1 | header 2 |");
+            block.InlineContent.NextSibling = new Inline("| ----");
+            block.InlineContent.NextSibling.NextSibling = new Inline("| value 1 | value 2 |");
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"<table class=""table""><tr><th class=""text-left"">header 1</th><th class=""text-left"">header 2</th></tr><tr><td class=""text-left"">value 1</td><td class=""text-left"">value 2</td></tr></table></p>{0}", Environment.NewLine), output);
+        }
+
+        /// <summary>
+        /// Tests with table with one column.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WriteOneColumnTable()
+        {
+            // Process
+            Block block = new Block(BlockTag.Paragraph, 0);
+            block.InlineContent = new Inline("| header 1");
+            block.InlineContent.NextSibling = new Inline("| ----");
+            block.InlineContent.NextSibling.NextSibling = new Inline("| value 1");
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"<table class=""table""><tr><th class=""text-left"">header 1</th></tr><tr><td class=""text-left"">value 1</td></tr></table></p>{0}", Environment.NewLine), output);
+        }
+
+        /// <summary>
+        /// Tests with table that is not one.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WritNoTable()
+        {
+            // Process
+            Block block = new Block(BlockTag.Paragraph, 0);
+            block.InlineContent = new Inline("header 1");
+            block.InlineContent.NextSibling = new Inline("----");
+            block.InlineContent.NextSibling.NextSibling = new Inline("value 1");
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"<p>header 1----value 1</p>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
