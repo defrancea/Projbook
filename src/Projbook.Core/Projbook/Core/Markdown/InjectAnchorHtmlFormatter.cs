@@ -2,9 +2,12 @@
 using CommonMark.Formatters;
 using CommonMark.Syntax;
 using EnsureThat;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace Projbook.Core.Markdown
@@ -33,6 +36,11 @@ namespace Projbook.Core.Markdown
         /// Everytime we meet a conflict, the section generation will increment the index and use it as suffix.
         /// </summary>
         private Dictionary<string, int> sectionConflict = new Dictionary<string, int>();
+
+        /// <summary>
+        /// Table delimiter using dashes as separator.
+        /// </summary>
+        private static Regex dashDelimiter = new Regex("^(:?)-+(:?)$", RegexOptions.Compiled);
 
         /// <summary>
         /// Initializes a new instance of <see cref="InjectAnchorHtmlFormatter"/>.
@@ -102,6 +110,80 @@ namespace Projbook.Core.Markdown
                 sectionConflict[sectionId] = 1;
             }
 
+            // Read all paragraph inline strings in order to make table detectable
+            List<string> tableParts = new List<string>();
+            List<string[]> splittedTableParts = new List<string[]>();
+            if (isOpening && null != block && block.Tag == BlockTag.Paragraph)
+            {
+                Inline inline = block.InlineContent;
+                while (null != inline)
+                {
+                    if (inline.Tag == InlineTag.String)
+                    {
+                        tableParts.Add(inline.LiteralContent);
+                        splittedTableParts.Add(inline.LiteralContent.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()).ToArray());
+                    }
+                    inline = inline.NextSibling;
+                }
+            }
+            
+            // Detect tables
+            Match[] matchingDelimiters = null;
+            bool isTable = false;
+            if (3 <= splittedTableParts.Count && splittedTableParts[1].All(x => !string.IsNullOrWhiteSpace(x)) && (splittedTableParts[1].Length >= 2 || tableParts[1].Contains('|')))
+            {
+                // Match dashes
+                matchingDelimiters = splittedTableParts[1].Select(x => dashDelimiter.Match(x)).ToArray();
+                isTable = matchingDelimiters.All(x => x.Success);
+            }
+            
+            // Process table rendering
+            if (isTable)
+            {
+                // Remove the delimiter
+                splittedTableParts.RemoveAt(1);
+
+                // Render table
+                this.Write(@"<table class=""table"">");
+                for (int i = 0; i < splittedTableParts.Count; ++i)
+                {
+                    // Render rows
+                    this.Write("<tr>");
+
+                    // Render cells
+                    for (int j = 0; j < splittedTableParts[i].Length; ++j)
+                    {
+                        // Determine text alignment
+                        string style = "text-left";
+                        if (matchingDelimiters.Length > j && 0 < i)
+                        {
+                            Match match = matchingDelimiters[j];
+                            if (":" == match.Groups[1].Value && ":" == match.Groups[2].Value)
+                            {
+                                style = "text-center";
+                            }
+                            else if ("" == match.Groups[1].Value && ":" == match.Groups[2].Value)
+                            {
+                                style = "text-right";
+                            }
+                        }
+
+                        // Generate markup
+                        string tag = 0 == i ? "th" : "td";
+                        this.Write(string.Format(@"<{0} class=""{1}"">", tag, style));
+                        this.Write(splittedTableParts[i][j]);
+                        this.Write(string.Format("</{0}>", tag));
+                    }
+
+                    this.Write("</tr>");
+                }
+                this.Write("</table>");
+
+                // Report rendering finished
+                ignoreChildNodes = true;
+                return;
+            }
+            
             // Trigger parent rendering for the default html rendering
             base.WriteBlock(block, isOpening, isClosing, out ignoreChildNodes);
         }
