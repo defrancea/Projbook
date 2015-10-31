@@ -9,10 +9,10 @@ using System.Text;
 namespace Projbook.Tests.Core
 {
     /// <summary>
-    /// Tests <see cref="InjectAnchorHtmlFormatter"/>.
+    /// Tests <see cref="ProjbookHtmlFormatter"/>.
     /// </summary>
     [TestFixture]
-    public class InjectAnchorHtmlFormatterTests
+    public class ProjbookHtmlFormatterTests
     {
         /// <summary>
         /// The memory stream where the formatting is produced.
@@ -27,7 +27,7 @@ namespace Projbook.Tests.Core
         /// <summary>
         /// The tested formatter.
         /// </summary>
-        public InjectAnchorHtmlFormatter Formatter { get; private set; }
+        public ProjbookHtmlFormatter Formatter { get; private set; }
 
         /// <summary>
         /// Initializes the test with fresh memory stream and formatter.
@@ -41,7 +41,7 @@ namespace Projbook.Tests.Core
             
             // Initialize formatter
             this.Formatter =
-                new InjectAnchorHtmlFormatter("page", "UT", this.StreamWriter, CommonMarkSettings.Default);
+                new ProjbookHtmlFormatter("page", "UT", this.StreamWriter, CommonMarkSettings.Default);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Projbook.Tests.Core
         [ExpectedException(typeof(ArgumentException))]
         public void WrongInit(string contextName)
         {
-            new InjectAnchorHtmlFormatter(contextName, "UT", this.StreamWriter, CommonMarkSettings.Default);
+            new ProjbookHtmlFormatter(contextName, "UT", this.StreamWriter, CommonMarkSettings.Default);
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Projbook.Tests.Core
         }
 
         /// <summary>
-        /// Tests with conflicting anchor.
+        /// Tests with conflicting title.
         /// </summary>
         [Test]
         [TestCase]
@@ -173,7 +173,7 @@ namespace Projbook.Tests.Core
         }
 
         /// <summary>
-        /// Tests with conflicting anchor.
+        /// Tests with conflicting title.
         /// </summary>
         [Test]
         [TestCase]

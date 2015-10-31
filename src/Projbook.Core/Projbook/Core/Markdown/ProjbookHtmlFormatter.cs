@@ -13,10 +13,9 @@ using System.Web;
 namespace Projbook.Core.Markdown
 {
     /// <summary>
-    /// Implements markdown formatter for CommonMark.Net that inject anchor before each header.
-    /// During the injection the formatter collect injected anchor in order in order to be able to generate a summary later.
+    /// Implements markdown formatter for CommonMark.Net that customize rendering for Projbook integration.
     /// </summary>
-    public class InjectAnchorHtmlFormatter : HtmlFormatter
+    public class ProjbookHtmlFormatter : HtmlFormatter
     {
         /// <summary>
         /// Simple string identifying the formatting context.
@@ -43,13 +42,13 @@ namespace Projbook.Core.Markdown
         private static Regex dashDelimiter = new Regex("^(:?)-+(:?)$", RegexOptions.Compiled);
 
         /// <summary>
-        /// Initializes a new instance of <see cref="InjectAnchorHtmlFormatter"/>.
+        /// Initializes a new instance of <see cref="ProjbookHtmlFormatter"/>.
         /// </summary>
         /// <param name="contextName">Initializes the required <see cref="ContextName"/></param>
         /// <param name="pageSlippingIdentifier">Initializes the required <see cref="PageSplittingIdentifier"/></param>
         /// <param name="target">Initializes the required text writter used as output.</param>
         /// <param name="settings">Initializes the required common mark settings used by the formatting.</param>
-        public InjectAnchorHtmlFormatter(string contextName, string pageSlippingIdentifier, TextWriter target, CommonMarkSettings settings)
+        public ProjbookHtmlFormatter(string contextName, string pageSlippingIdentifier, TextWriter target, CommonMarkSettings settings)
             : base(target, settings)
         {
             // Data validation

@@ -267,7 +267,7 @@
     </Content>
     <Compile Include="Resources\FullGeneration\Source\Foo.cs" />
     <Compile Include="Projbook\Tests\Core\ConfigurationLoaderTests.cs" />
-    <Compile Include="Projbook\Tests\Core\Markdown\InjectAnchorHtmlFormatterTests.cs" />
+    <Compile Include="Projbook\Tests\Core\Markdown\ProjbookHtmlFormatterTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\AbstractSnippetTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\SnippetExtractorFactoryTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\CSharpSnippetExtractorTests.cs" />

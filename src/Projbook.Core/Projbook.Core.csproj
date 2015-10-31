@@ -83,7 +83,7 @@
   <ItemGroup>
     <Compile Include="Projbook\Core\ConfigurationLoader.cs" />
     <Compile Include="Projbook\Core\Exception\SnippetExtractionException.cs" />
-    <Compile Include="Projbook\Core\Markdown\InjectAnchorHtmlFormatter.cs" />
+    <Compile Include="Projbook\Core\Markdown\ProjbookHtmlFormatter.cs" />
     <Compile Include="Projbook\Core\Model\Configuration\Page.cs" />
     <Compile Include="Projbook\Core\Model\GenerationError.cs" />
     <Compile Include="Projbook\Core\Model\Section.cs" />

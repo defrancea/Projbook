@@ -208,7 +208,7 @@ namespace Projbook.Core
                 }
 
                 // Setup custom formatter
-                CommonMarkSettings.Default.OutputDelegate = (d, o, s) => new InjectAnchorHtmlFormatter(pageId, this.sectionSplittingIdentifier, o, s).WriteDocument(d);
+                CommonMarkSettings.Default.OutputDelegate = (d, o, s) => new ProjbookHtmlFormatter(pageId, this.sectionSplittingIdentifier, o, s).WriteDocument(d);
 
                 // Write to output
                 MemoryStream documentStream = new MemoryStream();
