@@ -340,6 +340,61 @@ namespace Projbook.Tests.Core
         }
 
         /// <summary>
+        /// Tests with table where the delimiter is at the wrong location.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WritTableWrongDelimiterLocation()
+        {
+            // Process
+            Block block = new Block(BlockTag.Paragraph, 0);
+            block.InlineContent = new Inline("header 1");
+            block.InlineContent.NextSibling = new Inline("value 1");
+            block.InlineContent.NextSibling.NextSibling = new Inline("----");
+            block.InlineContent.NextSibling.NextSibling.NextSibling = new Inline("value 2");
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"<p>header 1value 1----value 2</p>{0}", Environment.NewLine), output);
+        }
+
+        /// <summary>
+        /// Tests with table with no delimiter.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WritTableNoDelimiter()
+        {
+            // Process
+            Block block = new Block(BlockTag.Paragraph, 0);
+            block.InlineContent = new Inline("header 1");
+            block.InlineContent.NextSibling = new Inline("value 1");
+            block.InlineContent.NextSibling.NextSibling = new Inline("value 2");
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"<p>header 1value 1value 2</p>{0}", Environment.NewLine), output);
+        }
+
+        /// <summary>
+        /// Tests table with a partially correct delimited.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WritePartiallyCorrectDelimiterTable()
+        {
+            // Process
+            Block block = new Block(BlockTag.Paragraph, 0);
+            block.InlineContent = new Inline("| header 1 | header 2 |");
+            block.InlineContent.NextSibling = new Inline("| ---- | foo |");
+            block.InlineContent.NextSibling.NextSibling = new Inline("| value 1 | value 2 |");
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"<p>| header 1 | header 2 || ---- | foo || value 1 | value 2 |</p>{0}", Environment.NewLine), output);
+        }
+
+        /// <summary>
         /// Processes the given block.
         /// </summary>
         /// <param name="block">The block to process.</param>
