@@ -33,3 +33,6 @@ The `Section` class contains following members that can be used in templates
 ```
 ```csharp[Projbook/Core/Model/Section.cs] Section.Content
 ```
+
+## Default template
+See default [template.html](https://github.com/defrancea/Projbook/blob/master/src/Projbook.Example/template.html) and [template-pdf.html](https://github.com/defrancea/Projbook/blob/master/src/Projbook.Example/template-pdf.html)
