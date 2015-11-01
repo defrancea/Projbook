@@ -25,6 +25,10 @@ The member matching follows this syntax `csharp[<fileName>] <optionalOption><mem
 * `csharp[File.cs] Property.get`: Match the getter of any property nammed `PropertyName`
 * `csharp[File.cs] get`: Match any getter
 
+### Indexers
+* `csharp[File.cs] ClassName.[int]`: Match any indexer using the type `int` of the class `ClassName`
+* `csharp[File.cs] [int]`: Match any indexer using the type `int`
+
 ### Events
 * `csharp[File.cs] ClassName.EventName`: Match any event nammed `EventName` of the class `ClassName`
 * `csharp[File.cs] EventName`: Match any property nammed `EventName`
@@ -42,7 +46,7 @@ The member matching follows this syntax `csharp[<fileName>] <optionalOption><mem
 
 ### Generics
 * `csharp[File.cs] ClassName{T}`: Match any class nammed `ClassName` with a type parameter `T`
-* `csharp[File.cs] ClassName{T,U}`: Match any class nammed `ClassName` with two type parameter `T` and `U`
+* `csharp[File.cs] ClassName{T, U}`: Match any class nammed `ClassName` with two type parameter `T` and `U`
 * `csharp[File.cs] ClassName.MethodName{T}`: Match any method nammed `MethodName` of the class `ClassName` with a type parameter `T`
 * `csharp[File.cs] ClassName.MethodName{T}(T)`: Match any method nammed `MethodName` of the class `ClassName` with a type parameter `T` having a parameter of type `T`
 * `csharp[File.cs] ClassName{T}.MethodName{U}(U)`: Match any method nammed `MethodName` of the class `ClassName` having a type parater `T` with a type parameter `U` having a parameter of type `U`
