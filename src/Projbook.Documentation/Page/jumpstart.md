@@ -60,6 +60,3 @@ You can combine rules for extracting and processing many member with options. Th
 It is also possible to extract xml content by using XPath as query language, for example, we can export all Import tag in the Projbook's documentation project by using `xml[Projbook.Documentation.csproj] //Import`:
 ```xml[Projbook.Documentation.csproj] //Import
 ```
-
-## Source example
-Have a look to this documentation pages as example [source](https://github.com/defrancea/Projbook/tree/master/src/Projbook.Documentation/Page)

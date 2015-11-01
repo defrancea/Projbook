@@ -56,3 +56,6 @@ CSharp matching simply follow Projbook's syntax for member matching but use XPat
 The member matching follows this syntax `csharp[<fileName>] <xpath>`.
 * `<fileName>`: Any file name in the current documentation project, it's possible to reach code content outside of the document project by adding a project reference from the documentation project to another solution's project.
 * `<xpath>`: The XPath query performing the member selection, see [XPath reference](https://msdn.microsoft.com/en-us/library/ms256115)
+
+## Source example
+Have a look to this documentation pages as example [source](https://github.com/defrancea/Projbook/tree/master/src/Projbook.Documentation/Page)
