@@ -72,6 +72,10 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Sample.cs", "NS.OneClassSomewhere", "OneClassSomewhere.txt")]
         [TestCase("Sample.cs", "OneClassSomewhere", "OneClassSomewhere.txt")]
 
+        // Match interface
+        [TestCase("Sample.cs", "NS2.NS2.NS3.I", "I.txt")]
+        [TestCase("Sample.cs", "I", "I.txt")]
+
         // Match subclass
         [TestCase("Sample.cs", "NS.OneClassSomewhere.SubClass", "SubClass.txt")]
         [TestCase("Sample.cs", "OneClassSomewhere.SubClass", "SubClass.txt")]
@@ -151,6 +155,9 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Sample.cs", "OneClassSomewhere.Foo(string, int)", "FooStringInt.txt")]
         [TestCase("Sample.cs", "Foo(string, int)", "FooStringInt.txt")]
         [TestCase("Sample.cs", "(string, int)", "FooStringInt.txt")]
+        [TestCase("Sample.cs", "(bool, string, int)", "IMethod.txt")]
+        [TestCase("Sample.cs", "NS2.NS2.NS3.I.InterfaceMethod(bool, string, int)", "IMethod.txt")]
+        [TestCase("Sample.cs", "InterfaceMethod", "IMethod.txt")]
 
         // Match sub namespace with overlapping
         [TestCase("Sample.cs", "NS.NS2.NS3", "NSNS2NS3.txt")]

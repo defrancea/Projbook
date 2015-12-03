@@ -84,6 +84,21 @@ namespace Projbook.Core.Snippet.CSharp
                 targetNode: n => n,
                 visit: base.VisitClassDeclaration);
         }
+        
+        /// <summary>
+        /// Visits an interface declaration.
+        /// </summary>
+        /// <param name="node">The class declaration to visit.</param>
+        public override void VisitInterfaceDeclaration(InterfaceDeclarationSyntax node)
+        {
+            // Visit
+            this.Visit<InterfaceDeclarationSyntax>(
+                node: node,
+                typeParameterList: node.TypeParameterList,
+                exctractName: n => node.Identifier.ValueText,
+                targetNode: n => n,
+                visit: base.VisitInterfaceDeclaration);
+        }
 
         /// <summary>
         /// Visits a property declaration.

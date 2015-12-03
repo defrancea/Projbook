@@ -57,4 +57,9 @@ namespace NS2.NS3
             }
         }
     }
+
+    interface I
+    {
+        void InterfaceMethod(bool v1, string v2, int v3);
+    }
 }

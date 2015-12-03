@@ -95,5 +95,10 @@ namespace NS2
                 }
             }
         }
+
+        interface I
+        {
+            void InterfaceMethod(bool v1, string v2, int v3);
+        }
     }
 }
