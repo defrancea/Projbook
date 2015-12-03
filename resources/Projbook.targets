@@ -3,7 +3,7 @@
   <UsingTask TaskName="Projbook" AssemblyFile="../tools/Projbook.Target.dll" />
   <ImportGroup />
   <Target Name="AfterBuild">
-    <Projbook ProjectPath="$(ProjbookBoundProject)" TemplateFile="$(TargetDir)template.html" ConfigurationFile="$(TargetDir)projbook.json" OutputDirectory="$(TargetDir)" />
+    <Projbook ProjectPath="$(ProjbookBoundProject)" TemplateFile="$(TargetDir)template.html" ConfigurationFile="$(TargetDir)projbook.json" OutputDirectory="$(TargetDir)" GeneratePdfInput="true" />
     <Exec Command="..\packages\wkhtmltopdf.msvc.64.exe.0.12.2.5\tools\wkhtmltopdf.exe $(TargetDir)template-pdf-generated.html $(TargetDir)template-pdf-generated.pdf" ContinueOnError="true" />
   </Target>
 </Project>

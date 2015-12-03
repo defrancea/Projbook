@@ -50,6 +50,11 @@ namespace Projbook.Core
         public DirectoryInfo OutputDirectory { get; private set; }
 
         /// <summary>
+        /// Whether the PDF template rendering enabled.
+        /// </summary>
+        public bool GeneratePdfInput { get; private set; }
+
+        /// <summary>
         /// Snippet extractor factory.
         /// </summary>
         private SnippetExtractorFactory snippetExtractorFactory;
@@ -78,7 +83,8 @@ namespace Projbook.Core
         /// <param name="templateFilePath">Initializes the required <see cref="TemplateFile"/>.</param>
         /// <param name="configFile">Initializes the required <see cref="ConfigFile"/>.</param>
         /// <param name="outputDirectoryPath">Initializes the required <see cref="OutputDirectory"/>.</param>
-        public ProjbookEngine(string csprojFile, string templateFilePath, string configFile, string outputDirectoryPath)
+        /// <param name="generatePdfInput">Initializes the required <see cref="GeneratePdfInput"/>.</param>
+        public ProjbookEngine(string csprojFile, string templateFilePath, string configFile, string outputDirectoryPath, bool generatePdfInput)
         {
             // Data validation
             Ensure.That(() => csprojFile).IsNotNullOrWhiteSpace();
@@ -94,6 +100,7 @@ namespace Projbook.Core
             this.TemplateFile = new FileInfo(templateFilePath);
             this.ConfigFile = new FileInfo(configFile);
             this.OutputDirectory = new DirectoryInfo(outputDirectoryPath);
+            this.GeneratePdfInput = generatePdfInput;
             this.snippetExtractorFactory = new SnippetExtractorFactory(this.CsprojFile);
             this.sectionSplittingIdentifier = Guid.NewGuid().ToString();
             this.regex = new Regex(
@@ -271,14 +278,17 @@ namespace Projbook.Core
             }
 
             // Pdf specific generation
-            string pdfTemplate = this.TemplateFilePdf.Exists ? this.TemplateFilePdf.FullName : this.TemplateFile.FullName;
-            try
+            if (this.GeneratePdfInput)
             {
-                this.GenerateFile(pdfTemplate, this.TemplateFilePdf.FullName, configuration, pages);
-            }
-            catch (System.Exception exception)
-            {
-                generationError.Add(new Model.GenerationError(pdfTemplate, string.Format("Error during PDF generation: {0}", exception.Message)));
+                string pdfTemplate = this.TemplateFilePdf.Exists ? this.TemplateFilePdf.FullName : this.TemplateFile.FullName;
+                try
+                {
+                    this.GenerateFile(pdfTemplate, this.TemplateFilePdf.FullName, configuration, pages);
+                }
+                catch (System.Exception exception)
+                {
+                    generationError.Add(new Model.GenerationError(pdfTemplate, string.Format("Error during PDF generation: {0}", exception.Message)));
+                }
             }
 
             // Return the generation errors

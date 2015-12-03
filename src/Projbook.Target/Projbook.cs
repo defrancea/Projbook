@@ -35,13 +35,19 @@ namespace Projbook.Target
         public string OutputDirectory { get; set; }
 
         /// <summary>
+        /// Whether the PDF template rendering enabled.
+        /// </summary>
+        [Required]
+        public bool GeneratePdfInput { get; set; }
+
+        /// <summary>
         /// Trigger task execution.
         /// </summary>
         /// <returns>True if the task succeeded.</returns>
         public override bool Execute()
         {
             // Run generation
-            ProjbookEngine projbookEngine = new ProjbookEngine(this.ProjectPath, this.TemplateFile, this.ConfigurationFile, this.OutputDirectory);
+            ProjbookEngine projbookEngine = new ProjbookEngine(this.ProjectPath, this.TemplateFile, this.ConfigurationFile, this.OutputDirectory, this.GeneratePdfInput);
             GenerationError[] errors = projbookEngine.Generate();
 
             // Report generation errors
