@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace Projbook.Core.Markdown
 {
@@ -40,6 +39,11 @@ namespace Projbook.Core.Markdown
         /// Table delimiter using dashes as separator.
         /// </summary>
         private static Regex dashDelimiter = new Regex("^(:?)-+(:?)$", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Invalid title chars.
+        /// </summary>
+        private static Regex invalidTitleChars = new Regex("[^a-zA-Z0-9]", RegexOptions.Compiled);
 
         /// <summary>
         /// Initializes a new instance of <see cref="ProjbookHtmlFormatter"/>.
@@ -93,9 +97,8 @@ namespace Projbook.Core.Markdown
                 }
 
                 // Compute the anchor value
-                string sectionId = HttpUtility.UrlEncode(headerContent.ToLower());
-                sectionId = string.Format("{0}-{1}", this.ContextName, sectionId)
-                    .Replace('+', '-');
+                string sectionId = headerContent.ToLower();
+                sectionId = invalidTitleChars.Replace(string.Format("{0}-{1}", this.ContextName, sectionId), "-");
 
                 // Detect anchor conflict
                 if (sectionConflict.ContainsKey(sectionId))

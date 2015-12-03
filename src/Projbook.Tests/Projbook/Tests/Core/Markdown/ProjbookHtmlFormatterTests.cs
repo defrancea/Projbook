@@ -144,11 +144,11 @@ namespace Projbook.Tests.Core
         {
             // Process
             Block block = new Block(BlockTag.AtxHeader, 0);
-            block.InlineContent = new Inline("This is a & super content en Français");
+            block.InlineContent = new Inline("This is a & super content en Français ?");
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [This is a & super content en Français](page-this-is-a-%26-super-content-en-fran%c3%a7ais)-->{0}<h0>This is a &amp; super content en Français</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<!--UT [This is a & super content en Français ?](page-this-is-a---super-content-en-fran-ais--)-->{0}<h0>This is a &amp; super content en Français ?</h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
@@ -173,6 +173,27 @@ namespace Projbook.Tests.Core
         }
 
         /// <summary>
+        /// Tests with conflicting title with special char.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WriteHeaderConflictSpecialChar()
+        {
+            // Process
+            Block block1 = new Block(BlockTag.AtxHeader, 0);
+            block1.InlineContent = new Inline("Title ?");
+            Block block2 = new Block(BlockTag.AtxHeader, 0);
+            block2.InlineContent = new Inline("Title !");
+            Block block = new Block(BlockTag.Document, 0);
+            block.FirstChild = block1;
+            block.FirstChild.FirstChild = block2;
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"<!--UT [Title ?](page-title--)-->{0}<h0>Title ?<!--UT [Title !](page-title---2)-->{0}<h0>Title !</h0>{0}</h0>{0}", Environment.NewLine), output);
+        }
+
+        /// <summary>
         /// Tests with conflicting title.
         /// </summary>
         [Test]
@@ -190,7 +211,7 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [One/Title](page-one%2ftitle)-->{0}<h0>One/Title<!--UT [One/Title](page-one%2ftitle-2)-->{0}<h0>One/Title</h0>{0}</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<!--UT [One/Title](page-one-title)-->{0}<h0>One/Title<!--UT [One/Title](page-one-title-2)-->{0}<h0>One/Title</h0>{0}</h0>{0}", Environment.NewLine), output);
         }
 
         /// <summary>
