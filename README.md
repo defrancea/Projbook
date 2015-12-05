@@ -5,4 +5,4 @@ The build is performed by [travis-ci](https://travis-ci.org/defrancea/Projbook)
 Projbook uses itself for its own documentation, check the [user manual](http://defrancea.github.com/Projbook) to learn how to use it and check the [documentation source code](https://github.com/defrancea/Projbook/tree/master/src/Projbook.Documentation).
 
 ## Contributing
-Please fill an [issue](https://github.com/defrancea/Projbook/issues) for any bug you find. Projbook is also very open to contribution. Feel free to chat with us in an issue in order to aggree on a bugfix or a new feature and we'll be glad to integraiton your contribution when it's ready.
+Please fill an [issue](https://github.com/defrancea/Projbook/issues) for any bug you find. Projbook is also very open to contribution. Feel free to chat with us through an issue, we'll be glad to integrate your contribution when it's ready.
