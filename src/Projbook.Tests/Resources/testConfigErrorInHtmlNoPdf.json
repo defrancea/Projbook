@@ -1,0 +1,5 @@
+﻿{
+  "title": "Test title",
+  "template-html": "Resources/FullGeneration/testTemplateErrorNoPdf.txt",
+  "template-pdf": "Resources/FullGeneration/testTemplateErrorNoPdf.txt"
+}

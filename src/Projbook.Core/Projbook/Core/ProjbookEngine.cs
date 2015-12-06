@@ -4,7 +4,6 @@ using EnsureThat;
 using Projbook.Core.Exception;
 using Projbook.Core.Markdown;
 using Projbook.Core.Model.Configuration;
-using Projbook.Core.Projbook.Core;
 using Projbook.Core.Snippet;
 using RazorEngine;
 using RazorEngine.Configuration;
@@ -12,6 +11,7 @@ using RazorEngine.Templating;
 using RazorEngine.Text;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -30,19 +30,9 @@ namespace Projbook.Core
         public FileInfo CsprojFile { get; private set; }
 
         /// <summary>
-        /// The documentation template using razor syntax, see documentation for model structure.
+        /// The configuration.
         /// </summary>
-        public FileInfo TemplateFile { get; private set; }
-
-        /// <summary>
-        /// The documentation template for pdf using razor syntax, see documentation for model structure.
-        /// </summary>
-        public FileInfo TemplateFilePdf { get; private set; }
-
-        /// <summary>
-        /// The config file defining documentation pages and labels.
-        /// </summary>
-        public FileInfo ConfigFile { get; private set; }
+        public Configuration Configuration { get; private set; }
 
         /// <summary>
         /// The output directory where generated content will be written.
@@ -50,9 +40,9 @@ namespace Projbook.Core
         public DirectoryInfo OutputDirectory { get; private set; }
 
         /// <summary>
-        /// Whether the PDF template rendering enabled.
+        /// The WkhtmlToPdf location.
         /// </summary>
-        public bool GeneratePdfInput { get; private set; }
+        public string WkhtmlToPdfLocation { get; private set; }
 
         /// <summary>
         /// Snippet extractor factory.
@@ -80,37 +70,28 @@ namespace Projbook.Core
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
         /// </summary>
         /// <param name="csprojFile">Initializes the required <see cref="CsprojFile"/>.</param>
-        /// <param name="templateFilePath">Initializes the required <see cref="TemplateFile"/>.</param>
-        /// <param name="configFile">Initializes the required <see cref="ConfigFile"/>.</param>
+        /// <param name="configuration">Initializes the required <see cref="Configuration"/>.</param>
         /// <param name="outputDirectoryPath">Initializes the required <see cref="OutputDirectory"/>.</param>
-        /// <param name="generatePdfInput">Initializes the required <see cref="GeneratePdfInput"/>.</param>
-        public ProjbookEngine(string csprojFile, string templateFilePath, string configFile, string outputDirectoryPath, bool generatePdfInput)
+        /// <param name="wkhtmlToPdfLocation">Initializes the required <see cref="WkhtmlToPdfLocation"/>.</param>
+        public ProjbookEngine(string csprojFile, Configuration configuration, string outputDirectoryPath, string wkhtmlToPdfLocation)
         {
             // Data validation
             Ensure.That(() => csprojFile).IsNotNullOrWhiteSpace();
-            Ensure.That(() => templateFilePath).IsNotNullOrWhiteSpace();
-            Ensure.That(() => configFile).IsNotNullOrWhiteSpace();
+            Ensure.That(() => configuration).IsNotNull();
             Ensure.That(() => outputDirectoryPath).IsNotNullOrWhiteSpace();
             Ensure.That(File.Exists(csprojFile), string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
-            Ensure.That(File.Exists(templateFilePath), string.Format("Could not find '{0}' file", templateFilePath)).IsTrue();
-            Ensure.That(File.Exists(configFile), string.Format("Could not find '{0}' file", configFile)).IsTrue();
+            Ensure.That(File.Exists(wkhtmlToPdfLocation), string.Format("Could not find '{0}' file", wkhtmlToPdfLocation)).IsTrue();
 
             // Initialize
             this.CsprojFile = new FileInfo(csprojFile);
-            this.TemplateFile = new FileInfo(templateFilePath);
-            this.ConfigFile = new FileInfo(configFile);
+            this.Configuration = configuration;
             this.OutputDirectory = new DirectoryInfo(outputDirectoryPath);
-            this.GeneratePdfInput = generatePdfInput;
+            this.WkhtmlToPdfLocation = wkhtmlToPdfLocation;
             this.snippetExtractorFactory = new SnippetExtractorFactory(this.CsprojFile);
             this.sectionSplittingIdentifier = Guid.NewGuid().ToString();
             this.regex = new Regex(
                 string.Format(@"<!--{0} \[([^\]]*)\]\(([^\)]*)\)-->(.+?)(?=<!--{0} |$)", this.sectionSplittingIdentifier),
                 RegexOptions.Compiled | RegexOptions.Singleline);
-
-            // Compute and initialize pdf template
-            string templateDirectory = Path.GetDirectoryName(templateFilePath);
-            string pdfTemplateFile = string.Format("{0}-pdf{1}", Path.GetFileNameWithoutExtension(templateFilePath), Path.GetExtension(templateFilePath));
-            this.TemplateFilePdf = new FileInfo(Path.Combine(templateDirectory, pdfTemplateFile));
         }
 
         /// <summary>
@@ -126,37 +107,16 @@ namespace Projbook.Core
             {
                 this.OutputDirectory.Create();
             }
-
-            // Read configuration
-            ConfigurationLoader configurationLoader = new ConfigurationLoader();
-            Configuration configuration;
-            try
-            {
-                configuration = configurationLoader.Load(this.ConfigFile);
-            }
-            catch (System.Exception exception)
-            {
-                generationError.Add(new Model.GenerationError(this.ConfigFile.FullName, string.Format("Error during loading configuration: {0}", exception.Message)));
-                return generationError.ToArray();
-            }
             
             // Process all pages
             List<Model.Page> pages = new List<Model.Page>();
-            foreach (Page page in configuration.Pages)
+            foreach (Page page in this.Configuration.Pages)
             {
                 // Compute the page id used as a tab id and page prefix for bookmarking
                 string pageId = page.Path.Replace(".", string.Empty).Replace("/", string.Empty);
 
                 // Load the document
                 Block document;
-                FileInfo fileInfo = new FileInfo(page.Path);
-
-                // Skip the page if doesn't exist
-                if (!fileInfo.Exists)
-                {
-                    generationError.Add(new Model.GenerationError(this.ConfigFile.FullName, string.Format("Error during loading configuration: Could not find file '{0}'", fileInfo.FullName)));
-                    continue;
-                }
 
                 // Process the page
                 using (StreamReader reader = new StreamReader(new FileStream(new FileInfo(page.Path).FullName, FileMode.Open)))
@@ -267,27 +227,39 @@ namespace Projbook.Core
                     sections: sections.ToArray()));
             }
 
-            // Standard generation
-            try
+            // Html generation
+            if (this.Configuration.GenerateHtml)
             {
-                this.GenerateFile(this.TemplateFile.FullName, this.TemplateFile.FullName, configuration, pages);
-            }
-            catch (System.Exception exception)
-            {
-                generationError.Add(new Model.GenerationError(this.TemplateFile.FullName, string.Format("Error during HTML generation: {0}", exception.Message)));
-            }
-
-            // Pdf specific generation
-            if (this.GeneratePdfInput)
-            {
-                string pdfTemplate = this.TemplateFilePdf.Exists ? this.TemplateFilePdf.FullName : this.TemplateFile.FullName;
                 try
                 {
-                    this.GenerateFile(pdfTemplate, this.TemplateFilePdf.FullName, configuration, pages);
+                    this.GenerateFile(this.Configuration.TemplateHtml, this.Configuration.OutputHtml, this.Configuration, pages);
                 }
                 catch (System.Exception exception)
                 {
-                    generationError.Add(new Model.GenerationError(pdfTemplate, string.Format("Error during PDF generation: {0}", exception.Message)));
+                    generationError.Add(new Model.GenerationError(this.Configuration.TemplateHtml, string.Format("Error during HTML generation: {0}", exception.Message)));
+                }
+            }
+
+            // Pdf generation
+            if (this.Configuration.GeneratePdf)
+            {
+                try
+                {
+                    // Generate pdf template
+                    this.GenerateFile(this.Configuration.TemplatePdf, this.Configuration.OutputPdf, this.Configuration, pages);
+
+                    // Run process
+                    string outputPdf = Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
+                    Process process = new Process();
+                    process.StartInfo.FileName = Path.Combine(this.OutputDirectory.FullName, this.WkhtmlToPdfLocation);
+                    process.StartInfo.Arguments = string.Format("{0} {1}", this.Configuration.OutputPdf, outputPdf);
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    process.Start();
+                    process.WaitForExit();
+                }
+                catch (System.Exception exception)
+                {
+                    generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", exception.Message)));
                 }
             }
 
@@ -305,8 +277,7 @@ namespace Projbook.Core
         private void GenerateFile(string templateName, string targetName, Configuration configuration, List<Model.Page> pages)
         {
             // Generate final documentation from the template using razor engine
-            string fileName = string.Format("{0}-generated{1}", Path.GetFileNameWithoutExtension(targetName), Path.GetExtension(targetName));
-            string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, fileName);
+            string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, targetName);
             using (var reader = new StreamReader(new FileStream(templateName, FileMode.Open)))
             using (var writer = new StreamWriter(new FileStream(outputFileHtml, FileMode.Create)))
             {

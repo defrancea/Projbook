@@ -94,9 +94,6 @@ namespace Projbook.Tests.Core.Snippet
                 fileWriter.Write(fileReader.ReadToEnd());
             }
 
-            Console.WriteLine(System.Text.Encoding.UTF8.GetString(memoryStream.ToArray()).Replace("\r\n", Environment.NewLine));
-            Console.WriteLine(snippet.Content.Replace("\r\n", Environment.NewLine));
-
             // Assert
             Assert.AreEqual(
                 System.Text.Encoding.UTF8.GetString(memoryStream.ToArray()).Replace("\r\n", Environment.NewLine),

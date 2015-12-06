@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
+using Projbook.Core;
 using Projbook.Core.Model.Configuration;
-using Projbook.Core.Projbook.Core;
 using System;
 using System.IO;
 
@@ -63,15 +63,90 @@ namespace Projbook.Tests.Core
         [Test]
         public void ValidConfiguration()
         {
-            Configuration configuration = this.ConfigurationLoader.Load(new FileInfo(Path.Combine("Resources", "testConfig.json")));
-            Assert.AreEqual("Test title", configuration.Title);
-            Assert.AreEqual(3, configuration.Pages.Length);
-            Assert.AreEqual("Resources/FullGeneration/Page/firstPage.md", configuration.Pages[0].Path);
-            Assert.AreEqual("First page title", configuration.Pages[0].Title);
-            Assert.AreEqual("Resources/FullGeneration/Page/secondPage.md", configuration.Pages[1].Path);
-            Assert.AreEqual("Second page title", configuration.Pages[1].Title);
-            Assert.AreEqual("Resources/FullGeneration/Page/thirdPage.md", configuration.Pages[2].Path);
-            Assert.AreEqual("Third page title", configuration.Pages[2].Title);
+            Configuration[] configurations = this.ConfigurationLoader.Load(new FileInfo(Path.Combine("Resources", "testConfig.json")));
+            Assert.AreEqual("Test title", configurations[0].Title);
+            Assert.AreEqual(true, configurations[0].GenerateHtml);
+            Assert.AreEqual(true, configurations[0].GeneratePdf);
+            Assert.AreEqual("Resources/FullGeneration/testTemplate.txt", configurations[0].TemplateHtml);
+            Assert.AreEqual("Resources/FullGeneration/testTemplate-pdf.txt", configurations[0].TemplatePdf);
+            Assert.AreEqual("testTemplate-generated.txt", configurations[0].OutputHtml);
+            Assert.AreEqual("testTemplate-pdf-generated.txt", configurations[0].OutputPdf);
+            Assert.AreEqual(0, configurations[0].Pages.Length);
+        }
+
+        /// <summary>
+        /// Tests with valid configuration with all values.
+        /// </summary>
+        [Test]
+        public void ValidConfigurationAllValues()
+        {
+            Configuration[] configurations = this.ConfigurationLoader.Load(new FileInfo(Path.Combine("Resources", "testConfigAllValues.json")));
+            Assert.AreEqual("Test title", configurations[0].Title);
+            Assert.AreEqual(true, configurations[0].GenerateHtml);
+            Assert.AreEqual(true, configurations[0].GeneratePdf);
+            Assert.AreEqual("Resources/FullGeneration/testTemplate.txt", configurations[0].TemplateHtml);
+            Assert.AreEqual("Resources/FullGeneration/testTemplate-pdf.txt", configurations[0].TemplatePdf);
+            Assert.AreEqual("doc.html", configurations[0].OutputHtml);
+            Assert.AreEqual("doc-pdf-input.html", configurations[0].OutputPdf);
+            Assert.AreEqual(3, configurations[0].Pages.Length);
+            Assert.AreEqual("Resources/FullGeneration/Page/firstPage.md", configurations[0].Pages[0].Path);
+            Assert.AreEqual("First page title", configurations[0].Pages[0].Title);
+            Assert.AreEqual("Resources/FullGeneration/Page/secondPage.md", configurations[0].Pages[1].Path);
+            Assert.AreEqual("Second page title", configurations[0].Pages[1].Title);
+            Assert.AreEqual("Resources/FullGeneration/Page/thirdPage.md", configurations[0].Pages[2].Path);
+            Assert.AreEqual("Third page title", configurations[0].Pages[2].Title);
+        }
+
+        /// <summary>
+        /// Tests with valid configuration with all values and two generations.
+        /// </summary>
+        [Test]
+        public void ValidConfigurationTwoGenerationsWithHtmlOnlyAndPdfOnly()
+        {
+            Configuration[] configurations = this.ConfigurationLoader.Load(new FileInfo(Path.Combine("Resources", "testConfigTwoGenerations.json")));
+            Assert.AreEqual("Test title 1", configurations[0].Title);
+            Assert.AreEqual(true, configurations[0].GenerateHtml);
+            Assert.AreEqual(false, configurations[0].GeneratePdf);
+            Assert.AreEqual("Resources/FullGeneration/testTemplate.txt", configurations[0].TemplateHtml);
+            Assert.AreEqual("testTemplate-generated.txt", configurations[0].OutputHtml);
+            Assert.AreEqual(null, configurations[0].TemplatePdf);
+            Assert.AreEqual(null, configurations[0].OutputPdf);
+            Assert.AreEqual(0, configurations[0].Pages.Length);
+            Assert.AreEqual("Test title 2", configurations[1].Title);
+            Assert.AreEqual(false, configurations[1].GenerateHtml);
+            Assert.AreEqual(true, configurations[1].GeneratePdf);
+            Assert.AreEqual(null, configurations[1].TemplateHtml);
+            Assert.AreEqual(null, configurations[1].OutputHtml);
+            Assert.AreEqual("Resources/FullGeneration/testTemplate-pdf.txt", configurations[1].TemplatePdf);
+            Assert.AreEqual("testTemplate-pdf-generated.txt", configurations[1].OutputPdf);
+            Assert.AreEqual(0, configurations[1].Pages.Length);
+        }
+        
+        /// <summary>
+        /// Run the full generation with invalid template.
+        /// </summary>
+        /// <param name="configFile">The config file.</param>
+        /// <param name="errorMessage">The error message.</param>
+        [Test]
+        [TestCase("none.json", "none.json': File not found")]
+        [TestCase("testConfigError.json", "Unexpected end when deserializing object. Path 'title', line 2, position 25.")]
+        [TestCase("testConfigMissingPage.json", "Could not find page 'Resources/FullGeneration/Page/missing.md'")]
+        [TestCase("testConfigNoTemplate.json", "At least one template must to be definied, possible template configuration: template-html, template-pdf")]
+        [TestCase("testConfigEmptyArray.json", "Could not find configuration definition")]
+        public void ErrorInConfiguration(string configFile, string errorMessage)
+        {
+            // Try to generate configuration with error
+            try
+            {
+                new ConfigurationLoader().Load(new FileInfo("Resources/" + configFile));
+                Assert.Fail("Expected to fail");
+            }
+
+            // Assert correct error
+            catch (Exception exception)
+            {
+                Assert.IsTrue(exception.Message.EndsWith(errorMessage));
+            }
         }
     }
 }
