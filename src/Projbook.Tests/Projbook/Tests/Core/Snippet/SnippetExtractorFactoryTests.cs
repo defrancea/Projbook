@@ -10,7 +10,7 @@ namespace Projbook.Tests.Core.Snippet
     /// Tests <see cref="SnippetExtractorFactory"/>.
     /// </summary>
     [TestFixture]
-    public class SnippetExtractorFactoryTests : AbstractSnippetTests
+    public class SnippetExtractorFactoryTests : AbstractTests
     {
         /// <summary>
         /// The tested extractor factory.

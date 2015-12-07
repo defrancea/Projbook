@@ -10,7 +10,7 @@ namespace Projbook.Tests.Core.Snippet
     /// Tests <see cref="DefaultSnippetExtractor"/>.
     /// </summary>
     [TestFixture]
-    public class DefaultSnippetExtractorTests : AbstractSnippetTests
+    public class DefaultSnippetExtractorTests : AbstractTests
     {
         /// <summary>
         /// Tests with invalid input.
@@ -53,7 +53,7 @@ namespace Projbook.Tests.Core.Snippet
         {
             // Run the extraction
             DefaultSnippetExtractor extractor = new DefaultSnippetExtractor(this.SourceDirectories);
-            Projbook.Core.Model.Snippet snippet = extractor.Extract("content.txt", null);
+            Projbook.Core.Model.Snippet snippet = extractor.Extract(this.ComputeFilePath("content.txt"), null);
 
             // Load the expected file content
             MemoryStream memoryStream = new MemoryStream();

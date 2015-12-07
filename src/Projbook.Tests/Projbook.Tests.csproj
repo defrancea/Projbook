@@ -252,34 +252,18 @@
     <Content Include="Resources\Expected\NS.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\FullGeneration\testTemplateErrorInPdf-pdf.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\FullGeneration\testTemplateErrorInPdf.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\FullGeneration\testTemplateError-pdf.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\FullGeneration\testTemplateErrorNoPdf.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\FullGeneration\testTemplateNoPdf.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\FullGeneration\testTemplateError.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\FullGeneration\testTemplate-pdf.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\FullGeneration\testTemplate.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Resources\FullGeneration\testTemplateErrorInPdf-pdf.txt" />
+    <Content Include="Resources\FullGeneration\testTemplateErrorInPdf.txt" />
+    <Content Include="Resources\FullGeneration\testTemplateError-pdf.txt" />
+    <Content Include="Resources\FullGeneration\testTemplateErrorNoPdf.txt" />
+    <Content Include="Resources\FullGeneration\testTemplateNoPdf.txt" />
+    <Content Include="Resources\FullGeneration\testTemplateError.txt" />
+    <Content Include="Resources\FullGeneration\testTemplate-pdf.txt" />
+    <Content Include="Resources\FullGeneration\testTemplate.txt" />
     <Compile Include="Resources\FullGeneration\Source\Foo.cs" />
     <Compile Include="Projbook\Tests\Core\ConfigurationLoaderTests.cs" />
     <Compile Include="Projbook\Tests\Core\Markdown\ProjbookHtmlFormatterTests.cs" />
-    <Compile Include="Projbook\Tests\Core\Snippet\AbstractSnippetTests.cs" />
+    <Compile Include="Projbook\Tests\Core\AbstractTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\SnippetExtractorFactoryTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\CSharpSnippetExtractorTests.cs" />
     <Content Include="Resources\SourcesA\content.txt" />
@@ -308,42 +292,18 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Resources\testConfigEmptyArray.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\testConfigTwoGenerations.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\testConfigAllValues.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\testConfigNoTemplate.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\testConfigNoHtml.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\testConfigNoPdf.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\testConfigErrorInHtmlNoPdf.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\testConfigErrorInHtml.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\testConfigErrorInPdf.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\testConfigMissingPage.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\testConfigError.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\testConfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="Resources\testConfigEmptyArray.json" />
+    <None Include="Resources\testConfigTwoGenerations.json" />
+    <None Include="Resources\testConfigAllValues.json" />
+    <None Include="Resources\testConfigNoTemplate.json" />
+    <None Include="Resources\testConfigNoHtml.json" />
+    <None Include="Resources\testConfigNoPdf.json" />
+    <None Include="Resources\testConfigErrorInHtmlNoPdf.json" />
+    <None Include="Resources\testConfigErrorInHtml.json" />
+    <None Include="Resources\testConfigErrorInPdf.json" />
+    <None Include="Resources\testConfigMissingPage.json" />
+    <None Include="Resources\testConfigError.json" />
+    <None Include="Resources\testConfig.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Projbook.Core\Projbook.Core.csproj">

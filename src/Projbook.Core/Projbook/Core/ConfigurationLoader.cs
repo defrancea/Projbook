@@ -13,17 +13,22 @@ namespace Projbook.Core
         /// <summary>
         /// Load the configuraiton
         /// </summary>
+        /// <param name="projectLocation">The project location.</param>
         /// <param name="configurationFile">The configuration to load.</param>
         /// <returns>The loaded configuration.</returns>
-        public Configuration[] Load(FileInfo configurationFile)
+        public Configuration[] Load(string projectLocation, string configurationFile)
         {
             // Data validation
+            Ensure.That(() => projectLocation).IsNotNull();
             Ensure.That(() => configurationFile).IsNotNull();
-            Ensure.That(configurationFile.Exists, string.Format("Could not load '{0}': File not found", configurationFile.FullName)).IsTrue();
+            Ensure.That(Directory.Exists(projectLocation), string.Format("Could not find '{0}': Directory not found", projectLocation)).IsTrue();
+
+            string configurationPath = Path.Combine(projectLocation, configurationFile);
+            Ensure.That(File.Exists(configurationPath), string.Format("Could not load configuration '{0}': File not found", configurationPath)).IsTrue();
 
             // Deserialize configuration
             Configuration[] configurations;
-            using (var reader = new StreamReader(new FileStream(configurationFile.FullName, FileMode.Open)))
+            using (var reader = new StreamReader(new FileStream(configurationPath, FileMode.Open)))
             {
                 // Read the content
                 string content = reader.ReadToEnd();
@@ -49,6 +54,18 @@ namespace Projbook.Core
             // Ensure valid pages
             foreach (Configuration configuration in configurations)
             {
+                // Resolve html template path
+                if (!string.IsNullOrWhiteSpace(configuration.TemplateHtml))
+                {
+                    configuration.TemplateHtml = Path.Combine(projectLocation, configuration.TemplateHtml);
+                }
+
+                // Resolve pdf template pth
+                if (!string.IsNullOrWhiteSpace(configuration.TemplatePdf))
+                {
+                    configuration.TemplatePdf = Path.Combine(projectLocation, configuration.TemplatePdf);
+                }
+
                 // Validate that at least one template is definied
                 if (string.IsNullOrWhiteSpace(configuration.TemplateHtml) && string.IsNullOrWhiteSpace(configuration.TemplatePdf))
                 {

@@ -10,7 +10,7 @@ namespace Projbook.Tests.Core
     /// Tests <see cref="ConfigurationLoader"/>.
     /// </summary>
     [TestFixture]
-    public class ConfigurationLoaderTests
+    public class ConfigurationLoaderTests : AbstractTests
     {
         /// <summary>
         /// Configuration loader.
@@ -34,7 +34,7 @@ namespace Projbook.Tests.Core
         [ExpectedException(typeof(ArgumentNullException))]
         public void WrongInitNull()
         {
-            this.ConfigurationLoader.Load(null);
+            this.ConfigurationLoader.Load(this.SourceDirectories[0].FullName, null);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Projbook.Tests.Core
         [ExpectedException(typeof(ArgumentException))]
         public void WrongInitEmpty()
         {
-            this.ConfigurationLoader.Load(new FileInfo(""));
+            this.ConfigurationLoader.Load(this.SourceDirectories[0].FullName, "");
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Projbook.Tests.Core
         [ExpectedException(typeof(ArgumentException))]
         public void WrongInitNotFound()
         {
-            this.ConfigurationLoader.Load(new FileInfo("does not exist"));
+            this.ConfigurationLoader.Load(this.SourceDirectories[0].FullName, "does not exist");
         }
 
         /// <summary>
@@ -63,12 +63,12 @@ namespace Projbook.Tests.Core
         [Test]
         public void ValidConfiguration()
         {
-            Configuration[] configurations = this.ConfigurationLoader.Load(new FileInfo(Path.Combine("Resources", "testConfig.json")));
+            Configuration[] configurations = this.ConfigurationLoader.Load(this.SourceDirectories[0].FullName, Path.Combine("Resources", "testConfig.json"));
             Assert.AreEqual("Test title", configurations[0].Title);
             Assert.AreEqual(true, configurations[0].GenerateHtml);
             Assert.AreEqual(true, configurations[0].GeneratePdf);
-            Assert.AreEqual("Resources/FullGeneration/testTemplate.txt", configurations[0].TemplateHtml);
-            Assert.AreEqual("Resources/FullGeneration/testTemplate-pdf.txt", configurations[0].TemplatePdf);
+            Assert.IsTrue(configurations[0].TemplateHtml.EndsWith("Resources/FullGeneration/testTemplate.txt"));
+            Assert.IsTrue(configurations[0].TemplatePdf.EndsWith("Resources/FullGeneration/testTemplate-pdf.txt"));
             Assert.AreEqual("testTemplate-generated.txt", configurations[0].OutputHtml);
             Assert.AreEqual("testTemplate-pdf-generated.txt", configurations[0].OutputPdf);
             Assert.AreEqual(0, configurations[0].Pages.Length);
@@ -80,12 +80,12 @@ namespace Projbook.Tests.Core
         [Test]
         public void ValidConfigurationAllValues()
         {
-            Configuration[] configurations = this.ConfigurationLoader.Load(new FileInfo(Path.Combine("Resources", "testConfigAllValues.json")));
+            Configuration[] configurations = this.ConfigurationLoader.Load(this.SourceDirectories[0].FullName, Path.Combine("Resources", "testConfigAllValues.json"));
             Assert.AreEqual("Test title", configurations[0].Title);
             Assert.AreEqual(true, configurations[0].GenerateHtml);
             Assert.AreEqual(true, configurations[0].GeneratePdf);
-            Assert.AreEqual("Resources/FullGeneration/testTemplate.txt", configurations[0].TemplateHtml);
-            Assert.AreEqual("Resources/FullGeneration/testTemplate-pdf.txt", configurations[0].TemplatePdf);
+            Assert.IsTrue(configurations[0].TemplateHtml.EndsWith("Resources/FullGeneration/testTemplate.txt"));
+            Assert.IsTrue(configurations[0].TemplatePdf.EndsWith("Resources/FullGeneration/testTemplate-pdf.txt"));
             Assert.AreEqual("doc.html", configurations[0].OutputHtml);
             Assert.AreEqual("doc-pdf-input.html", configurations[0].OutputPdf);
             Assert.AreEqual(3, configurations[0].Pages.Length);
@@ -103,11 +103,11 @@ namespace Projbook.Tests.Core
         [Test]
         public void ValidConfigurationTwoGenerationsWithHtmlOnlyAndPdfOnly()
         {
-            Configuration[] configurations = this.ConfigurationLoader.Load(new FileInfo(Path.Combine("Resources", "testConfigTwoGenerations.json")));
+            Configuration[] configurations = this.ConfigurationLoader.Load(this.SourceDirectories[0].FullName, Path.Combine("Resources", "testConfigTwoGenerations.json"));
             Assert.AreEqual("Test title 1", configurations[0].Title);
             Assert.AreEqual(true, configurations[0].GenerateHtml);
             Assert.AreEqual(false, configurations[0].GeneratePdf);
-            Assert.AreEqual("Resources/FullGeneration/testTemplate.txt", configurations[0].TemplateHtml);
+            Assert.IsTrue(configurations[0].TemplateHtml.EndsWith("Resources/FullGeneration/testTemplate.txt"));
             Assert.AreEqual("testTemplate-generated.txt", configurations[0].OutputHtml);
             Assert.AreEqual(null, configurations[0].TemplatePdf);
             Assert.AreEqual(null, configurations[0].OutputPdf);
@@ -117,7 +117,7 @@ namespace Projbook.Tests.Core
             Assert.AreEqual(true, configurations[1].GeneratePdf);
             Assert.AreEqual(null, configurations[1].TemplateHtml);
             Assert.AreEqual(null, configurations[1].OutputHtml);
-            Assert.AreEqual("Resources/FullGeneration/testTemplate-pdf.txt", configurations[1].TemplatePdf);
+            Assert.IsTrue(configurations[1].TemplatePdf.EndsWith("Resources/FullGeneration/testTemplate-pdf.txt"));
             Assert.AreEqual("testTemplate-pdf-generated.txt", configurations[1].OutputPdf);
             Assert.AreEqual(0, configurations[1].Pages.Length);
         }
@@ -138,7 +138,7 @@ namespace Projbook.Tests.Core
             // Try to generate configuration with error
             try
             {
-                new ConfigurationLoader().Load(new FileInfo("Resources/" + configFile));
+                new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, Path.Combine("Resources", configFile));
                 Assert.Fail("Expected to fail");
             }
 

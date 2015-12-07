@@ -5,7 +5,7 @@
   <Target Name="AfterBuild">
     <Projbook
       ProjectPath="$(ProjbookBoundProject)"
-      ConfigurationFile="$(TargetDir)projbook.json"
+      ConfigurationFile="projbook.json"
       OutputDirectory="$(TargetDir)"
       WkhtmlToPdfLocation="..\packages\wkhtmltopdf.msvc.64.exe.0.12.2.5\tools\wkhtmltopdf.exe" />
   </Target>

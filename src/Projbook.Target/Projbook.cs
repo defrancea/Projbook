@@ -3,7 +3,6 @@ using Microsoft.Build.Utilities;
 using Projbook.Core;
 using Projbook.Core.Model;
 using Projbook.Core.Model.Configuration;
-using Projbook.Core.Projbook.Core;
 using System;
 using System.IO;
 
@@ -44,20 +43,12 @@ namespace Projbook.Target
         /// <returns>True if the task succeeded.</returns>
         public override bool Execute()
         {
-            // Check that the configuration exist
-            FileInfo configurationFile = new FileInfo(this.ConfigurationFile);
-            if (!configurationFile.Exists)
-            {
-                this.Log.LogError(string.Empty, string.Empty, string.Empty, string.Empty, -1, -1, -1, -1, string.Format("Could not find configuration file: {0}", this.ConfigurationFile));
-                return false;
-            }
-
             // Load configuration
             ConfigurationLoader configurationLoader = new ConfigurationLoader();
             Configuration[] configurations;
             try
             {
-                configurations = configurationLoader.Load(configurationFile);
+                configurations = configurationLoader.Load(this.ProjectPath, this.ConfigurationFile);
             }
             catch (Exception exception)
             {

@@ -2,12 +2,12 @@
 using System.IO;
 using System.Reflection;
 
-namespace Projbook.Tests.Core.Snippet
+namespace Projbook.Tests.Core
 {
     /// <summary>
-    /// Abstract test for snippet extraction.
+    /// Abstract test.
     /// </summary>
-    public abstract class AbstractSnippetTests
+    public abstract class AbstractTests
     {
         /// <summary>
         /// The csproj file.
@@ -26,14 +26,24 @@ namespace Projbook.Tests.Core.Snippet
         public virtual void Setup()
         {
             // Initialize extractor
-            string testAssemblyLocation = Assembly.GetAssembly(typeof(AbstractSnippetTests)).Location;
+            string testAssemblyLocation = Assembly.GetAssembly(typeof(AbstractTests)).Location;
             string testAssemblyDirectory = Path.GetDirectoryName(testAssemblyLocation);
             string testSourceLocation = Path.GetFullPath(Path.Combine(testAssemblyDirectory, "..", ".."));
             this.CsprojFile = new FileInfo(Path.Combine(testSourceLocation, "Projbook.Tests.csproj"));
             this.SourceDirectories = new DirectoryInfo[] {
-                new DirectoryInfo(Path.Combine(testSourceLocation, "Resources", "SourcesA")),
+                new DirectoryInfo(Path.Combine(testSourceLocation)),
                 new DirectoryInfo(Path.Combine(testAssemblyDirectory, "..", "..", "..", "Projbook.Core"))
             };
+        }
+
+        /// <summary>
+        /// Computes the file path in the source directory.
+        /// </summary>
+        /// <param name="fileName">The file name</param>
+        /// <returns>The file path.</returns>
+        protected string ComputeFilePath(string fileName)
+        {
+            return Path.Combine("Resources", "SourcesA", fileName);
         }
     }
 }

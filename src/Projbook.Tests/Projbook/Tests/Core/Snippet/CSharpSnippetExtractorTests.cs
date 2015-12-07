@@ -12,7 +12,7 @@ namespace Projbook.Tests.Core.Snippet
     /// Tests <see cref="CSharpSnippetExtractor"/>.
     /// </summary>
     [TestFixture]
-    public class CSharpSnippetExtractorTests : AbstractSnippetTests
+    public class CSharpSnippetExtractorTests : AbstractTests
     {
         /// <summary>
         /// Use a cache for unit testing in order to speed up execution and simulate an actual usage.
@@ -229,6 +229,12 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Projbook/Core/ProjbookEngine.cs", "=ProjbookEngine.GenerateFile", "FromCore.txt")]
         public void ExtractSnippet(string fileName, string pattern, string expectedFile)
         {
+            // Resolve path
+            if (!fileName.StartsWith("Projbook"))
+            {
+                fileName = this.ComputeFilePath(fileName);
+            }
+
             // Run the extraction
             ISnippetExtractor snippetExtractor;
             if (!this.extractorCache.TryGetValue(fileName, out snippetExtractor))
@@ -261,7 +267,7 @@ namespace Projbook.Tests.Core.Snippet
         public void ExtractSnippetInvalidRule()
         {
             // Run the extraction
-            new CSharpSnippetExtractor(this.SourceDirectories).Extract("Sample.cs", "abc abc(abc");
+            new CSharpSnippetExtractor(this.SourceDirectories).Extract(this.ComputeFilePath("Sample.cs"), "abc abc(abc");
         }
 
         /// <summary>
@@ -273,6 +279,9 @@ namespace Projbook.Tests.Core.Snippet
         [ExpectedException(ExpectedException = typeof(SnippetExtractionException), ExpectedMessage = "Cannot find member")]
         public void ExtractSnippetNotFound(string fileName, string pattern)
         {
+            // Resolve path
+            fileName = this.ComputeFilePath(fileName);
+
             // Run the extraction
             CSharpSnippetExtractor extractor = new CSharpSnippetExtractor(this.SourceDirectories);
             Projbook.Core.Model.Snippet snippet = extractor.Extract(fileName, pattern);
