@@ -23,6 +23,7 @@ namespace Projbook.Core
             Ensure.That(() => configurationFile).IsNotNull();
             Ensure.That(Directory.Exists(projectLocation), string.Format("Could not find '{0}': Directory not found", projectLocation)).IsTrue();
 
+            // Compute and validate configuration path
             string configurationPath = Path.Combine(projectLocation, configurationFile);
             Ensure.That(File.Exists(configurationPath), string.Format("Could not load configuration '{0}': File not found", configurationPath)).IsTrue();
 

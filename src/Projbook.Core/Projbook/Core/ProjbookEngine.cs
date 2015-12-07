@@ -251,8 +251,8 @@ namespace Projbook.Core
                     // Run process
                     string outputPdf = Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
                     Process process = new Process();
-                    process.StartInfo.FileName = Path.Combine(this.OutputDirectory.FullName, this.WkhtmlToPdfLocation);
-                    process.StartInfo.Arguments = string.Format("{0} {1}", this.Configuration.OutputPdf, outputPdf);
+                    process.StartInfo.FileName = Path.Combine(CsprojFile.Directory.FullName, this.WkhtmlToPdfLocation);
+                    process.StartInfo.Arguments = string.Format("{0} {1}", Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputPdf), Path.Combine(this.OutputDirectory.FullName, outputPdf));
                     process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                     process.Start();
                     process.WaitForExit();

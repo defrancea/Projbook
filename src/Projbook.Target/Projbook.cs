@@ -48,7 +48,7 @@ namespace Projbook.Target
             Configuration[] configurations;
             try
             {
-                configurations = configurationLoader.Load(this.ProjectPath, this.ConfigurationFile);
+                configurations = configurationLoader.Load(Path.GetDirectoryName(this.ProjectPath), this.ConfigurationFile);
             }
             catch (Exception exception)
             {
