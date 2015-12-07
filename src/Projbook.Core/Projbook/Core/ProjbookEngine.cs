@@ -40,11 +40,6 @@ namespace Projbook.Core
         public DirectoryInfo OutputDirectory { get; private set; }
 
         /// <summary>
-        /// The WkhtmlToPdf location.
-        /// </summary>
-        public string WkhtmlToPdfLocation { get; private set; }
-
-        /// <summary>
         /// Snippet extractor factory.
         /// </summary>
         private SnippetExtractorFactory snippetExtractorFactory;
@@ -67,6 +62,11 @@ namespace Projbook.Core
         private Regex regex;
 
         /// <summary>
+        /// The wkhtmltopdf full path.
+        /// </summary>
+        private string wkhtmltopdfFullPath;
+
+        /// <summary>
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
         /// </summary>
         /// <param name="csprojFile">Initializes the required <see cref="CsprojFile"/>.</param>
@@ -80,18 +80,20 @@ namespace Projbook.Core
             Ensure.That(() => configuration).IsNotNull();
             Ensure.That(() => outputDirectoryPath).IsNotNullOrWhiteSpace();
             Ensure.That(File.Exists(csprojFile), string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
-            Ensure.That(File.Exists(wkhtmlToPdfLocation), string.Format("Could not find '{0}' file", wkhtmlToPdfLocation)).IsTrue();
 
             // Initialize
             this.CsprojFile = new FileInfo(csprojFile);
             this.Configuration = configuration;
             this.OutputDirectory = new DirectoryInfo(outputDirectoryPath);
-            this.WkhtmlToPdfLocation = wkhtmlToPdfLocation;
             this.snippetExtractorFactory = new SnippetExtractorFactory(this.CsprojFile);
             this.sectionSplittingIdentifier = Guid.NewGuid().ToString();
             this.regex = new Regex(
                 string.Format(@"<!--{0} \[([^\]]*)\]\(([^\)]*)\)-->(.+?)(?=<!--{0} |$)", this.sectionSplittingIdentifier),
                 RegexOptions.Compiled | RegexOptions.Singleline);
+            
+            // Compute wkhtmltopdf full path and assert the file exists
+            this.wkhtmltopdfFullPath = Path.Combine(this.CsprojFile.Directory.FullName, wkhtmlToPdfLocation);
+            Ensure.That(File.Exists(wkhtmltopdfFullPath), string.Format("Could not find '{0}' file", wkhtmltopdfFullPath)).IsTrue();
         }
 
         /// <summary>
@@ -251,7 +253,7 @@ namespace Projbook.Core
                     // Run process
                     string outputPdf = Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
                     Process process = new Process();
-                    process.StartInfo.FileName = Path.Combine(CsprojFile.Directory.FullName, this.WkhtmlToPdfLocation);
+                    process.StartInfo.FileName = wkhtmltopdfFullPath;
                     process.StartInfo.Arguments = string.Format("{0} {1}", Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputPdf), Path.Combine(this.OutputDirectory.FullName, outputPdf));
                     process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                     process.Start();

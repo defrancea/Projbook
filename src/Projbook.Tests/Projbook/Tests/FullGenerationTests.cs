@@ -14,6 +14,11 @@ namespace Projbook.Tests.Core
     public class FullGenerationTests : AbstractTests
     {
         /// <summary>
+        /// The WkhtmltoPdf location.
+        /// </summary>
+        private const string Wkhtmltopdf_Location = "../packages/wkhtmltopdf.msvc.64.exe.0.12.2.5/tools/wkhtmltopdf.exe";
+
+        /// <summary>
         /// Run the full generation and compate the generated output with the expected output.
         /// </summary>
         /// <param name="configFileName">The config file name.</param>
@@ -33,7 +38,7 @@ namespace Projbook.Tests.Core
 
             // Perform generation
             Configuration configuration = new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, "Resources/" + configFileName)[0];
-            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", "wkhtmltopdf.exe").Generate();
+            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", FullGenerationTests.Wkhtmltopdf_Location).Generate();
 
             // Read expected ouput
             string expectedContent = this.LoadFile("Resources/FullGeneration/" + expectedHtmlFileName);
@@ -74,7 +79,7 @@ namespace Projbook.Tests.Core
         {
             // Perform generation
             Configuration configuration = new ConfigurationLoader().Load(this.SourceDirectories[0].FullName,"Resources/" + configFileName)[0];
-            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", "wkhtmltopdf.exe").Generate();
+            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", FullGenerationTests.Wkhtmltopdf_Location).Generate();
 
             // Assert result
             Assert.IsNotNull(errors);
@@ -94,7 +99,7 @@ namespace Projbook.Tests.Core
         {
             // Perform generation
             Configuration configuration = new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, "Resources/testConfigErrorInPdf.json")[0];
-            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", "wkhtmltopdf.exe").Generate();
+            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", FullGenerationTests.Wkhtmltopdf_Location).Generate();
 
             // Assert result
             Assert.IsNotNull(errors);
