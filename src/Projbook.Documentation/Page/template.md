@@ -1,10 +1,14 @@
 ## HTML and PDF templates
-There are two template file:
-* `template.html`: Used as template for HTML generation
-* `template-pdf.html`: used as template for PDF generation
-Default templates using bootstrap can be directly used as it without any changes but can be modified or entirely rewritte if needed.
+There are two template file that you can define in `projbook.json`:
+* `template-html`: Used as template for HTML generation.
+* `template-pdf`: Used as template for PDF generation.
 
-If `template-pdf.html` doesn't exist, `template.html` will be used for both.
+By default the generated file is going to have the same name as the template one with the `-generated` sufix but you can define your own using:
+* `output-html`: The output file for `template-html`
+* `output-pdf`: The output file for `template-pdf`
+
+Default templates using bootstrap can be directly used as it without any changes but can be modified or entirely rewritte if needed.
+You can use html template, pdf or both but at least one must be definied.
 
 ## Syntax
 Templates use html with [Razor syntax](http://www.asp.net/web-pages/overview/getting-started/introducing-razor-syntax-(c) having relevant information about documentation as model.
