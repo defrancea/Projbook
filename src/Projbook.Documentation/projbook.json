@@ -1,5 +1,7 @@
 ﻿{
   "title": "Projbook",
+  "template-html": "template.html",
+  "output-html": "projbook.html",
   "pages": [
     {
       "title": "Jump start",

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Projbook.1.0.0\build\Projbook.props" Condition="Exists('..\packages\Projbook.1.0.0\build\Projbook.props')" />
+  <Import Project="..\packages\Projbook.1.0.1\build\Projbook.props" Condition="Exists('..\packages\Projbook.1.0.1\build\Projbook.props')" />
   <Import Project="$(SolutionDir)build\Projbook.settings" Condition="Exists('$(SolutionDir)build\Projbook.settings')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -95,12 +95,8 @@
     <Content Include="Scripts\projbook.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="template-pdf.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="template.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="template-pdf.html" />
+    <Content Include="template.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Projbook.Core\Projbook.Core.csproj">
@@ -113,8 +109,8 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Projbook.1.0.0\build\Projbook.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Projbook.1.0.0\build\Projbook.props'))" />
-    <Error Condition="!Exists('..\packages\Projbook.1.0.0\build\Projbook.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Projbook.1.0.0\build\Projbook.targets'))" />
+    <Error Condition="!Exists('..\packages\Projbook.1.0.1\build\Projbook.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Projbook.1.0.1\build\Projbook.props'))" />
+    <Error Condition="!Exists('..\packages\Projbook.1.0.1\build\Projbook.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Projbook.1.0.1\build\Projbook.targets'))" />
   </Target>
-  <Import Project="..\packages\Projbook.1.0.0\build\Projbook.targets" Condition="Exists('..\packages\Projbook.1.0.0\build\Projbook.targets')" />
+  <Import Project="..\packages\Projbook.1.0.1\build\Projbook.targets" Condition="Exists('..\packages\Projbook.1.0.1\build\Projbook.targets')" />
 </Project>
