@@ -14,7 +14,7 @@
     <tags>Snippet PDF Markdown Documentation</tags>
     <iconUrl>https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png</iconUrl>
     <dependencies>
-      <dependency id="bootstrap" version="3.3.5" />
+      <dependency id="bootstrap" version="3.2.0" />
       <dependency id="wkhtmltopdf.msvc.64.exe" version="0.12.2.5" />
     </dependencies>
   </metadata>
