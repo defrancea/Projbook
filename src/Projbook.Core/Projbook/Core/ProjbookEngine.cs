@@ -93,7 +93,8 @@ namespace Projbook.Core
             
             // Compute wkhtmltopdf full path and assert the file exists
             this.wkhtmltopdfFullPath = Path.Combine(this.CsprojFile.Directory.FullName, wkhtmlToPdfLocation);
-            Ensure.That(File.Exists(wkhtmltopdfFullPath), string.Format("Could not find '{0}' file", wkhtmltopdfFullPath)).IsTrue();
+            if (this.Configuration.GeneratePdf)
+                Ensure.That(File.Exists(wkhtmltopdfFullPath), string.Format("Could not find '{0}' file", wkhtmltopdfFullPath)).IsTrue();
         }
 
         /// <summary>
