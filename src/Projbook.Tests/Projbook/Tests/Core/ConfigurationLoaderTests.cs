@@ -21,8 +21,11 @@ namespace Projbook.Tests.Core
         /// Initializes the test.
         /// </summary>
         [SetUp]
-        public void Setup()
+        public override void Setup()
         {
+            // Call base implementation
+            base.Setup();
+
             // Initialize configuration loader
             this.ConfigurationLoader = new ConfigurationLoader();
         }
