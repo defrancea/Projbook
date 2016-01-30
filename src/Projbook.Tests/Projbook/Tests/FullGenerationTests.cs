@@ -4,6 +4,7 @@ using Projbook.Core.Model;
 using Projbook.Core.Model.Configuration;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Projbook.Tests.Core
 {
@@ -26,11 +27,13 @@ namespace Projbook.Tests.Core
         /// <param name="expectedPdfFileName">The file name containing the expected content for PDF generation.</param>
         /// <param name="generatedHtmlFileName">The file name containing the generated content for HTML.</param>
         /// <param name="generatedPdfFileName">The file name containing the generated content for PDF.</param>
+        /// <param name="readOnly">Make files read only.</param>
         [Test]
-        [TestCase("testConfigAllValues.json", "expected.txt", "expected-pdf.txt", "doc.html", "doc-pdf-input.html")]
-        [TestCase("testConfigNoPdf.json", "expected.txt", "", "testTemplate-generated.txt", "testTemplate-pdf-generated.txt")]
-        [TestCase("testConfigNoHtml.json", "", "expected-pdf.txt", "testTemplate-generated.txt", "testTemplate-pdf-generated.txt")]
-        public void FullGeneration(string configFileName, string expectedHtmlFileName, string expectedPdfFileName, string generatedHtmlFileName, string generatedPdfFileName)
+        [TestCase("testConfigAllValues.json", "expected.txt", "expected-pdf.txt", "doc.html", "doc-pdf-input.html", false)]
+        [TestCase("testConfigAllValues.json", "expected.txt", "expected-pdf.txt", "doc.html", "doc-pdf-input.html", true)]
+        [TestCase("testConfigNoPdf.json", "expected.txt", "", "testTemplate-generated.txt", "testTemplate-pdf-generated.txt", false)]
+        [TestCase("testConfigNoHtml.json", "", "expected-pdf.txt", "testTemplate-generated.txt", "testTemplate-pdf-generated.txt", false)]
+        public void FullGeneration(string configFileName, string expectedHtmlFileName, string expectedPdfFileName, string generatedHtmlFileName, string generatedPdfFileName, bool readOnly)
         {
             // Ensure nothing generated yet
             this.EnsureNoFile(generatedHtmlFileName);
@@ -38,34 +41,99 @@ namespace Projbook.Tests.Core
 
             // Perform generation
             Configuration configuration = new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, "Resources/" + configFileName)[0];
-            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", FullGenerationTests.Wkhtmltopdf_Location).Generate();
+            string htmlTemplatePath = configuration.TemplateHtml;
+            string pdfTemplatePath = configuration.TemplatePdf;
+            string firstPagePath = new FileInfo(configuration.Pages.First().Path).FullName;
 
-            // Read expected ouput
-            string expectedContent = this.LoadFile("Resources/FullGeneration/" + expectedHtmlFileName);
+            // Retrieve attribute of html template
+            FileAttributes? htmlTemplateFileAttributes = null;
+            if (File.Exists(htmlTemplatePath))
+            {
+                htmlTemplateFileAttributes = File.GetAttributes(htmlTemplatePath);
+            }
 
-            // Read expected ouput
-            string expectedPdfContent = this.LoadFile("Resources/FullGeneration/" + expectedPdfFileName);
+            // Retrieve attribute of pdf template
+            FileAttributes? pdfTemplateFileAttributes = null;
+            if (File.Exists(pdfTemplatePath))
+            {
+                pdfTemplateFileAttributes = File.GetAttributes(pdfTemplatePath);
+            }
 
-            // Read generated ouput
-            string generatedContent = this.LoadFile(generatedHtmlFileName);
+            // Retrieve attribute of the first markdown page
+            FileAttributes? firstPageFileAttributes = null;
+            if (File.Exists(firstPagePath))
+            {
+                firstPageFileAttributes = File.GetAttributes(firstPagePath);
+            }
 
-            // Read generated pdf ouput
-            string generatedPdfContent = this.LoadFile(generatedPdfFileName);
+            // Make the file read only
+            if (readOnly)
+            {
+                if (null != htmlTemplateFileAttributes)
+                {
+                    File.SetAttributes(htmlTemplatePath, htmlTemplateFileAttributes.Value | FileAttributes.ReadOnly);
+                }
+                if (null != pdfTemplateFileAttributes)
+                {
+                    File.SetAttributes(pdfTemplatePath, pdfTemplateFileAttributes.Value | FileAttributes.ReadOnly);
+                }
+                if (null != firstPageFileAttributes)
+                {
+                    File.SetAttributes(firstPagePath, firstPageFileAttributes.Value | FileAttributes.ReadOnly);
+                }
+            }
 
-            // Remove line return for cross platform platform testing
-            expectedContent = expectedContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
-            expectedPdfContent = expectedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
-            generatedContent = generatedContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
-            generatedPdfContent = generatedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+            // Execute test
+            try
+            {
+                // Execute generation
+                GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", FullGenerationTests.Wkhtmltopdf_Location).Generate();
 
-            // Assert result
-            Assert.IsNotNull(errors);
-            Assert.AreEqual(0, errors.Length);
-            Assert.AreEqual(expectedContent, generatedContent);
-            Assert.AreEqual(expectedPdfContent, generatedPdfContent);
+                // Read expected ouput
+                string expectedContent = this.LoadFile("Resources/FullGeneration/" + expectedHtmlFileName);
 
-            // wkhtmltopdf cannot be trigerred from mono:
-            // Assert.AreEqual(configuration.GeneratePdf, File.Exists(Path.ChangeExtension(configuration.OutputPdf, "pdf")));
+                // Read expected ouput
+                string expectedPdfContent = this.LoadFile("Resources/FullGeneration/" + expectedPdfFileName);
+
+                // Read generated ouput
+                string generatedContent = this.LoadFile(generatedHtmlFileName);
+
+                // Read generated pdf ouput
+                string generatedPdfContent = this.LoadFile(generatedPdfFileName);
+
+                // Remove line return for cross platform platform testing
+                expectedContent = expectedContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+                expectedPdfContent = expectedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+                generatedContent = generatedContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+                generatedPdfContent = generatedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+
+                // Assert result
+                Assert.IsNotNull(errors);
+                Assert.AreEqual(0, errors.Length);
+                Assert.AreEqual(expectedContent, generatedContent);
+                Assert.AreEqual(expectedPdfContent, generatedPdfContent);
+
+                // wkhtmltopdf cannot be trigerred from mono:
+                // Assert.AreEqual(configuration.GeneratePdf, File.Exists(Path.ChangeExtension(configuration.OutputPdf, "pdf")));
+            }
+            finally
+            {
+                if (readOnly)
+                {
+                    if (null != htmlTemplateFileAttributes)
+                    {
+                        File.SetAttributes(htmlTemplatePath, htmlTemplateFileAttributes.Value);
+                    }
+                    if (null != pdfTemplateFileAttributes)
+                    {
+                        File.SetAttributes(pdfTemplatePath, pdfTemplateFileAttributes.Value);
+                    }
+                    if (null != firstPageFileAttributes)
+                    {
+                        File.SetAttributes(firstPagePath, firstPageFileAttributes.Value);
+                    }
+                }
+            }
         }
 
         /// <summary>

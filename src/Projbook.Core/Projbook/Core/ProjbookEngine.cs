@@ -122,7 +122,7 @@ namespace Projbook.Core
                 Block document;
 
                 // Process the page
-                using (StreamReader reader = new StreamReader(new FileStream(new FileInfo(page.Path).FullName, FileMode.Open)))
+                using (StreamReader reader = new StreamReader(new FileStream(new FileInfo(page.Path).FullName, FileMode.Open, FileAccess.Read)))
                 {
                     document = CommonMarkConverter.ProcessStage1(reader);
                 }
@@ -281,8 +281,8 @@ namespace Projbook.Core
         {
             // Generate final documentation from the template using razor engine
             string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, targetName);
-            using (var reader = new StreamReader(new FileStream(templateName, FileMode.Open)))
-            using (var writer = new StreamWriter(new FileStream(outputFileHtml, FileMode.Create)))
+            using (var reader = new StreamReader(new FileStream(templateName, FileMode.Open, FileAccess.Read)))
+            using (var writer = new StreamWriter(new FileStream(outputFileHtml, FileMode.Create, FileAccess.Write)))
             {
                 var config = new TemplateServiceConfiguration();
                 config.Language = Language.CSharp;

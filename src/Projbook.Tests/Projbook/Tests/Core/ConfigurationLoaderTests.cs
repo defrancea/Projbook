@@ -60,18 +60,44 @@ namespace Projbook.Tests.Core
         /// <summary>
         /// Tests with valid configuration.
         /// </summary>
+        /// <param name="readOnly">Make the configuration read only.</param>
         [Test]
-        public void ValidConfiguration()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ValidConfiguration(bool readOnly)
         {
-            Configuration[] configurations = this.ConfigurationLoader.Load(this.SourceDirectories[0].FullName, Path.Combine("Resources", "testConfig.json"));
-            Assert.AreEqual("Test title", configurations[0].Title);
-            Assert.AreEqual(true, configurations[0].GenerateHtml);
-            Assert.AreEqual(true, configurations[0].GeneratePdf);
-            Assert.IsTrue(configurations[0].TemplateHtml.EndsWith("Resources/FullGeneration/testTemplate.txt"));
-            Assert.IsTrue(configurations[0].TemplatePdf.EndsWith("Resources/FullGeneration/testTemplate-pdf.txt"));
-            Assert.AreEqual("testTemplate-generated.txt", configurations[0].OutputHtml);
-            Assert.AreEqual("testTemplate-pdf-generated.txt", configurations[0].OutputPdf);
-            Assert.AreEqual(0, configurations[0].Pages.Length);
+            // Handle file attribute
+            string projectLocation = this.SourceDirectories[0].FullName;
+            string configurationName = Path.Combine("Resources", "testConfig.json");
+            string configurationPath = Path.Combine(projectLocation, configurationName);
+            FileAttributes configurationFileAttributes = File.GetAttributes(configurationPath);
+
+            // Make the file read only
+            if (readOnly)
+            {
+                File.SetAttributes(configurationPath, configurationFileAttributes | FileAttributes.ReadOnly);
+            }
+
+            // Execute test
+            try
+            {
+                Configuration[] configurations = this.ConfigurationLoader.Load(projectLocation, configurationPath);
+                Assert.AreEqual("Test title", configurations[0].Title);
+                Assert.AreEqual(true, configurations[0].GenerateHtml);
+                Assert.AreEqual(true, configurations[0].GeneratePdf);
+                Assert.IsTrue(configurations[0].TemplateHtml.EndsWith("Resources/FullGeneration/testTemplate.txt"));
+                Assert.IsTrue(configurations[0].TemplatePdf.EndsWith("Resources/FullGeneration/testTemplate-pdf.txt"));
+                Assert.AreEqual("testTemplate-generated.txt", configurations[0].OutputHtml);
+                Assert.AreEqual("testTemplate-pdf-generated.txt", configurations[0].OutputPdf);
+                Assert.AreEqual(0, configurations[0].Pages.Length);
+            }
+            finally
+            {
+                if (readOnly)
+                {
+                    File.SetAttributes(configurationPath, configurationFileAttributes);
+                }
+            }
         }
 
         /// <summary>

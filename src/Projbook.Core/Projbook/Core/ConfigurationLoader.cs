@@ -29,7 +29,7 @@ namespace Projbook.Core
 
             // Deserialize configuration
             Configuration[] configurations;
-            using (var reader = new StreamReader(new FileStream(configurationPath, FileMode.Open)))
+            using (var reader = new StreamReader(new FileStream(configurationPath, FileMode.Open, FileAccess.Read)))
             {
                 // Read the content
                 string content = reader.ReadToEnd();
@@ -37,8 +37,10 @@ namespace Projbook.Core
                 // Deserialize as contiguration array if the configuration content looks containing many generation configuraiton
                 if (content.TrimStart().StartsWith("["))
                 {
+                    // Deserialize the configuration
                     configurations = JsonConvert.DeserializeObject<Configuration[]>(content);
 
+                    // Raise error if no configuration is found
                     if (configurations.Length <= 0)
                     {
                         throw new System.Exception("Could not find configuration definition");
