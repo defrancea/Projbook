@@ -1,0 +1,28 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "type": "object",
+  "anyOf": [
+    { "required": [ "template-html" ] },
+    { "required": [ "template-pdf" ] }
+  ],
+  "required": [ "title" ],
+  "properties": {
+    "title": { "type": "string" },
+    "template-html": { "type": "string" },
+    "template-pdf": { "type": "string" },
+    "output-html": { "type": "string" },
+    "output-pdf": { "type": "string" },
+    "pages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [ "title", "path" ],
+        "properties": {
+          "title": { "type": "string" },
+          "path": { "type": "string" }
+        }
+      }
+    }
+  }
+}

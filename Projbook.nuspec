@@ -27,6 +27,7 @@
     <file src="src/Projbook.Target/bin/Release/Microsoft.CodeAnalysis.CSharp.dll" target="tools" exclude="" />
     <file src="src/Projbook.Target/bin/Release/Microsoft.CodeAnalysis.dll" target="tools" exclude="" />
     <file src="src/Projbook.Target/bin/Release/Newtonsoft.Json.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/Newtonsoft.Json.Schema.dll" target="tools" exclude="" />
     <file src="src/Projbook.Target/bin/Release/Projbook.Core.dll" target="tools" exclude="" />
     <file src="src/Projbook.Target/bin/Release/Projbook.Target.dll" target="tools" exclude="" />
     <file src="src/Projbook.Target/bin/Release/RazorEngine.dll" target="tools" exclude="" />

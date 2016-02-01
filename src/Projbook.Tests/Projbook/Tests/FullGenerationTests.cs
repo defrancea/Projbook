@@ -157,7 +157,11 @@ namespace Projbook.Tests.Core
             Assert.IsTrue(errors[0].SourceFile.EndsWith(firstErrorFile));
             Assert.IsTrue(errors[1].SourceFile.EndsWith(secondErrorFile));
             Assert.AreEqual(@"Error during HTML generation: (16:1) - Encountered end tag ""Sections"" with no matching start tag.  Are your start/end tags properly balanced?", errors[0].Message);
+            Assert.AreEqual(16, errors[0].Line);
+            Assert.AreEqual(1, errors[0].Column);
             Assert.AreEqual(@"Error during PDF generation: (16:1) - Encountered end tag ""Sections"" with no matching start tag.  Are your start/end tags properly balanced?", errors[1].Message);
+            Assert.AreEqual(16, errors[1].Line);
+            Assert.AreEqual(1, errors[1].Column);
         }
 
         /// <summary>
@@ -176,6 +180,34 @@ namespace Projbook.Tests.Core
             Assert.AreEqual(1, errors.Length);
             Assert.IsTrue(errors[0].SourceFile.EndsWith("testTemplateErrorInPdf-pdf.txt"));
             Assert.AreEqual(@"Error during PDF generation: (16:1) - Encountered end tag ""Sections"" with no matching start tag.  Are your start/end tags properly balanced?", errors[0].Message);
+            Assert.AreEqual(16, errors[0].Line);
+            Assert.AreEqual(1, errors[0].Column);
+
+        }
+
+        /// <summary>
+        /// Run the full generation with unexistingMembers.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void FullGenerationUnexistingMembers()
+        {
+            // Perform generation
+            Configuration configuration = new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, "Resources/testConfigUnexistingMembers.json")[0];
+            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", FullGenerationTests.Wkhtmltopdf_Location).Generate();
+
+            // Assert result
+            Assert.IsNotNull(errors);
+            Assert.AreEqual(3, errors.Length);
+            Assert.AreEqual("Cannot find member: NotFound", errors[0].Message);
+            Assert.AreEqual(1, errors[0].Line);
+            Assert.AreEqual(52, errors[0].Column);
+            Assert.AreEqual("Cannot find member: NotFound", errors[1].Message);
+            Assert.AreEqual(7, errors[1].Line);
+            Assert.AreEqual(52, errors[1].Column);
+            Assert.IsTrue(errors[2].Message.StartsWith("Cannot find file 'Resources/FullGeneration/Source/NotFound.cs' in any referenced project"));
+            Assert.AreEqual(13, errors[2].Line);
+            Assert.AreEqual(12, errors[2].Column);
 
         }
 

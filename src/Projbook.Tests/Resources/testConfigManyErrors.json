@@ -1,0 +1,25 @@
+﻿[{ "title": "Test title", "template-html": "Resources/FullGeneration/notExisting.txt",
+    "template-pdf": "Resources/FullGeneration/testTemplate-pdf.txt",
+    "output-html": "doc.html",
+    "output-pdf": "doc-pdf-input.html",
+    "pages": [
+      {
+        "path": "Resources/FullGeneration/Page/notExisting.md",
+        "title": "First page title"
+      },
+      {
+        "path": "Resources/FullGeneration/Page/anotherNotExisting.md",
+        "title": "Second page title"
+      },
+      {
+        "path": "Resources/FullGeneration/Page/notExisting.md",
+        "title": "Third page title"
+      }
+    ]
+  },
+  {
+    "title": "Test title",
+    "template-html": "Resources/FullGeneration/testTemplate.txt",
+    "template-pdf": "Resources/FullGeneration/notExisting-pdf.txt"
+  }
+]

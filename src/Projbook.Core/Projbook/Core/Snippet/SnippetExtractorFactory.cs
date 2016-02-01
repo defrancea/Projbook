@@ -48,56 +48,12 @@ namespace Projbook.Core.Snippet
             switch (snippetExtractionRule.Language)
             {
                 case "csharp":
-                    return new CSharpSnippetExtractor(this.ExtractSourceDirectories(this.CsprojFile));
+                    return new CSharpSnippetExtractor();
                 case "xml":
-                    return new XmlSnippetExtractor(this.ExtractSourceDirectories(this.CsprojFile));
+                    return new XmlSnippetExtractor();
                 default:
-                    return new DefaultSnippetExtractor(this.ExtractSourceDirectories(this.CsprojFile));
+                    return new DefaultSnippetExtractor();
             }
-        }
-
-        /// <summary>
-        /// Extracts source directories from the csproj file.
-        /// The extected directory info list is the csproj's directory and all project references.
-        /// </summary>
-        /// <param name="csprojFile"></param>
-        /// <returns></returns>
-        private DirectoryInfo[] ExtractSourceDirectories(FileInfo csprojFile)
-        {
-            // Data validation
-            Ensure.That(() => csprojFile).IsNotNull();
-            Ensure.That(csprojFile.Exists, string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
-
-            // Initialize the extracted directories
-            List<DirectoryInfo> extractedSourceDirectories = new List<DirectoryInfo>();
-
-            // Add the csproj's directory
-            DirectoryInfo projectDirectory = new DirectoryInfo(Path.GetDirectoryName(csprojFile.FullName));
-            extractedSourceDirectories.Add(projectDirectory);
-
-            // Extract project reference path
-            XmlDocument xmlDocument = new XmlDocument();
-            xmlDocument.Load(csprojFile.FullName);
-            XmlNamespaceManager xmlNamespaceManager = new XmlNamespaceManager(xmlDocument.NameTable);
-            xmlNamespaceManager.AddNamespace("msbuild", "http://schemas.microsoft.com/developer/msbuild/2003");
-            XmlNodeList xmlNodes = xmlDocument.SelectNodes("//msbuild:ProjectReference", xmlNamespaceManager);
-            for (int i = 0; i < xmlNodes.Count; ++i)
-            {
-                XmlNode xmlNode = xmlNodes.Item(i);
-                string includeValue = xmlNode.Attributes["Include"].Value;
-                string combinedPath = Path.Combine(projectDirectory.FullName, includeValue);
-
-                // The combinedPath can contains both forward and backslash path chunk.
-                // In linux environment we can end up having "/..\" in the path which make the GetDirectoryName method bugging (returns empty).
-                // For this reason we need to make sure that the combined path uses forward slashes
-                combinedPath = combinedPath.Replace(@"\", "/");
-
-                // Add the combined path
-                extractedSourceDirectories.Add(new DirectoryInfo(Path.GetDirectoryName(Path.GetFullPath(combinedPath))));
-            }
-
-            // Returne the extracted directories
-            return extractedSourceDirectories.ToArray();
         }
     }
 }

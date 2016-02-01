@@ -1,4 +1,6 @@
-﻿namespace Projbook.Core.Snippet
+﻿using System.IO;
+
+namespace Projbook.Core.Snippet
 {
     /// <summary>
     /// Defines interface for snippet extractor.
@@ -8,9 +10,9 @@
         /// <summary>
         /// Extracts a snippet.
         /// </summary>
-        /// <param name="filePath">The file path.</param>
+        /// <param name="streamReader">The streak reader.</param>
         /// <param name="pattern">The extraction pattern.</param>
         /// <returns>The extracted snippet.</returns>
-        Model.Snippet Extract(string filePath, string pattern);
+        Model.Snippet Extract(StreamReader streamReader, string pattern);
     }
 }

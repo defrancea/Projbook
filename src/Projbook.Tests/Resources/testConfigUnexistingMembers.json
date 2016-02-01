@@ -1,0 +1,12 @@
+﻿{
+  "title": "Test title",
+  "template-html": "Resources/FullGeneration/testTemplate.txt",
+  "output-html": "doc.html",
+  "output-pdf":  "doc-pdf-input.html",
+  "pages": [
+    {
+      "path": "Resources/FullGeneration/Page/unexistingMembers.md",
+      "title": "Test"
+    }
+  ]
+}

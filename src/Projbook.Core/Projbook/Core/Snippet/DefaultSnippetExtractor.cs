@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using EnsureThat;
-using Projbook.Core.Exception;
 using Projbook.Core.Projbook.Core.Snippet.CSharp;
 
 namespace Projbook.Core.Snippet
@@ -15,71 +14,32 @@ namespace Projbook.Core.Snippet
     public class DefaultSnippetExtractor : ISnippetExtractor
     {
         /// <summary>
-        /// All source directories where snippets could possibly be.
-        /// </summary>
-        public DirectoryInfo[] SourceDictionaries { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="DefaultSnippetExtractor"/>.
-        /// </summary>
-        /// <param name="sourceDirectories">Initializes the required <see cref="SourceDictionaries"/>.</param>
-        public DefaultSnippetExtractor(params DirectoryInfo[] sourceDirectories)
-        {
-            // Data validation
-            Ensure.That(() => sourceDirectories).IsNotNull();
-            Ensure.That(() => sourceDirectories).HasItems();
-
-            // Initialize
-            this.SourceDictionaries = sourceDirectories;
-        }
-
-        /// <summary>
         /// Extracts a snippet.
         /// </summary>
-        /// <param name="filePath">The file path.</param>
+        /// <param name="streamReader">The streak reader.</param>
         /// <param name="pattern">The extraction pattern, never used for this implementation.</param>
         /// <returns>The extracted snippet.</returns>
-        public virtual Model.Snippet Extract(string filePath, string pattern)
+        public virtual Model.Snippet Extract(StreamReader streamReader, string pattern)
         {
             // Extract file content
-            string sourceCode = this.LoadFile(filePath);
+            string sourceCode = this.LoadFile(streamReader);
 
             // Return the entire code
             return this.BuildSnippet(sourceCode);
         }
-        
+
         /// <summary>
         /// Loads a file from the file name.
         /// </summary>
-        /// <param name="filePath">The file path to load.</param>
+        /// <param name="streamReader">The streak reader.</param>
         /// <returns>The file's content.</returns>
-        protected string LoadFile(string filePath)
+        protected string LoadFile(StreamReader streamReader)
         {
-            // Look for the file in available source directories
-            FileInfo fileInfo = null;
-            foreach (DirectoryInfo directoryInfo in this.SourceDictionaries)
-            {
-                string fullFilePath = Path.Combine(directoryInfo.FullName, filePath ?? string.Empty);
-                if (File.Exists(fullFilePath))
-                {
-                    fileInfo = new FileInfo(fullFilePath);
-                    break;
-                }
-            }
-
-            // Raise an error if cannot find the file
-            if (null == fileInfo)
-            {
-                string availablePath = string.Join(";", this.SourceDictionaries.Select(x => x.FullName));
-                throw new SnippetExtractionException(string.Format("Cannot find file in any referenced project ({0})", availablePath), filePath);
-            }
-
             // Load the file content
             MemoryStream memoryStream = new MemoryStream();
-            using (var fileReader = new StreamReader(new FileStream(fileInfo.FullName, FileMode.Open)))
             using (var fileWriter = new StreamWriter(memoryStream))
             {
-                fileWriter.Write(fileReader.ReadToEnd());
+                fileWriter.Write(streamReader.ReadToEnd());
             }
 
             // Read the code snippet from the file

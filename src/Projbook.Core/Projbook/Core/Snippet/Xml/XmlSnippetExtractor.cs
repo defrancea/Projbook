@@ -28,32 +28,24 @@ namespace Projbook.Core.Snippet.Xml
         private XmlNamespaceManager xmlNamespaceManager;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="XmlSnippetExtractor"/>.
-        /// </summary>
-        /// <param name="sourceDirectories">Initializes the required <see cref="SourceDictionaries"/>.</param>
-        public XmlSnippetExtractor(params DirectoryInfo[] sourceDirectories)
-            : base (sourceDirectories)
-        {
-        }
-
-        /// <summary>
         /// Extracts a snippet from a given rule pattern.
         /// </summary>
-        /// <param name="memberPattern">The mem.</param>
+        /// <param name="streamReader">The streak reader.</param>
+        /// <param name="memberPattern">The member pattern to extract.</param>
         /// <returns>The extracted snippet.</returns>
-        public override Model.Snippet Extract(string filePath, string memberPattern)
+        public override Model.Snippet Extract(StreamReader streamReader, string memberPattern)
         {
             // Return the entire code if no member is specified
             if (string.IsNullOrWhiteSpace(memberPattern))
             {
-                return base.Extract(filePath, memberPattern);
+                return base.Extract(streamReader, memberPattern);
             }
 
             // Load the xml document for xpath execution
             if (null == this.xmlDocument)
             {
                 // Load file content
-                string sourceCode = base.LoadFile(filePath);
+                string sourceCode = base.LoadFile(streamReader);
 
                 // Remove default avoiding to define and use a prefix for the default namespace
                 // This is not strictly correct in a xml point of view but it's closest to most needs
@@ -104,7 +96,7 @@ namespace Projbook.Core.Snippet.Xml
             // Ensure we found a result
             if (xmlNodeList.Count <= 0)
             {
-                throw new SnippetExtractionException("Cannot find member", filePath);
+                throw new SnippetExtractionException("Cannot find member", memberPattern);
             }
             
             // Build a snippet for extracted nodes

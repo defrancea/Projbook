@@ -22,25 +22,17 @@ namespace Projbook.Core.Snippet.CSharp
         private CSharpSyntaxMatchingNode syntaxTrie;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="CSharpSnippetExtractor"/>.
-        /// </summary>
-        /// <param name="sourceDirectories">Initializes the required <see cref="SourceDictionaries"/>.</param>
-        public CSharpSnippetExtractor(params DirectoryInfo[] sourceDirectories)
-            : base (sourceDirectories)
-        {
-        }
-
-        /// <summary>
         /// Extracts a snippet from a given rule pattern.
         /// </summary>
-        /// <param name="memberPattern">The mem.</param>
+        /// <param name="streamReader">The streak reader.</param>
+        /// <param name="memberPattern">The member pattern to extract.</param>
         /// <returns>The extracted snippet.</returns>
-        public override Model.Snippet Extract(string filePath, string memberPattern)
+        public override Model.Snippet Extract(StreamReader streamReader, string memberPattern)
         {
             // Return the entire code if no member is specified
             if (string.IsNullOrWhiteSpace(memberPattern))
             {
-                return base.Extract(filePath, memberPattern);
+                return base.Extract(streamReader, memberPattern);
             }
 
             // Parse the matching rule from the pattern
@@ -50,7 +42,7 @@ namespace Projbook.Core.Snippet.CSharp
             if (null == this.syntaxTrie)
             {
                 // Load file content
-                string sourceCode = base.LoadFile(filePath);
+                string sourceCode = base.LoadFile(streamReader);
 
                 // Build a syntax tree from the source code
                 SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceCode);
@@ -68,7 +60,7 @@ namespace Projbook.Core.Snippet.CSharp
             CSharpSyntaxMatchingNode matchingTrie = syntaxTrie.Match(rule.MatchingChunks);
             if (null == matchingTrie)
             {
-                throw new SnippetExtractionException("Cannot find member", string.Format("{0} {1}", filePath, memberPattern));
+                throw new SnippetExtractionException("Cannot find member", memberPattern);
             }
 
             // Build a snippet for extracted syntax nodes

@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using Projbook.Core.Exception;
 using Projbook.Core.Snippet;
 using System;
 using System.IO;
@@ -13,47 +12,14 @@ namespace Projbook.Tests.Core.Snippet
     public class DefaultSnippetExtractorTests : AbstractTests
     {
         /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void WrongInitSourceDefaultDirectories()
-        {
-            new DefaultSnippetExtractor(null);
-        }
-        /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void WrongInitSourceEmptyDirectories()
-        {
-            new DefaultSnippetExtractor(new DirectoryInfo[0]);
-        }
-
-        /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        /// <param name="filePath">The file path to test.</param>
-        [Test]
-        [TestCase(null)]
-        [TestCase("")]
-        [TestCase("   ")]
-        [ExpectedException(typeof(SnippetExtractionException))]
-        public void WrongInitEmpty(string filePath)
-        {
-            new DefaultSnippetExtractor(new DirectoryInfo("Foo")).Extract(filePath, string.Empty);
-        }
-
-        /// <summary>
         /// Tests extract snippet.
         /// </summary>
         [Test]
         public void ExtractSnippet()
         {
             // Run the extraction
-            DefaultSnippetExtractor extractor = new DefaultSnippetExtractor(this.SourceDirectories);
-            Projbook.Core.Model.Snippet snippet = extractor.Extract(this.ComputeFilePath("content.txt"), null);
+            DefaultSnippetExtractor extractor = new DefaultSnippetExtractor();
+            Projbook.Core.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "Expected", "content.txt")).OpenRead()), null);
 
             // Load the expected file content
             MemoryStream memoryStream = new MemoryStream();

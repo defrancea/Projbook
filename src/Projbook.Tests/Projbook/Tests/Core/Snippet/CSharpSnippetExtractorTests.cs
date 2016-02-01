@@ -20,39 +20,6 @@ namespace Projbook.Tests.Core.Snippet
         private Dictionary<string, ISnippetExtractor> extractorCache = new Dictionary<string, ISnippetExtractor>();
 
         /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void WrongInitSourceDefaultDirectories()
-        {
-            new CSharpSnippetExtractor().Extract("Foo.cs", string.Empty);
-        }
-        /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void WrongInitSourceEmptyDirectories()
-        {
-            new CSharpSnippetExtractor(new DirectoryInfo[0]).Extract("Foo.cs", string.Empty);
-        }
-
-        /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        /// <param name="filePath">The file path to test.</param>
-        [Test]
-        [TestCase(null)]
-        [TestCase("")]
-        [TestCase("   ")]
-        [ExpectedException(typeof(SnippetExtractionException))]
-        public void WrongInitEmpty(string filePath)
-        {
-            new CSharpSnippetExtractor(new DirectoryInfo("Foo")).Extract(filePath, string.Empty);
-        }
-
-        /// <summary>
         /// Tests extract snippet.
         /// </summary>
         /// <param name="fileName">The file name.</param>
@@ -239,10 +206,10 @@ namespace Projbook.Tests.Core.Snippet
             ISnippetExtractor snippetExtractor;
             if (!this.extractorCache.TryGetValue(fileName, out snippetExtractor))
             {
-                snippetExtractor = new CSharpSnippetExtractor(this.SourceDirectories);
+                snippetExtractor = new CSharpSnippetExtractor();
                 this.extractorCache[fileName] = snippetExtractor;
             }
-            Projbook.Core.Model.Snippet snippet = snippetExtractor.Extract(fileName, pattern);
+            Projbook.Core.Model.Snippet snippet = snippetExtractor.Extract(new StreamReader(this.LocateFile(fileName).OpenRead()), pattern);
 
             // Load the expected file content
             MemoryStream memoryStream = new MemoryStream();
@@ -267,7 +234,7 @@ namespace Projbook.Tests.Core.Snippet
         public void ExtractSnippetInvalidRule()
         {
             // Run the extraction
-            new CSharpSnippetExtractor(this.SourceDirectories).Extract(this.ComputeFilePath("Sample.cs"), "abc abc(abc");
+            new CSharpSnippetExtractor().Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "SourcesA", "Sample.cs")).OpenRead()), "abc abc(abc");
         }
 
         /// <summary>
@@ -283,8 +250,8 @@ namespace Projbook.Tests.Core.Snippet
             fileName = this.ComputeFilePath(fileName);
 
             // Run the extraction
-            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor(this.SourceDirectories);
-            Projbook.Core.Model.Snippet snippet = extractor.Extract(fileName, pattern);
+            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor();
+            Projbook.Core.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)).OpenRead()), pattern);
         }
     }
 }

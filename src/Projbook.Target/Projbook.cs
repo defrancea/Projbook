@@ -1,9 +1,11 @@
 ﻿using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Projbook.Core;
+using Projbook.Core.Exception;
 using Projbook.Core.Model;
 using Projbook.Core.Model.Configuration;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Projbook.Target
@@ -50,9 +52,15 @@ namespace Projbook.Target
             {
                 configurations = configurationLoader.Load(Path.GetDirectoryName(this.ProjectPath), this.ConfigurationFile);
             }
+            catch (ConfigurationException configurationException)
+            {
+                // Report generation errors
+                this.ReportErrors(configurationException.GenerationErrors);
+                return false;
+            }
             catch (Exception exception)
             {
-                this.Log.LogError(string.Empty, string.Empty, string.Empty, this.ConfigurationFile, -1, -1, -1, -1, string.Format("Error during loading configuration: {0}", exception.Message));
+                this.Log.LogError(string.Empty, string.Empty, string.Empty, this.ConfigurationFile, 0, 0, 0, 0, string.Format("Error during loading configuration: {0}", exception.Message));
                 return false;
             }
 
@@ -65,10 +73,7 @@ namespace Projbook.Target
                 GenerationError[] errors = projbookEngine.Generate();
 
                 // Report generation errors
-                foreach (GenerationError error in errors)
-                {
-                    this.Log.LogError(string.Empty, string.Empty, string.Empty, error.SourceFile, -1, -1, -1, -1, error.Message);
-                }
+                this.ReportErrors(errors);
 
                 // Stop processing in case of error
                 if (errors.Length > 0)
@@ -77,6 +82,18 @@ namespace Projbook.Target
 
             // Report processing successful
             return success;
+        }
+
+        /// <summary>
+        /// Report generation errors.
+        /// </summary>
+        /// <param name="generationErrors">The generation errors to report.</param>
+        private void ReportErrors(IEnumerable<GenerationError> generationErrors)
+        {
+            foreach (GenerationError generationError in generationErrors)
+            {
+                this.Log.LogError(string.Empty, string.Empty, string.Empty, generationError.SourceFile, generationError.Line, generationError.Column, 0, 0, generationError.Message);
+            }
         }
     }
 }

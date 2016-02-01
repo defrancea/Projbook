@@ -18,11 +18,23 @@ namespace Projbook.Core.Model
         public string Message { get; private set; }
 
         /// <summary>
+        /// The error line.
+        /// </summary>
+        public int Line { get; private set; }
+
+        /// <summary>
+        /// The error column.
+        /// </summary>
+        public int Column { get; private set; }
+
+        /// <summary>
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
         /// </summary>
         /// <param name="sourceFile">Initializes the required <see cref="SourceFile"/>.</param>
         /// <param name="message">Initializes the required <see cref="Message"/>.</param>
-        public GenerationError(string sourceFile, string message)
+        /// <param name="line">Initializes the required <see cref="Line"/>.</param>
+        /// <param name="column">Initializes the required <see cref="Column"/>.</param>
+        public GenerationError(string sourceFile, string message, int line, int column)
         {
             // Data validation
             Ensure.That(() => sourceFile).IsNotNullOrWhiteSpace();
@@ -31,6 +43,8 @@ namespace Projbook.Core.Model
             // Initialize
             this.SourceFile = sourceFile;
             this.Message = message;
+            this.Line = line;
+            this.Column = column;
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using EnsureThat;
-
-namespace Projbook.Core.Exception
+﻿namespace Projbook.Core.Exception
 {
     /// <summary>
     /// Represents a snippet extraction exception.

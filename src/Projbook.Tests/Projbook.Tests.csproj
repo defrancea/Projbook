@@ -268,6 +268,9 @@
     <Content Include="Resources\SourcesA\Sample.xml">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Resources\FullGeneration\Page\unexistingMembers.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\FullGeneration\Page\thirdPage.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -287,6 +290,8 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Resources\testConfigUnexistingMembers.json" />
+    <None Include="Resources\testConfigManyErrors.json" />
     <None Include="Resources\testConfigEmptyArray.json" />
     <None Include="Resources\testConfigTwoGenerations.json" />
     <None Include="Resources\testConfigAllValues.json" />

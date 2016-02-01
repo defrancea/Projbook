@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Projbook.Core;
+using Projbook.Core.Exception;
 using Projbook.Core.Model.Configuration;
 using System;
 using System.IO;
@@ -118,11 +119,11 @@ namespace Projbook.Tests.Core
             Assert.AreEqual("doc.html", configurations[0].OutputHtml);
             Assert.AreEqual("doc-pdf-input.html", configurations[0].OutputPdf);
             Assert.AreEqual(3, configurations[0].Pages.Length);
-            Assert.AreEqual("Resources/FullGeneration/Page/firstPage.md", configurations[0].Pages[0].Path);
+            Assert.IsTrue(configurations[0].Pages[0].Path.EndsWith("Resources/FullGeneration/Page/firstPage.md"));
             Assert.AreEqual("First page title", configurations[0].Pages[0].Title);
-            Assert.AreEqual("Resources/FullGeneration/Page/secondPage.md", configurations[0].Pages[1].Path);
+            Assert.IsTrue(configurations[0].Pages[1].Path.EndsWith("Resources/FullGeneration/Page/secondPage.md"));
             Assert.AreEqual("Second page title", configurations[0].Pages[1].Title);
-            Assert.AreEqual("Resources/FullGeneration/Page/thirdPage.md", configurations[0].Pages[2].Path);
+            Assert.IsTrue(configurations[0].Pages[2].Path.EndsWith("Resources/FullGeneration/Page/thirdPage.md"));
             Assert.AreEqual("Third page title", configurations[0].Pages[2].Title);
         }
 
@@ -150,19 +151,20 @@ namespace Projbook.Tests.Core
             Assert.AreEqual("testTemplate-pdf-generated.txt", configurations[1].OutputPdf);
             Assert.AreEqual(0, configurations[1].Pages.Length);
         }
-        
+
         /// <summary>
-        /// Run the full generation with invalid template.
+        /// Test configuration error reporting.
         /// </summary>
         /// <param name="configFile">The config file.</param>
         /// <param name="errorMessage">The error message.</param>
+        /// <param name="line">The error line.</param>
+        /// <param name="column">The error column.</param>
         [Test]
-        [TestCase("none.json", "none.json': File not found")]
-        [TestCase("testConfigError.json", "Unexpected end when deserializing object. Path 'title', line 2, position 25.")]
-        [TestCase("testConfigMissingPage.json", "Could not find page 'Resources/FullGeneration/Page/missing.md'")]
-        [TestCase("testConfigNoTemplate.json", "At least one template must to be definied, possible template configuration: template-html, template-pdf")]
-        [TestCase("testConfigEmptyArray.json", "Could not find configuration definition")]
-        public void ErrorInConfiguration(string configFile, string errorMessage)
+        [TestCase("testConfigError.json", "Unexpected end when deserializing object. Path 'title', line 2, position 24.", 2, 25)]
+        [TestCase("testConfigMissingPage.json", "Could not find page 'Resources/FullGeneration/Page/missing.md'", 6, 16)]
+        [TestCase("testConfigNoTemplate.json", "JSON does not match any schemas from 'anyOf'. Path '', line 3, position 1.", 3, 1)]
+        [TestCase("testConfigEmptyArray.json", "Array item count 0 is less than minimum count of 1. Path '', line 2, position 1.", 2, 1)]
+        public void ErrorInConfiguration(string configFile, string errorMessage, int line, int column)
         {
             // Try to generate configuration with error
             try
@@ -170,11 +172,68 @@ namespace Projbook.Tests.Core
                 new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, Path.Combine("Resources", configFile));
                 Assert.Fail("Expected to fail");
             }
-
             // Assert correct error
-            catch (Exception exception)
+            catch (ConfigurationException configurationException)
             {
-                Assert.IsTrue(exception.Message.EndsWith(errorMessage));
+                Assert.AreEqual("Error occured during configuration loading", configurationException.Message);
+                Assert.AreEqual(1, configurationException.GenerationErrors.Length);
+                Assert.AreEqual(errorMessage, configurationException.GenerationErrors[0].Message);
+                Assert.AreEqual(line, configurationException.GenerationErrors[0].Line);
+                Assert.AreEqual(column, configurationException.GenerationErrors[0].Column);
+            }
+        }
+
+        /// <summary>
+        /// Test configuration error reporting.
+        /// </summary>
+        [Test]
+        public void NoConfiguration()
+        {
+            // Try to generate configuration with error
+            try
+            {
+                new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, "none.json");
+                Assert.Fail("Expected to fail");
+            }
+            // Assert correct error
+            catch (ArgumentException argumentException)
+            {
+                Assert.IsTrue(argumentException.Message.EndsWith(": File not found"));
+            }
+        }
+
+        /// <summary>
+        /// Test configuration error reporting.
+        /// </summary>
+        [Test]
+        public void ManyErrors()
+        {
+            // Try to generate configuration with error
+            try
+            {
+                new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, Path.Combine("Resources", "testConfigManyErrors.json"));
+                Assert.Fail("Expected to fail");
+            }
+            // Assert correct error
+            catch (ConfigurationException argumentException)
+            {
+                Assert.AreEqual("Error occured during configuration loading", argumentException.Message);
+                Assert.AreEqual(5, argumentException.GenerationErrors.Length);
+                Assert.AreEqual("Could not find html template 'Resources/FullGeneration/notExisting.txt'", argumentException.GenerationErrors[0].Message);
+                Assert.AreEqual(1, argumentException.GenerationErrors[0].Line);
+                Assert.AreEqual(45, argumentException.GenerationErrors[0].Column);
+                Assert.AreEqual("Could not find html template 'Resources/FullGeneration/notExisting-pdf.txt'", argumentException.GenerationErrors[1].Message);
+                Assert.AreEqual(23, argumentException.GenerationErrors[1].Line);
+                Assert.AreEqual(22, argumentException.GenerationErrors[1].Column);
+                Assert.AreEqual("Could not find page 'Resources/FullGeneration/Page/notExisting.md'", argumentException.GenerationErrors[2].Message);
+                Assert.AreEqual(7, argumentException.GenerationErrors[2].Line);
+                Assert.AreEqual(18, argumentException.GenerationErrors[2].Column);
+                Assert.AreEqual("Could not find page 'Resources/FullGeneration/Page/notExisting.md'", argumentException.GenerationErrors[3].Message);
+                Assert.AreEqual(15, argumentException.GenerationErrors[3].Line);
+                Assert.AreEqual(18, argumentException.GenerationErrors[3].Column);
+                Assert.AreEqual("Could not find page 'Resources/FullGeneration/Page/anotherNotExisting.md'", argumentException.GenerationErrors[4].Message);
+                Assert.AreEqual(11, argumentException.GenerationErrors[4].Line);
+                Assert.AreEqual(18, argumentException.GenerationErrors[4].Column);
             }
         }
     }

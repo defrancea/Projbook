@@ -13,7 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace Projbook.Core
 {
@@ -122,7 +124,7 @@ namespace Projbook.Core
                 Block document;
 
                 // Process the page
-                using (StreamReader reader = new StreamReader(new FileStream(new FileInfo(page.Path).FullName, FileMode.Open, FileAccess.Read)))
+                using (StreamReader reader = new StreamReader(new FileStream(new FileInfo(page.FileSystemPath).FullName, FileMode.Open, FileAccess.Read)))
                 {
                     document = CommonMarkConverter.ProcessStage1(reader);
                 }
@@ -155,23 +157,69 @@ namespace Projbook.Core
                                     this.extractorCache[snippetExtractionRule.FileName] = snippetExtractor;
                                 }
 
+                                // Look for the file in available source directories
+                                FileInfo fileInfo = null;
+                                DirectoryInfo[] directoryInfos = this.ExtractSourceDirectories(this.CsprojFile);
+                                foreach (DirectoryInfo directoryInfo in directoryInfos)
+                                {
+                                    string fullFilePath = Path.Combine(directoryInfo.FullName, snippetExtractionRule.FileName ?? string.Empty);
+                                    if (File.Exists(fullFilePath))
+                                    {
+                                        fileInfo = new FileInfo(fullFilePath);
+                                        break;
+                                    }
+                                }
+
+                                // Raise an error if cannot find the file
+                                if (null == fileInfo)
+                                {
+                                    // Locate block line
+                                    int line = this.LocateBlockLine(node.Block, page);
+
+                                    // Compute error column: Index of the path in the fenced code + 3 (for the ``` prefix) + 1 (to be 1 based)
+                                    int column = fencedCode.IndexOf(snippetExtractionRule.FileName) + 4;
+
+                                    // Report error
+                                    generationError.Add(new Model.GenerationError(
+                                        sourceFile: page.Path,
+                                        message: string.Format("Cannot find file '{0}' in any referenced project ({0})", snippetExtractionRule.FileName, string.Join(";", directoryInfos.Select(x => x.FullName))),
+                                        line: line,
+                                        column: column));
+                                    continue;
+                                }
+
                                 // Extract the snippet
-                                Model.Snippet snippet = snippetExtractor.Extract(snippetExtractionRule.FileName, snippetExtractionRule.Pattern);
+                                Model.Snippet snippet = null;
+                                using (StreamReader streamReader = new StreamReader(fileInfo.OpenRead()))
+                                {
+                                    snippet = snippetExtractor.Extract(streamReader, snippetExtractionRule.Pattern);
+                                }
                                 StringContent code = new StringContent();
                                 code.Append(snippet.Content, 0, snippet.Content.Length);
                                 node.Block.StringContent = code;
                             }
                             catch (SnippetExtractionException snippetExtraction)
                             {
+                                // Locate block line
+                                int line = this.LocateBlockLine(node.Block, page);
+
+                                // Compute error column: Fenced code length - pattern length + 3 (for the ``` prefix) + 1 (to be 1 based)
+                                int column = fencedCode.Length - snippetExtractionRule.Pattern.Length + 4;
+
+                                // Report error
                                 generationError.Add(new Model.GenerationError(
                                     sourceFile: page.Path,
-                                    message: string.Format("{0}: {1}", snippetExtraction.Message, snippetExtraction.Pattern)));
+                                    message: string.Format("{0}: {1}", snippetExtraction.Message, snippetExtraction.Pattern),
+                                    line: line,
+                                    column: column));
                             }
                             catch (System.Exception exception)
                             {
                                 generationError.Add(new Model.GenerationError(
                                     sourceFile: page.Path,
-                                    message: exception.Message));
+                                    message: exception.Message,
+                                    line: 0,
+                                    column: 0));
                             }
                         }
                     }
@@ -237,9 +285,13 @@ namespace Projbook.Core
                 {
                     this.GenerateFile(this.Configuration.TemplateHtml, this.Configuration.OutputHtml, this.Configuration, pages);
                 }
+                catch (TemplateParsingException templateParsingException)
+                {
+                    generationError.Add(new Model.GenerationError(this.Configuration.TemplateHtml, string.Format("Error during HTML generation: {0}", templateParsingException.Message), templateParsingException.Line, templateParsingException.Column));
+                }
                 catch (System.Exception exception)
                 {
-                    generationError.Add(new Model.GenerationError(this.Configuration.TemplateHtml, string.Format("Error during HTML generation: {0}", exception.Message)));
+                    generationError.Add(new Model.GenerationError(this.Configuration.TemplateHtml, string.Format("Error during HTML generation: {0}", exception.Message), 0, 0));
                 }
             }
 
@@ -260,9 +312,13 @@ namespace Projbook.Core
                     process.Start();
                     process.WaitForExit();
                 }
+                catch (TemplateParsingException templateParsingException)
+                {
+                    generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", templateParsingException.Message), templateParsingException.Line, templateParsingException.Column));
+                }
                 catch (System.Exception exception)
                 {
-                    generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", exception.Message)));
+                    generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", exception.Message), 0, 0));
                 }
             }
 
@@ -292,6 +348,81 @@ namespace Projbook.Core
                 string processed = Engine.Razor.RunCompile(new LoadedTemplateSource(reader.ReadToEnd()), string.Empty, null, new { Title = configuration.Title, Pages = pages });
                 writer.WriteLine(processed);
             }
+        }
+
+        /// <summary>
+        /// Computes line number of a block in a page.
+        /// </summary>
+        /// <param name="block">The block to locate.</param>
+        /// <param name="page">The page where the block is.</param>
+        /// <returns>The block line.</returns>
+        private int LocateBlockLine(Block block, Page page)
+        {
+            // Initialize the line to 1
+            int line = 1;
+
+            // Load the page until the block source position
+            char[] buffer = new char[block.SourcePosition];
+            using (StreamReader reader = new StreamReader(new FileStream(new FileInfo(page.Path).FullName, FileMode.Open, FileAccess.Read)))
+            {
+                reader.Read(buffer, 0, buffer.Length);
+            }
+
+            // Count the number of line break to increment line number
+            foreach (char currentChar in buffer)
+            {
+                if ('\n' == currentChar)
+                {
+                    ++line;
+                }
+            }
+
+            // Return the line number
+            return line;
+        }
+
+        /// <summary>
+        /// Extracts source directories from the csproj file.
+        /// The extected directory info list is the csproj's directory and all project references.
+        /// </summary>
+        /// <param name="csprojFile"></param>
+        /// <returns></returns>
+        private DirectoryInfo[] ExtractSourceDirectories(FileInfo csprojFile)
+        {
+            // Data validation
+            Ensure.That(() => csprojFile).IsNotNull();
+            Ensure.That(csprojFile.Exists, string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
+
+            // Initialize the extracted directories
+            List<DirectoryInfo> extractedSourceDirectories = new List<DirectoryInfo>();
+
+            // Add the csproj's directory
+            DirectoryInfo projectDirectory = new DirectoryInfo(Path.GetDirectoryName(csprojFile.FullName));
+            extractedSourceDirectories.Add(projectDirectory);
+
+            // Extract project reference path
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.Load(csprojFile.FullName);
+            XmlNamespaceManager xmlNamespaceManager = new XmlNamespaceManager(xmlDocument.NameTable);
+            xmlNamespaceManager.AddNamespace("msbuild", "http://schemas.microsoft.com/developer/msbuild/2003");
+            XmlNodeList xmlNodes = xmlDocument.SelectNodes("//msbuild:ProjectReference", xmlNamespaceManager);
+            for (int i = 0; i < xmlNodes.Count; ++i)
+            {
+                XmlNode xmlNode = xmlNodes.Item(i);
+                string includeValue = xmlNode.Attributes["Include"].Value;
+                string combinedPath = Path.Combine(projectDirectory.FullName, includeValue);
+
+                // The combinedPath can contains both forward and backslash path chunk.
+                // In linux environment we can end up having "/..\" in the path which make the GetDirectoryName method bugging (returns empty).
+                // For this reason we need to make sure that the combined path uses forward slashes
+                combinedPath = combinedPath.Replace(@"\", "/");
+
+                // Add the combined path
+                extractedSourceDirectories.Add(new DirectoryInfo(Path.GetDirectoryName(Path.GetFullPath(combinedPath))));
+            }
+
+            // Returne the extracted directories
+            return extractedSourceDirectories.ToArray();
         }
     }
 }

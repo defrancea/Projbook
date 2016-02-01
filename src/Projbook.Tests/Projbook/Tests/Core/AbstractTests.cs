@@ -45,5 +45,27 @@ namespace Projbook.Tests.Core
         {
             return Path.Combine("Resources", "SourcesA", fileName);
         }
+
+        /// <summary>
+        /// Locates a file in source directories.
+        /// </summary>
+        /// <param name="fileName">The file to locate.</param>
+        /// <returns>The located file.</returns>
+        protected FileInfo LocateFile(string fileName)
+        {
+            // Browse all directories
+            foreach (DirectoryInfo directory in this.SourceDirectories)
+            {
+                // Build file name and return if existing
+                FileInfo fileInfo = new FileInfo(Path.Combine(directory.FullName, fileName));
+                if (fileInfo.Exists)
+                {
+                    return fileInfo;
+                }
+            }
+
+            // Return false if nothing is found
+            return null;
+        }
     }
 }

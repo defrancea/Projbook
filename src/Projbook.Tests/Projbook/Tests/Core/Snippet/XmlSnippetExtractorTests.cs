@@ -20,39 +20,6 @@ namespace Projbook.Tests.Core.Snippet
         private Dictionary<string, ISnippetExtractor> extractorCache = new Dictionary<string, ISnippetExtractor>();
 
         /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void WrongInitSourceDefaultDirectories()
-        {
-            new XmlSnippetExtractor().Extract("Foo.xml", string.Empty);
-        }
-        /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void WrongInitSourceEmptyDirectories()
-        {
-            new XmlSnippetExtractor(new DirectoryInfo[0]).Extract("Foo.xml", string.Empty);
-        }
-
-        /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        /// <param name="filePath">The file path to test.</param>
-        [Test]
-        [TestCase(null)]
-        [TestCase("")]
-        [TestCase("   ")]
-        [ExpectedException(typeof(SnippetExtractionException))]
-        public void WrongInitEmpty(string filePath)
-        {
-            new XmlSnippetExtractor(new DirectoryInfo("Foo")).Extract(filePath, string.Empty);
-        }
-
-        /// <summary>
         /// Tests extract snippet.
         /// </summary>
         /// <param name="fileName">The file name.</param>
@@ -87,10 +54,10 @@ namespace Projbook.Tests.Core.Snippet
             ISnippetExtractor snippetExtractor;
             if (!this.extractorCache.TryGetValue(fileName, out snippetExtractor))
             {
-                snippetExtractor = new XmlSnippetExtractor(this.SourceDirectories);
+                snippetExtractor = new XmlSnippetExtractor();
                 this.extractorCache[fileName] = snippetExtractor;
             }
-            Projbook.Core.Model.Snippet snippet = snippetExtractor.Extract(fileName, pattern);
+            Projbook.Core.Model.Snippet snippet = snippetExtractor.Extract(new StreamReader(this.LocateFile(fileName).OpenRead()), pattern);
 
             // Load the expected file content
             MemoryStream memoryStream = new MemoryStream();
@@ -115,7 +82,7 @@ namespace Projbook.Tests.Core.Snippet
         public void ExtractSnippetInvalidRule()
         {
             // Run the extraction
-            new XmlSnippetExtractor(this.SourceDirectories).Extract(this.ComputeFilePath("Sample.xml"), "abc abc(abc");
+            new XmlSnippetExtractor().Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "SourcesA", "Sample.xml")).OpenRead()), "abc abc(abc");
         }
 
         /// <summary>
@@ -131,8 +98,8 @@ namespace Projbook.Tests.Core.Snippet
             fileName = this.ComputeFilePath(fileName);
             
             // Run the extraction
-            XmlSnippetExtractor extractor = new XmlSnippetExtractor(this.SourceDirectories);
-            Projbook.Core.Model.Snippet snippet = extractor.Extract(fileName, pattern);
+            XmlSnippetExtractor extractor = new XmlSnippetExtractor();
+            Projbook.Core.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)).OpenRead()), pattern);
         }
     }
 }
