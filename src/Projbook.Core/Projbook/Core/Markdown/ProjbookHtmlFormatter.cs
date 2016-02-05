@@ -122,8 +122,30 @@ namespace Projbook.Core.Markdown
                 {
                     if (inline.Tag == InlineTag.String)
                     {
+                        // Read and split line on '|'
                         tableParts.Add(inline.LiteralContent);
-                        splittedTableParts.Add(inline.LiteralContent.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()).ToArray());
+                        string line = inline.LiteralContent.Trim();
+                        string[] lineParts = line.Split(new char[] { '|' }, StringSplitOptions.None).Select(x => x.Trim()).ToArray();
+
+                        // Define parts boundaries
+                        int startPos = 0;
+                        int numbber = lineParts.Length;
+
+                        // Ignore the first part if the line starts with '|'
+                        if ('|' == line.First())
+                        {
+                            ++startPos;
+                            --numbber;
+                        }
+                        
+                        // Ignore the last part if the line ends with '|'
+                        if ('|' == line.Last())
+                        {
+                            --numbber;
+                        }
+
+                        // Add the line to splitted parts
+                        splittedTableParts.Add(lineParts.Skip(startPos).Take(numbber).ToArray());
                     }
                     inline = inline.NextSibling;
                 }
