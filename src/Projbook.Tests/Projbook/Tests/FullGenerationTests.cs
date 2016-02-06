@@ -15,11 +15,6 @@ namespace Projbook.Tests.Core
     public class FullGenerationTests : AbstractTests
     {
         /// <summary>
-        /// The WkhtmltoPdf location.
-        /// </summary>
-        private const string Wkhtmltopdf_Location = "../packages/wkhtmltopdf.msvc.64.exe.0.12.2.5/tools/wkhtmltopdf.exe";
-
-        /// <summary>
         /// Run the full generation and compate the generated output with the expected output.
         /// </summary>
         /// <param name="configFileName">The config file name.</param>
@@ -87,7 +82,7 @@ namespace Projbook.Tests.Core
             try
             {
                 // Execute generation
-                GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", FullGenerationTests.Wkhtmltopdf_Location).Generate();
+                GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", generatePdf: false).Generate();
 
                 // Read expected ouput
                 string expectedContent = this.LoadFile("Resources/FullGeneration/" + expectedHtmlFileName);
@@ -106,14 +101,14 @@ namespace Projbook.Tests.Core
                 expectedPdfContent = expectedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 generatedContent = generatedContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 generatedPdfContent = generatedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
-
+                
                 // Assert result
                 Assert.IsNotNull(errors);
                 Assert.AreEqual(0, errors.Length);
                 Assert.AreEqual(expectedContent, generatedContent);
                 Assert.AreEqual(expectedPdfContent, generatedPdfContent);
 
-                // wkhtmltopdf cannot be trigerred from mono:
+                // wkhtmltopdf cannot be trigerred from mono and nunit at the same time because of native code loading:
                 // Assert.AreEqual(configuration.GeneratePdf, File.Exists(Path.ChangeExtension(configuration.OutputPdf, "pdf")));
             }
             finally
@@ -149,7 +144,7 @@ namespace Projbook.Tests.Core
         {
             // Perform generation
             Configuration configuration = new ConfigurationLoader().Load(this.SourceDirectories[0].FullName,"Resources/" + configFileName)[0];
-            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", FullGenerationTests.Wkhtmltopdf_Location).Generate();
+            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".").Generate();
 
             // Assert result
             Assert.IsNotNull(errors);
@@ -173,7 +168,7 @@ namespace Projbook.Tests.Core
         {
             // Perform generation
             Configuration configuration = new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, "Resources/testConfigErrorInPdf.json")[0];
-            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", FullGenerationTests.Wkhtmltopdf_Location).Generate();
+            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".").Generate();
 
             // Assert result
             Assert.IsNotNull(errors);
@@ -194,7 +189,7 @@ namespace Projbook.Tests.Core
         {
             // Perform generation
             Configuration configuration = new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, "Resources/testConfigUnexistingMembers.json")[0];
-            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", FullGenerationTests.Wkhtmltopdf_Location).Generate();
+            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".").Generate();
 
             // Assert result
             Assert.IsNotNull(errors);

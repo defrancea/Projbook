@@ -9,13 +9,11 @@ using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using RazorEngine.Text;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Xml;
+using WkHtmlToXSharp;
 
 namespace Projbook.Core
 {
@@ -52,9 +50,9 @@ namespace Projbook.Core
         private Dictionary<string, ISnippetExtractor> extractorCache = new Dictionary<string, ISnippetExtractor>();
 
         /// <summary>
-        /// The wkhtmltopdf full path.
+        /// Define wheather projbook engine should generate the pdf.
         /// </summary>
-        private string wkhtmltopdfFullPath;
+        private bool generatePdf;
 
         /// <summary>
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
@@ -62,8 +60,8 @@ namespace Projbook.Core
         /// <param name="csprojFile">Initializes the required <see cref="CsprojFile"/>.</param>
         /// <param name="configuration">Initializes the required <see cref="Configuration"/>.</param>
         /// <param name="outputDirectoryPath">Initializes the required <see cref="OutputDirectory"/>.</param>
-        /// <param name="wkhtmlToPdfLocation">Initializes the required <see cref="WkhtmlToPdfLocation"/>.</param>
-        public ProjbookEngine(string csprojFile, Configuration configuration, string outputDirectoryPath, string wkhtmlToPdfLocation)
+        /// <param name="generatePdf">Define wheather projbook must generates pdf files.</param>
+        public ProjbookEngine(string csprojFile, Configuration configuration, string outputDirectoryPath, bool generatePdf = true)
         {
             // Data validation
             Ensure.That(() => csprojFile).IsNotNullOrWhiteSpace();
@@ -76,11 +74,7 @@ namespace Projbook.Core
             this.Configuration = configuration;
             this.OutputDirectory = new DirectoryInfo(outputDirectoryPath);
             this.snippetExtractorFactory = new SnippetExtractorFactory(this.CsprojFile);
-            
-            // Compute wkhtmltopdf full path and assert the file exists
-            this.wkhtmltopdfFullPath = Path.Combine(this.CsprojFile.Directory.FullName, wkhtmlToPdfLocation);
-            if (this.Configuration.GeneratePdf)
-                Ensure.That(File.Exists(wkhtmltopdfFullPath), string.Format("Could not find '{0}' file", wkhtmltopdfFullPath)).IsTrue();
+            this.generatePdf = generatePdf;
         }
 
         /// <summary>
@@ -280,6 +274,7 @@ namespace Projbook.Core
             {
                 try
                 {
+                    string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputHtml);
                     this.GenerateFile(this.Configuration.TemplateHtml, this.Configuration.OutputHtml, this.Configuration, pages);
                 }
                 catch (TemplateParsingException templateParsingException)
@@ -297,17 +292,43 @@ namespace Projbook.Core
             {
                 try
                 {
-                    // Generate pdf template
-                    this.GenerateFile(this.Configuration.TemplatePdf, this.Configuration.OutputPdf, this.Configuration, pages);
+                    // Generate the pdf template
+                    string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputPdf);
+                    this.GenerateFile(this.Configuration.TemplatePdf, outputFileHtml, this.Configuration, pages);
 
-                    // Run process
-                    string outputPdf = Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
-                    Process process = new Process();
-                    process.StartInfo.FileName = wkhtmltopdfFullPath;
-                    process.StartInfo.Arguments = string.Format("{0} {1}", Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputPdf), Path.Combine(this.OutputDirectory.FullName, outputPdf));
-                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    process.Start();
-                    process.WaitForExit();
+                    // Run pdf generation
+                    if (this.generatePdf)
+                    {
+                        // Run process
+                        string outputPdf = Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
+
+                        // Register bundles
+                        WkHtmlToXLibrariesManager.Register(new Linux32NativeBundle());
+                        WkHtmlToXLibrariesManager.Register(new Linux64NativeBundle());
+                        WkHtmlToXLibrariesManager.Register(new Win32NativeBundle());
+                        WkHtmlToXLibrariesManager.Register(new Win64NativeBundle());
+
+                        // Run pdf convertion
+                        using (var inputFileReader = new StreamReader(new FileStream(outputFileHtml, FileMode.Open, FileAccess.Read)))
+                        using (MultiplexingConverter pdfConverter = new MultiplexingConverter())
+                        using (var outputFileStream = new FileStream(outputPdf, FileMode.Create, FileAccess.Write))
+                        {
+                            pdfConverter.Error += (s, e) => {
+                                generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", e.Value), 0, 0));
+                            };
+
+                            try
+                            {
+                                byte[] buffer = pdfConverter.Convert(inputFileReader.ReadToEnd());
+                                outputFileStream.Write(buffer, 0, buffer.Length);
+                            }
+                            catch
+                            {
+                                // Ignore generation errors at that level
+                                // Errors are handled by the error handling having the best description
+                            }
+                        }
+                    }
                 }
                 catch (TemplateParsingException templateParsingException)
                 {
@@ -327,13 +348,12 @@ namespace Projbook.Core
         /// Generates a file.
         /// </summary>
         /// <param name="templateName">The template name use as input.</param>
-        /// <param name="targetName">The target name used as output.</param>
+        /// <param name="outputFileHtml">The output html file.</param>
         /// <param name="configuration">The configuration to inject.</param>
         /// <param name="pages">The pages to inject.</param>
-        private void GenerateFile(string templateName, string targetName, Configuration configuration, List<Model.Page> pages)
+        private void GenerateFile(string templateName, string outputFileHtml, Configuration configuration, List<Model.Page> pages)
         {
             // Generate final documentation from the template using razor engine
-            string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, targetName);
             using (var reader = new StreamReader(new FileStream(templateName, FileMode.Open, FileAccess.Read)))
             using (var writer = new StreamWriter(new FileStream(outputFileHtml, FileMode.Create, FileAccess.Write)))
             {
@@ -346,7 +366,7 @@ namespace Projbook.Core
                 writer.WriteLine(processed);
             }
         }
-
+        
         /// <summary>
         /// Computes line number of a block in a page.
         /// </summary>

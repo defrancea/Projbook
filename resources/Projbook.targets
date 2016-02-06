@@ -6,7 +6,6 @@
     <Projbook
       ProjectPath="$(ProjbookBoundProject)"
       ConfigurationFile="projbook.json"
-      OutputDirectory="$(TargetDir)"
-      WkhtmlToPdfLocation="..\packages\wkhtmltopdf.msvc.64.exe.0.12.2.5\tools\wkhtmltopdf.exe" />
+      OutputDirectory="$(TargetDir)" />
   </Target>
 </Project>

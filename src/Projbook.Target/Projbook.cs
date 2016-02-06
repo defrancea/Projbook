@@ -34,12 +34,6 @@ namespace Projbook.Target
         public string OutputDirectory { get; set; }
 
         /// <summary>
-        /// The WkhtmlToPdf location.
-        /// </summary>
-        [Required]
-        public string WkhtmlToPdfLocation { get; set; }
-
-        /// <summary>
         /// Trigger task execution.
         /// </summary>
         /// <returns>True if the task succeeded.</returns>
@@ -69,7 +63,7 @@ namespace Projbook.Target
             foreach (Configuration configuration in configurations)
             {
                 // Run generation
-                ProjbookEngine projbookEngine = new ProjbookEngine(this.ProjectPath, configuration, this.OutputDirectory, this.WkhtmlToPdfLocation);
+                ProjbookEngine projbookEngine = new ProjbookEngine(this.ProjectPath, configuration, this.OutputDirectory);
                 GenerationError[] errors = projbookEngine.Generate();
 
                 // Report generation errors

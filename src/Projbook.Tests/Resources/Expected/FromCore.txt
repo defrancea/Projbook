@@ -2,10 +2,10 @@
 /// Generates a file.
 /// </summary>
 /// <param name="templateName">The template name use as input.</param>
-/// <param name="targetName">The target name used as output.</param>
+/// <param name="outputFileHtml">The output html file.</param>
 /// <param name="configuration">The configuration to inject.</param>
 /// <param name="pages">The pages to inject.</param>
-private void GenerateFile(string templateName, string targetName, Configuration configuration, List<Model.Page> pages)
+private void GenerateFile(string templateName, string outputFileHtml, Configuration configuration, List<Model.Page> pages)
 {
     // ...
 }
