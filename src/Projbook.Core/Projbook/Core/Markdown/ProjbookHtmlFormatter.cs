@@ -24,9 +24,14 @@ namespace Projbook.Core.Markdown
         public string ContextName { get; private set; }
 
         /// <summary>
-        /// Identifier used as injected value for splitting page section.
+        /// The page break info exposed as array to the outside.
         /// </summary>
-        public string PageSplittingIdentifier { get; private set; }
+        public PageBreakInfo[] PageBreak { get { return this.pageBreak.ToArray(); } }
+
+        /// <summary>
+        /// Internal page break list where page breaks are added during the processing.
+        /// </summary>
+        private List<PageBreakInfo> pageBreak;
 
         /// <summary>
         /// Internal dictionary to resolve section conflicts.
@@ -46,22 +51,27 @@ namespace Projbook.Core.Markdown
         private static Regex invalidTitleChars = new Regex("[^a-zA-Z0-9]", RegexOptions.Compiled);
 
         /// <summary>
+        /// The stream writer used during document generation.
+        /// </summary>
+        private StreamWriter writer;
+
+        /// <summary>
         /// Initializes a new instance of <see cref="ProjbookHtmlFormatter"/>.
         /// </summary>
         /// <param name="contextName">Initializes the required <see cref="ContextName"/></param>
-        /// <param name="pageSlippingIdentifier">Initializes the required <see cref="PageSplittingIdentifier"/></param>
         /// <param name="target">Initializes the required text writter used as output.</param>
         /// <param name="settings">Initializes the required common mark settings used by the formatting.</param>
-        public ProjbookHtmlFormatter(string contextName, string pageSlippingIdentifier, TextWriter target, CommonMarkSettings settings)
+        public ProjbookHtmlFormatter(string contextName, TextWriter target, CommonMarkSettings settings)
             : base(target, settings)
         {
             // Data validation
             Ensure.That(() => contextName).IsNotNullOrWhiteSpace();
-            Ensure.That(() => pageSlippingIdentifier).IsNotNullOrWhiteSpace();
+            Ensure.That(target is StreamWriter).IsTrue();
 
             // Initialize
             this.ContextName = contextName;
-            this.PageSplittingIdentifier = pageSlippingIdentifier;
+            this.pageBreak = new List<PageBreakInfo>();
+            this.writer = target as StreamWriter;
         }
 
         /// <summary>
@@ -107,8 +117,13 @@ namespace Projbook.Core.Markdown
                     sectionId = string.Format("{0}-{1}", sectionId, ++sectionConflict[sectionId]);
                 }
 
-                // Write anchor
-                this.Write(string.Format(@"<!--{0} [{1}]({2})-->", this.PageSplittingIdentifier, headerContent, sectionId));
+                // Flush the writer to move the stream position used during page break creation
+                this.writer.Flush();
+
+                // Add a new page break
+                this.pageBreak.Add(new PageBreakInfo(sectionId, headerContent, this.writer.BaseStream.Position));
+
+                // Initialize section conflict
                 sectionConflict[sectionId] = 1;
             }
 

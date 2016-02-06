@@ -88,6 +88,7 @@
     <Compile Include="Projbook\Core\ConfigurationLoader.cs" />
     <Compile Include="Projbook\Core\Exception\ConfigurationException.cs" />
     <Compile Include="Projbook\Core\Exception\SnippetExtractionException.cs" />
+    <Compile Include="Projbook\Core\Markdown\PageBreakInfo.cs" />
     <Compile Include="Projbook\Core\Markdown\ProjbookHtmlFormatter.cs" />
     <Compile Include="Projbook\Core\Model\Configuration\Page.cs" />
     <Compile Include="Projbook\Core\Model\Configuration\Validation\ConfigurationValidation.Designer.cs">

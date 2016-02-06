@@ -41,7 +41,7 @@ namespace Projbook.Tests.Core
             
             // Initialize formatter
             this.Formatter =
-                new ProjbookHtmlFormatter("page", "UT", this.StreamWriter, CommonMarkSettings.Default);
+                new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Projbook.Tests.Core
         [ExpectedException(typeof(ArgumentException))]
         public void WrongInit(string contextName)
         {
-            new ProjbookHtmlFormatter(contextName, "UT", this.StreamWriter, CommonMarkSettings.Default);
+            new ProjbookHtmlFormatter(contextName, this.StreamWriter, CommonMarkSettings.Default);
         }
 
         /// <summary>
@@ -84,7 +84,11 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [unknown](page-unknown)-->{0}<h0></h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<h0></h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(1, this.Formatter.PageBreak.Length);
+            Assert.AreEqual("page-unknown", this.Formatter.PageBreak[0].Id);
+            Assert.AreEqual("unknown", this.Formatter.PageBreak[0].Title);
+            Assert.AreEqual(0, this.Formatter.PageBreak[0].Position);
         }
 
         /// <summary>
@@ -100,7 +104,34 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [title](page-title)-->{0}<h0>title</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<h0>title</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(1, this.Formatter.PageBreak.Length);
+            Assert.AreEqual("page-title", this.Formatter.PageBreak[0].Id);
+            Assert.AreEqual("title", this.Formatter.PageBreak[0].Title);
+            Assert.AreEqual(0, this.Formatter.PageBreak[0].Position);
+        }
+
+        /// <summary>
+        /// Tests with simple header with pre content.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WriteSimpleHeaderWithPreContent()
+        {
+            // Process
+            Block block = new Block(BlockTag.Document, 0);
+            block.InlineContent = new Inline("pre content");
+            Block block1 = new Block(BlockTag.AtxHeader, 0);
+            block1.InlineContent = new Inline("title");
+            block.FirstChild = block1;
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"pre content{0}<h0>title</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(1, this.Formatter.PageBreak.Length);
+            Assert.AreEqual("page-title", this.Formatter.PageBreak[0].Id);
+            Assert.AreEqual("title", this.Formatter.PageBreak[0].Title);
+            Assert.AreEqual(11, this.Formatter.PageBreak[0].Position);
         }
 
         /// <summary>
@@ -116,7 +147,11 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [unknown](page-unknown)-->{0}<h42></h42>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<h42></h42>{0}", Environment.NewLine), output);
+            Assert.AreEqual(1, this.Formatter.PageBreak.Length);
+            Assert.AreEqual("page-unknown", this.Formatter.PageBreak[0].Id);
+            Assert.AreEqual("unknown", this.Formatter.PageBreak[0].Title);
+            Assert.AreEqual(0, this.Formatter.PageBreak[0].Position);
         }
 
         /// <summary>
@@ -132,7 +167,11 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [Title](page-title)-->{0}<h0>Title</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<h0>Title</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(1, this.Formatter.PageBreak.Length);
+            Assert.AreEqual("page-title", this.Formatter.PageBreak[0].Id);
+            Assert.AreEqual("Title", this.Formatter.PageBreak[0].Title);
+            Assert.AreEqual(0, this.Formatter.PageBreak[0].Position);
         }
 
         /// <summary>
@@ -148,7 +187,11 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [This is a & super content en Français ?](page-this-is-a---super-content-en-fran-ais--)-->{0}<h0>This is a &amp; super content en Français ?</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<h0>This is a &amp; super content en Français ?</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(1, this.Formatter.PageBreak.Length);
+            Assert.AreEqual("page-this-is-a---super-content-en-fran-ais--", this.Formatter.PageBreak[0].Id);
+            Assert.AreEqual("This is a & super content en Français ?", this.Formatter.PageBreak[0].Title);
+            Assert.AreEqual(0, this.Formatter.PageBreak[0].Position);
         }
 
         /// <summary>
@@ -169,7 +212,14 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [Title](page-title)-->{0}<h0>Title<!--UT [Title](page-title-2)-->{0}<h0>Title</h0>{0}</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<h0>Title{0}<h0>Title</h0>{0}</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(2, this.Formatter.PageBreak.Length);
+            Assert.AreEqual("page-title", this.Formatter.PageBreak[0].Id);
+            Assert.AreEqual("Title", this.Formatter.PageBreak[0].Title);
+            Assert.AreEqual(0, this.Formatter.PageBreak[0].Position);
+            Assert.AreEqual("page-title-2", this.Formatter.PageBreak[1].Id);
+            Assert.AreEqual("Title", this.Formatter.PageBreak[1].Title);
+            Assert.AreEqual(9, this.Formatter.PageBreak[1].Position);
         }
 
         /// <summary>
@@ -190,7 +240,14 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [Title ?](page-title--)-->{0}<h0>Title ?<!--UT [Title !](page-title---2)-->{0}<h0>Title !</h0>{0}</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<h0>Title ?{0}<h0>Title !</h0>{0}</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(2, this.Formatter.PageBreak.Length);
+            Assert.AreEqual("page-title--", this.Formatter.PageBreak[0].Id);
+            Assert.AreEqual("Title ?", this.Formatter.PageBreak[0].Title);
+            Assert.AreEqual(0, this.Formatter.PageBreak[0].Position);
+            Assert.AreEqual("page-title---2", this.Formatter.PageBreak[1].Id);
+            Assert.AreEqual("Title !", this.Formatter.PageBreak[1].Title);
+            Assert.AreEqual(11, this.Formatter.PageBreak[1].Position);
         }
 
         /// <summary>
@@ -211,7 +268,14 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [One/Title](page-one-title)-->{0}<h0>One/Title<!--UT [One/Title](page-one-title-2)-->{0}<h0>One/Title</h0>{0}</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<h0>One/Title{0}<h0>One/Title</h0>{0}</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(2, this.Formatter.PageBreak.Length);
+            Assert.AreEqual("page-one-title", this.Formatter.PageBreak[0].Id);
+            Assert.AreEqual("One/Title", this.Formatter.PageBreak[0].Title);
+            Assert.AreEqual(0, this.Formatter.PageBreak[0].Position);
+            Assert.AreEqual("page-one-title-2", this.Formatter.PageBreak[1].Id);
+            Assert.AreEqual("One/Title", this.Formatter.PageBreak[1].Title);
+            Assert.AreEqual(13, this.Formatter.PageBreak[1].Position);
         }
 
         /// <summary>
@@ -229,7 +293,11 @@ namespace Projbook.Tests.Core
             string output = this.Process(block);
 
             // Assert
-            Assert.AreEqual(string.Format(@"<!--UT [Title in many siblings](page-title-in-many-siblings)-->{0}<h0>Title in many siblings</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(string.Format(@"<h0>Title in many siblings</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(1, this.Formatter.PageBreak.Length);
+            Assert.AreEqual("page-title-in-many-siblings", this.Formatter.PageBreak[0].Id);
+            Assert.AreEqual("Title in many siblings", this.Formatter.PageBreak[0].Title);
+            Assert.AreEqual(0, this.Formatter.PageBreak[0].Position);
         }
 
         /// <summary>

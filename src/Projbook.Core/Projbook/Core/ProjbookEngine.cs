@@ -52,18 +52,6 @@ namespace Projbook.Core
         private Dictionary<string, ISnippetExtractor> extractorCache = new Dictionary<string, ISnippetExtractor>();
 
         /// <summary>
-        /// Represents a string defining the identifier to separate sections.
-        /// This identifier is injected but the formatted before each section.
-        /// It can then be used as an identifier to split the page content into sections.
-        /// </summary>
-        private string sectionSplittingIdentifier;
-
-        /// <summary>
-        /// The regex to parse sections information injected by the formatter.
-        /// </summary>
-        private Regex regex;
-
-        /// <summary>
         /// The wkhtmltopdf full path.
         /// </summary>
         private string wkhtmltopdfFullPath;
@@ -88,10 +76,6 @@ namespace Projbook.Core
             this.Configuration = configuration;
             this.OutputDirectory = new DirectoryInfo(outputDirectoryPath);
             this.snippetExtractorFactory = new SnippetExtractorFactory(this.CsprojFile);
-            this.sectionSplittingIdentifier = Guid.NewGuid().ToString();
-            this.regex = new Regex(
-                string.Format(@"<!--{0} \[([^\]]*)\]\(([^\)]*)\)-->(.+?)(?=<!--{0} |$)", this.sectionSplittingIdentifier),
-                RegexOptions.Compiled | RegexOptions.Singleline);
             
             // Compute wkhtmltopdf full path and assert the file exists
             this.wkhtmltopdfFullPath = Path.Combine(this.CsprojFile.Directory.FullName, wkhtmlToPdfLocation);
@@ -225,49 +209,62 @@ namespace Projbook.Core
                     }
                 }
 
-                // Setup custom formatter
-                CommonMarkSettings.Default.OutputDelegate = (d, o, s) => new ProjbookHtmlFormatter(pageId, this.sectionSplittingIdentifier, o, s).WriteDocument(d);
-
                 // Write to output
+                ProjbookHtmlFormatter projbookHtmlFormatter = null;
                 MemoryStream documentStream = new MemoryStream();
                 using (StreamWriter writer = new StreamWriter(documentStream))
                 {
+                    // Setup custom formatter
+                    CommonMarkSettings.Default.OutputDelegate = (d, o, s) => (projbookHtmlFormatter = new ProjbookHtmlFormatter(pageId, o, s)).WriteDocument(d);
+
+                    // Render
                     CommonMarkConverter.ProcessStage3(document, writer);
                 }
 
                 // Initialize the pre section content
                 string preSectionContent = string.Empty;
-
+                
                 // Retrieve page content
                 string pageContent = System.Text.Encoding.UTF8.GetString(documentStream.ToArray());
 
-                // Build section list
-                List<Model.Section> sections = new List<Model.Section>();
-                Match match = regex.Match(pageContent);
-                bool matched = false;
-                while(match.Success)
-                {
-                    // Initialize the pre section part from 0 to the first matching index for the first matching
-                    if (!matched)
-                    {
-                        preSectionContent = pageContent.Substring(0, match.Groups[0].Index);
-                    }
-
-                    // Create a new section and add to the known list
-                    sections.Add(new Model.Section(
-                        id: match.Groups[2].Value,
-                        title: match.Groups[1].Value,
-                        content: match.Groups[3].Value));
-
-                    // Mode to the next match
-                    match = match.NextMatch();
-                    matched = true;
-                }
-
-                // If nothing has been matching simple consider the whole input as pre section content
-                if (!matched)
+                // Set the whole page content if no page break is detected
+                if (projbookHtmlFormatter.PageBreak.Length == 0)
                 {
                     preSectionContent = pageContent;
+                }
+
+                // Compute pre section content from the position 0 to the first page break position
+                if (projbookHtmlFormatter.PageBreak.Length > 0 && projbookHtmlFormatter.PageBreak.First().Position > 0)
+                {
+                    preSectionContent = pageContent.Substring(0, (int)projbookHtmlFormatter.PageBreak.First().Position);
+                }
+
+                // Build section list
+                List<Model.Section> sections = new List<Model.Section>();
+                for (int i = 0; i < projbookHtmlFormatter.PageBreak.Length; ++i)
+                {
+                    // Retrieve the current page break
+                    PageBreakInfo pageBreak = projbookHtmlFormatter.PageBreak[i];
+
+                    // Extract the content from the current page break to the next one if any
+                    string content = null;
+                    if (i < projbookHtmlFormatter.PageBreak.Length - 1)
+                    {
+                        PageBreakInfo nextBreak = projbookHtmlFormatter.PageBreak[1 + i];
+                        content = pageContent.Substring((int)pageBreak.Position, (int)nextBreak.Position - (int)pageBreak.Position);
+                    }
+
+                    // Otherwise extract the content from the current page break to the end of the content
+                    else
+                    {
+                        content = pageContent.Substring((int)pageBreak.Position);
+                    }
+                    
+                    // Create a new section and add to the known list
+                    sections.Add(new Model.Section(
+                        id: pageBreak.Id,
+                        title: pageBreak.Title,
+                        content: content));
                 }
 
                 // Add new page
