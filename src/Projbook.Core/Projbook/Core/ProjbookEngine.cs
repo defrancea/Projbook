@@ -299,9 +299,6 @@ namespace Projbook.Core
                     // Run pdf generation
                     if (this.generatePdf)
                     {
-                        // Run process
-                        string outputPdf = Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
-
                         // Register bundles
                         WkHtmlToXLibrariesManager.Register(new Linux32NativeBundle());
                         WkHtmlToXLibrariesManager.Register(new Linux64NativeBundle());
@@ -309,9 +306,11 @@ namespace Projbook.Core
                         WkHtmlToXLibrariesManager.Register(new Win64NativeBundle());
 
                         // Run pdf convertion
+                        string outputPdf = Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
+                        string outputFilePdf = Path.Combine(this.OutputDirectory.FullName, outputPdf);
                         using (var inputFileReader = new StreamReader(new FileStream(outputFileHtml, FileMode.Open, FileAccess.Read)))
                         using (MultiplexingConverter pdfConverter = new MultiplexingConverter())
-                        using (var outputFileStream = new FileStream(outputPdf, FileMode.Create, FileAccess.Write))
+                        using (var outputFileStream = new FileStream(outputFilePdf, FileMode.Create, FileAccess.Write))
                         {
                             pdfConverter.Error += (s, e) => {
                                 generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", e.Value), 0, 0));
