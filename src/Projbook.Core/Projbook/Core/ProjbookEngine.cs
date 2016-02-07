@@ -268,7 +268,7 @@ namespace Projbook.Core
                 try
                 {
                     string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputHtml);
-                    this.GenerateFile(this.Configuration.TemplateHtml, this.Configuration.OutputHtml, this.Configuration, pages);
+                    this.GenerateFile(this.Configuration.TemplateHtml, outputFileHtml, this.Configuration, pages);  
                 }
                 catch (TemplateParsingException templateParsingException)
                 {
