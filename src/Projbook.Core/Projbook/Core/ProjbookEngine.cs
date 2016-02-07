@@ -305,20 +305,24 @@ namespace Projbook.Core
                         WkHtmlToXLibrariesManager.Register(new Win32NativeBundle());
                         WkHtmlToXLibrariesManager.Register(new Win64NativeBundle());
 
-                        // Run pdf convertion
+                        // Compute file names
                         string outputPdf = Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
                         string outputFilePdf = Path.Combine(this.OutputDirectory.FullName, outputPdf);
-                        using (var inputFileReader = new StreamReader(new FileStream(outputFileHtml, FileMode.Open, FileAccess.Read)))
-                        using (MultiplexingConverter pdfConverter = new MultiplexingConverter())
+
+                        // Prepare the converter
+                        MultiplexingConverter pdfConverter = new MultiplexingConverter();
+                        pdfConverter.ObjectSettings.Page = outputFileHtml;
+                        pdfConverter.Error += (s, e) => {
+                            generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", e.Value), 0, 0));
+                        };
+
+                        // Run pdf convertion
+                        using (pdfConverter)
                         using (var outputFileStream = new FileStream(outputFilePdf, FileMode.Create, FileAccess.Write))
                         {
-                            pdfConverter.Error += (s, e) => {
-                                generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", e.Value), 0, 0));
-                            };
-
                             try
                             {
-                                byte[] buffer = pdfConverter.Convert(inputFileReader.ReadToEnd());
+                                byte[] buffer = pdfConverter.Convert();
                                 outputFileStream.Write(buffer, 0, buffer.Length);
                             }
                             catch
