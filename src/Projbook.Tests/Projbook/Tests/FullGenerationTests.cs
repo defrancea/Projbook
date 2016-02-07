@@ -82,7 +82,7 @@ namespace Projbook.Tests.Core
             try
             {
                 // Execute generation
-                GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".", generatePdf: false).Generate();
+                GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".").Generate();
 
                 // Read expected ouput
                 string expectedContent = this.LoadFile("Resources/FullGeneration/" + expectedHtmlFileName);
@@ -108,8 +108,9 @@ namespace Projbook.Tests.Core
                 Assert.AreEqual(expectedContent, generatedContent);
                 Assert.AreEqual(expectedPdfContent, generatedPdfContent);
 
-                // wkhtmltopdf cannot be trigerred from mono and nunit at the same time because of native code loading:
-                // Assert.AreEqual(configuration.GeneratePdf, File.Exists(Path.ChangeExtension(configuration.OutputPdf, "pdf")));
+#if !NOPDF
+                Assert.AreEqual(configuration.GeneratePdf, File.Exists(Path.ChangeExtension(configuration.OutputPdf, "pdf")));
+#endif
             }
             finally
             {

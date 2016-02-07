@@ -50,18 +50,12 @@ namespace Projbook.Core
         private Dictionary<string, ISnippetExtractor> extractorCache = new Dictionary<string, ISnippetExtractor>();
 
         /// <summary>
-        /// Define wheather projbook engine should generate the pdf.
-        /// </summary>
-        private bool generatePdf;
-
-        /// <summary>
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
         /// </summary>
         /// <param name="csprojFile">Initializes the required <see cref="CsprojFile"/>.</param>
         /// <param name="configuration">Initializes the required <see cref="Configuration"/>.</param>
         /// <param name="outputDirectoryPath">Initializes the required <see cref="OutputDirectory"/>.</param>
-        /// <param name="generatePdf">Define wheather projbook must generates pdf files.</param>
-        public ProjbookEngine(string csprojFile, Configuration configuration, string outputDirectoryPath, bool generatePdf = true)
+        public ProjbookEngine(string csprojFile, Configuration configuration, string outputDirectoryPath)
         {
             // Data validation
             Ensure.That(() => csprojFile).IsNotNullOrWhiteSpace();
@@ -74,7 +68,6 @@ namespace Projbook.Core
             this.Configuration = configuration;
             this.OutputDirectory = new DirectoryInfo(outputDirectoryPath);
             this.snippetExtractorFactory = new SnippetExtractorFactory(this.CsprojFile);
-            this.generatePdf = generatePdf;
         }
 
         /// <summary>
@@ -295,43 +288,41 @@ namespace Projbook.Core
                     // Generate the pdf template
                     string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputPdf);
                     this.GenerateFile(this.Configuration.TemplatePdf, outputFileHtml, this.Configuration, pages);
+                    
+#if !NOPDF
+                    // Register bundles
+                    WkHtmlToXLibrariesManager.Register(new Linux32NativeBundle());
+                    WkHtmlToXLibrariesManager.Register(new Linux64NativeBundle());
+                    WkHtmlToXLibrariesManager.Register(new Win32NativeBundle());
+                    WkHtmlToXLibrariesManager.Register(new Win64NativeBundle());
 
-                    // Run pdf generation
-                    if (this.generatePdf)
+                    // Compute file names
+                    string outputPdf = Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
+                    string outputFilePdf = Path.Combine(this.OutputDirectory.FullName, outputPdf);
+
+                    // Prepare the converter
+                    MultiplexingConverter pdfConverter = new MultiplexingConverter();
+                    pdfConverter.ObjectSettings.Page = outputFileHtml;
+                    pdfConverter.Error += (s, e) => {
+                        generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", e.Value), 0, 0));
+                    };
+
+                    // Run pdf convertion
+                    using (pdfConverter)
+                    using (var outputFileStream = new FileStream(outputFilePdf, FileMode.Create, FileAccess.Write))
                     {
-                        // Register bundles
-                        WkHtmlToXLibrariesManager.Register(new Linux32NativeBundle());
-                        WkHtmlToXLibrariesManager.Register(new Linux64NativeBundle());
-                        WkHtmlToXLibrariesManager.Register(new Win32NativeBundle());
-                        WkHtmlToXLibrariesManager.Register(new Win64NativeBundle());
-
-                        // Compute file names
-                        string outputPdf = Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
-                        string outputFilePdf = Path.Combine(this.OutputDirectory.FullName, outputPdf);
-
-                        // Prepare the converter
-                        MultiplexingConverter pdfConverter = new MultiplexingConverter();
-                        pdfConverter.ObjectSettings.Page = outputFileHtml;
-                        pdfConverter.Error += (s, e) => {
-                            generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", e.Value), 0, 0));
-                        };
-
-                        // Run pdf convertion
-                        using (pdfConverter)
-                        using (var outputFileStream = new FileStream(outputFilePdf, FileMode.Create, FileAccess.Write))
+                        try
                         {
-                            try
-                            {
-                                byte[] buffer = pdfConverter.Convert();
-                                outputFileStream.Write(buffer, 0, buffer.Length);
-                            }
-                            catch
-                            {
-                                // Ignore generation errors at that level
-                                // Errors are handled by the error handling having the best description
-                            }
+                            byte[] buffer = pdfConverter.Convert();
+                            outputFileStream.Write(buffer, 0, buffer.Length);
+                        }
+                        catch
+                        {
+                            // Ignore generation errors at that level
+                            // Errors are handled by the error handling having the best description
                         }
                     }
+#endif 
                 }
                 catch (TemplateParsingException templateParsingException)
                 {
