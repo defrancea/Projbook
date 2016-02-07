@@ -202,7 +202,7 @@ namespace Projbook.Core
                 using (StreamWriter writer = new StreamWriter(documentStream))
                 {
                     // Setup custom formatter
-                    CommonMarkSettings.Default.OutputDelegate = (d, o, s) => (projbookHtmlFormatter = new ProjbookHtmlFormatter(pageId, o, s)).WriteDocument(d);
+                    CommonMarkSettings.Default.OutputDelegate = (d, o, s) => (projbookHtmlFormatter = new ProjbookHtmlFormatter(pageId, o, s, this.Configuration.SectionTitleBase)).WriteDocument(d);
 
                     // Render
                     CommonMarkConverter.ProcessStage3(document, writer);

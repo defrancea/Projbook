@@ -40,8 +40,7 @@ namespace Projbook.Tests.Core
             this.StreamWriter = new StreamWriter(this.MemoryStream);
             
             // Initialize formatter
-            this.Formatter =
-                new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default);
+            this.Formatter = new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default, 0);
         }
 
         /// <summary>
@@ -54,7 +53,7 @@ namespace Projbook.Tests.Core
         [ExpectedException(typeof(ArgumentException))]
         public void WrongInit(string contextName)
         {
-            new ProjbookHtmlFormatter(contextName, this.StreamWriter, CommonMarkSettings.Default);
+            new ProjbookHtmlFormatter(contextName, this.StreamWriter, CommonMarkSettings.Default, 0);
         }
 
         /// <summary>
@@ -105,6 +104,29 @@ namespace Projbook.Tests.Core
 
             // Assert
             Assert.AreEqual(string.Format(@"<h0>title</h0>{0}", Environment.NewLine), output);
+            Assert.AreEqual(1, this.Formatter.PageBreak.Length);
+            Assert.AreEqual("page-title", this.Formatter.PageBreak[0].Id);
+            Assert.AreEqual("title", this.Formatter.PageBreak[0].Title);
+            Assert.AreEqual(0, this.Formatter.PageBreak[0].Position);
+        }
+
+        /// <summary>
+        /// Tests with simple header with specific title base.
+        /// </summary>
+        [Test]
+        [TestCase]
+        public void WriteSimpleHeaderDifferentBase()
+        {
+            // Reinit formatter
+            this.Formatter = new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default, 42);
+
+            // Process
+            Block block = new Block(BlockTag.AtxHeader, 0);
+            block.InlineContent = new Inline("title");
+            string output = this.Process(block);
+
+            // Assert
+            Assert.AreEqual(string.Format(@"<h42>title</h42>{0}", Environment.NewLine), output);
             Assert.AreEqual(1, this.Formatter.PageBreak.Length);
             Assert.AreEqual("page-title", this.Formatter.PageBreak[0].Id);
             Assert.AreEqual("title", this.Formatter.PageBreak[0].Title);

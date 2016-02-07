@@ -4,6 +4,7 @@
   "template-pdf": "template-pdf.html",
   "output-html": "documentation.html",
   "output-pdf": "documentation-pdf-input.html",
+  "section-title-base": 1,
   "pages": [
     {
       "title": "First page",

@@ -56,22 +56,30 @@ namespace Projbook.Core.Markdown
         private StreamWriter writer;
 
         /// <summary>
+        /// The section title base.
+        /// </summary>
+        private int sectionTitleBase;
+
+        /// <summary>
         /// Initializes a new instance of <see cref="ProjbookHtmlFormatter"/>.
         /// </summary>
         /// <param name="contextName">Initializes the required <see cref="ContextName"/></param>
         /// <param name="target">Initializes the required text writter used as output.</param>
         /// <param name="settings">Initializes the required common mark settings used by the formatting.</param>
-        public ProjbookHtmlFormatter(string contextName, TextWriter target, CommonMarkSettings settings)
+        /// <param name="sectionTitleBase">Initializes the section title base.</param>
+        public ProjbookHtmlFormatter(string contextName, TextWriter target, CommonMarkSettings settings, int sectionTitleBase)
             : base(target, settings)
         {
             // Data validation
             Ensure.That(() => contextName).IsNotNullOrWhiteSpace();
             Ensure.That(target is StreamWriter).IsTrue();
+            Ensure.That(() => sectionTitleBase).IsGte(0);
 
             // Initialize
             this.ContextName = contextName;
             this.pageBreak = new List<PageBreakInfo>();
             this.writer = target as StreamWriter;
+            this.sectionTitleBase = sectionTitleBase;
         }
 
         /// <summary>
@@ -87,6 +95,9 @@ namespace Projbook.Core.Markdown
             // Filter opening header
             if (isOpening && null != block && block.Tag == BlockTag.AtxHeader)
             {
+                // Apply section title base
+                block.HeaderLevel += this.sectionTitleBase;
+
                 // Retrieve header content
                 string headerContent;
                 if (null != block.InlineContent && null != block.InlineContent.LiteralContent)

@@ -15,6 +15,7 @@
       "template-pdf": { "type": "string" },
       "output-html": { "type": "string" },
       "output-pdf": { "type": "string" },
+      "section-title-base": { "type": "integer", "minimum": 0, "exclusiveMinimum": true },
       "pages": {
         "type": "array",
         "minItems": 1,

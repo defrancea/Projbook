@@ -35,7 +35,13 @@ namespace Projbook.Core.Model.Configuration
         /// </summary>
         [JsonProperty("output-pdf")]
         public string OutputPdf { get; set; }
-        
+
+        /// <summary>
+        /// The section title base.
+        /// </summary>
+        [JsonProperty("section-title-base")]
+        public int SectionTitleBase { get; set; }
+
         /// <summary>
         /// Configuration pages.
         /// </summary>
