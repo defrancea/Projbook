@@ -10,10 +10,14 @@ git config user.email "defrancea@gmail.com"
 git checkout --orphan gh-pages
 git rm -rf .
 cp ./src/Projbook.Documentation/bin/Release/projbook.html index.html
+cp ./src/Projbook.Documentation/bin/Release/projbook-pdf.pdf projbook.pdf
 cp -R ./src/Projbook.Documentation/bin/Release/Content Content
 cp -R ./src/Projbook.Documentation/bin/Release/Scripts Scripts
+cp -R ./src/Projbook.Documentation/bin/Release/fonts fonts
 git add ./index.html
+git add ./projbook.pdf
 git add ./Content
+git add ./fonts
 git add ./Scripts
 git commit -m "Deploy Documentation"
 
