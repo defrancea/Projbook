@@ -2,6 +2,9 @@
   "title": "Projbook",
   "template-html": "template.html",
   "output-html": "projbook.html",
+  "template-pdf": "template-pdf.html",
+  "output-pdf": "projbook-pdf.html",
+  "section-title-base": 1,
   "pages": [
     {
       "title": "Jump start",
