@@ -16,7 +16,6 @@ $fontsFolder.ProjectItems.Item("glyphicons-halflings-regular.eot").Properties.It
 $fontsFolder.ProjectItems.Item("glyphicons-halflings-regular.svg").Properties.Item("CopyToOutputDirectory").Value = 2
 $fontsFolder.ProjectItems.Item("glyphicons-halflings-regular.ttf").Properties.Item("CopyToOutputDirectory").Value = 2
 $fontsFolder.ProjectItems.Item("glyphicons-halflings-regular.woff").Properties.Item("CopyToOutputDirectory").Value = 2
-$fontsFolder.ProjectItems.Item("glyphicons-halflings-regular.woff2").Properties.Item("CopyToOutputDirectory").Value = 2
 
 # Copy files in Scripts folder
 $scriptsFolder.ProjectItems.Item("prism.js").Properties.Item("CopyToOutputDirectory").Value = 2
