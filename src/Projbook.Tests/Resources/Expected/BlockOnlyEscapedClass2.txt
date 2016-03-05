@@ -1,0 +1,7 @@
+﻿/// <summary>
+/// Some comment that needs to { be } escaped.
+/// </summary>
+public class ConflictingCommentsClass2
+{
+    // ...
+}

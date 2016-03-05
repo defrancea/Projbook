@@ -177,7 +177,11 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Options.cs", "=Options.Event.add", "BlockOnlyEventadd.txt")]
         [TestCase("Options.cs", "=Event.add", "BlockOnlyEventadd.txt")]
         [TestCase("Options.cs", "=add", "BlockOnlyEventadd.txt")]
-        
+        [TestCase("Options.cs", "=ConflictingCommentsClass.Method", "BlockOnlyEscapedMethod.txt")]
+        [TestCase("Options.cs", "=ConflictingCommentsClass2.Method", "BlockOnlyEscapedMethod2.txt")]
+        [TestCase("Options.cs", "=ConflictingCommentsClass", "BlockOnlyEscapedClass.txt")]
+        [TestCase("Options.cs", "=ConflictingCommentsClass2", "BlockOnlyEscapedClass2.txt")]
+
         // Match content only
         [TestCase("Options.cs", "-Options", "ContentOnlyClass.txt")]
         [TestCase("Options.cs", "-Options.Method", "ContentOnlyMethod.txt")]
@@ -186,7 +190,11 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Options.cs", "-Options.Event.add", "ContentOnlyEventadd.txt")]
         [TestCase("Options.cs", "-Event.add", "ContentOnlyEventadd.txt")]
         [TestCase("Options.cs", "-add", "ContentOnlyEventadd.txt")]
-
+        [TestCase("Options.cs", "-ConflictingCommentsClass", "ContentOnlyEscapedClass.txt")]
+        [TestCase("Options.cs", "-ConflictingCommentsClass2", "ContentOnlyEscapedClass2.txt")]
+        [TestCase("Options.cs", "-ConflictingCommentsClass.Method", "ContentOnlyEscapedMethod.txt")]
+        [TestCase("Options.cs", "-ConflictingCommentsClass2.Method", "ContentOnlyEscapedMethod.txt")]
+        
         // Match empty content
         [TestCase("Options.cs", "-remove", "Empty.txt")]
         [TestCase("Options.cs", "-get", "Empty.txt")]
