@@ -1,3 +1,3 @@
-﻿Before section
+﻿Before section…
 # Foo
 ## Sub-foo

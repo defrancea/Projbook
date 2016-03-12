@@ -9,6 +9,7 @@ using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using RazorEngine.Text;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -212,18 +213,18 @@ namespace Projbook.Core
                 string preSectionContent = string.Empty;
                 
                 // Retrieve page content
-                string pageContent = System.Text.Encoding.UTF8.GetString(documentStream.ToArray());
+                byte[] pageContent = documentStream.ToArray();
 
                 // Set the whole page content if no page break is detected
                 if (projbookHtmlFormatter.PageBreak.Length == 0)
                 {
-                    preSectionContent = pageContent;
+                    preSectionContent = System.Text.Encoding.UTF8.GetString(pageContent);
                 }
 
                 // Compute pre section content from the position 0 to the first page break position
                 if (projbookHtmlFormatter.PageBreak.Length > 0 && projbookHtmlFormatter.PageBreak.First().Position > 0)
                 {
-                    preSectionContent = pageContent.Substring(0, (int)projbookHtmlFormatter.PageBreak.First().Position);
+                    preSectionContent = this.StringFromByteArray(pageContent, 0, projbookHtmlFormatter.PageBreak.First().Position);
                 }
 
                 // Build section list
@@ -238,13 +239,13 @@ namespace Projbook.Core
                     if (i < projbookHtmlFormatter.PageBreak.Length - 1)
                     {
                         PageBreakInfo nextBreak = projbookHtmlFormatter.PageBreak[1 + i];
-                        content = pageContent.Substring((int)pageBreak.Position, (int)nextBreak.Position - (int)pageBreak.Position);
+                        content = this.StringFromByteArray(pageContent, pageBreak.Position, nextBreak.Position - pageBreak.Position);
                     }
 
                     // Otherwise extract the content from the current page break to the end of the content
                     else
                     {
-                        content = pageContent.Substring((int)pageBreak.Position);
+                        content = this.StringFromByteArray(pageContent, pageBreak.Position, pageContent.Length - pageBreak.Position);
                     }
                     
                     // Create a new section and add to the known list
@@ -336,6 +337,20 @@ namespace Projbook.Core
 
             // Return the generation errors
             return generationError.ToArray();
+        }
+
+        /// <summary>
+        /// Extracts a string from a byte array.
+        /// </summary>
+        /// <param name="data">The data from where extracting the string.</param>
+        /// <param name="startIndex">The start index from where building the string.</param>
+        /// <param name="length">The length of byte to be used as data source.</param>
+        /// <returns>The built string.</returns>
+        private string StringFromByteArray(byte[] data, long startIndex, long length)
+        {
+            byte[] subData = new byte[length];
+            Array.Copy(data, startIndex, subData, 0, length);
+            return System.Text.Encoding.UTF8.GetString(subData);
         }
 
         /// <summary>
