@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Projbook\Extension\Extraction\DefaultSnippetExtractor.cs" />
     <Compile Include="Projbook\Extension\Model\Snippet.cs" />
     <Compile Include="Projbook\Extension\Spi\ISnippetExtractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

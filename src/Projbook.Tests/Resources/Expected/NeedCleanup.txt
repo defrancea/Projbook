@@ -1,15 +1,22 @@
-﻿// Some comments here
+﻿
+    
 
-using System;
+    
+    // Some comments here
 
-namespace Projbook.Tests.Resources.SourcesA
-{
-    public class NeedCleanup
+    using System;
+
+    namespace Projbook.Tests.Resources.SourcesA
     {
-        // Following is an empty line
-
-        // That has to be kept without preventing the indent fix
+        public class NeedCleanup
+        {
+            // Following is an empty line
+ 
+            // That has to be kept without preventing the indent fix
+        }
     }
-}
 
-// Some more fucky lines after
+    // Some more fucky lines after
+
+
+

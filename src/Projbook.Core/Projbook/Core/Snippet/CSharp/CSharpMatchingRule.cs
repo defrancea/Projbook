@@ -1,5 +1,4 @@
-﻿using EnsureThat;
-using Projbook.Core.Exception;
+﻿using Projbook.Core.Exception;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
