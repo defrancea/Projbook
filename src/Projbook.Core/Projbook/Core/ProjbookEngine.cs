@@ -5,6 +5,7 @@ using Projbook.Core.Exception;
 using Projbook.Core.Markdown;
 using Projbook.Core.Model.Configuration;
 using Projbook.Core.Snippet;
+using Projbook.Extension.Spi;
 using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
@@ -161,7 +162,7 @@ namespace Projbook.Core
                                 }
 
                                 // Extract the snippet
-                                Model.Snippet snippet = null;
+                                Extension.Model.Snippet snippet = null;
                                 using (StreamReader streamReader = new StreamReader(fileInfo.OpenRead()))
                                 {
                                     snippet = snippetExtractor.Extract(streamReader, snippetExtractionRule.Pattern);

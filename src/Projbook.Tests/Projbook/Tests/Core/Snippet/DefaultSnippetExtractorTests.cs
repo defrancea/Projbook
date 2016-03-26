@@ -19,7 +19,7 @@ namespace Projbook.Tests.Core.Snippet
         {
             // Run the extraction
             DefaultSnippetExtractor extractor = new DefaultSnippetExtractor();
-            Projbook.Core.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "Expected", "content.txt")).OpenRead()), null);
+            Projbook.Extension.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "Expected", "content.txt")).OpenRead()), null);
 
             // Load the expected file content
             MemoryStream memoryStream = new MemoryStream();

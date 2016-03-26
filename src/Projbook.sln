@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
@@ -38,6 +38,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "resources", "resources", "{
 		..\resources\Projbook.targets = ..\resources\Projbook.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projbook.Extension", "Projbook.Extension\Projbook.Extension.csproj", "{8338B756-0519-4D20-BA04-3A8F4839237A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,12 @@ Global
 		{3D916A38-1298-4B12-BC34-9F73BAEF9974}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3D916A38-1298-4B12-BC34-9F73BAEF9974}.ReleaseNoPdf|Any CPU.ActiveCfg = ReleaseNoPdf|Any CPU
 		{3D916A38-1298-4B12-BC34-9F73BAEF9974}.ReleaseNoPdf|Any CPU.Build.0 = ReleaseNoPdf|Any CPU
+		{8338B756-0519-4D20-BA04-3A8F4839237A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8338B756-0519-4D20-BA04-3A8F4839237A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8338B756-0519-4D20-BA04-3A8F4839237A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8338B756-0519-4D20-BA04-3A8F4839237A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8338B756-0519-4D20-BA04-3A8F4839237A}.ReleaseNoPdf|Any CPU.ActiveCfg = Release|Any CPU
+		{8338B756-0519-4D20-BA04-3A8F4839237A}.ReleaseNoPdf|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

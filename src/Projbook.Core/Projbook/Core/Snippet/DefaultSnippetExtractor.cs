@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using EnsureThat;
+using Projbook.Extension.Spi;
 using Projbook.Core.Projbook.Core.Snippet.CSharp;
 
 namespace Projbook.Core.Snippet
@@ -19,7 +20,7 @@ namespace Projbook.Core.Snippet
         /// <param name="streamReader">The streak reader.</param>
         /// <param name="pattern">The extraction pattern, never used for this implementation.</param>
         /// <returns>The extracted snippet.</returns>
-        public virtual Model.Snippet Extract(StreamReader streamReader, string pattern)
+        public virtual Extension.Model.Snippet Extract(StreamReader streamReader, string pattern)
         {
             // Extract file content
             string sourceCode = this.LoadFile(streamReader);
@@ -51,7 +52,7 @@ namespace Projbook.Core.Snippet
         /// </summary>
         /// <param name="fileContent">The file content.</param>
         /// <returns>The built snippet.</returns>
-        private Model.Snippet BuildSnippet(string fileContent)
+        private Extension.Model.Snippet BuildSnippet(string fileContent)
         {
             // Data validation
             Ensure.That(() => fileContent).IsNotNull();
@@ -79,7 +80,7 @@ namespace Projbook.Core.Snippet
             this.WriteAndCleanupSnippet(stringBuilder, lines.ToArray(), CSharpExtractionMode.FullMember);
 
             // Create the snippet from the exctracted code
-            return new Model.Snippet(stringBuilder.ToString());
+            return new Extension.Model.Snippet(stringBuilder.ToString());
         }
 
         /// <summary>

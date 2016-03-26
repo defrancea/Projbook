@@ -33,7 +33,7 @@ namespace Projbook.Core.Snippet.Xml
         /// <param name="streamReader">The streak reader.</param>
         /// <param name="memberPattern">The member pattern to extract.</param>
         /// <returns>The extracted snippet.</returns>
-        public override Model.Snippet Extract(StreamReader streamReader, string memberPattern)
+        public override Extension.Model.Snippet Extract(StreamReader streamReader, string memberPattern)
         {
             // Return the entire code if no member is specified
             if (string.IsNullOrWhiteSpace(memberPattern))
@@ -108,7 +108,7 @@ namespace Projbook.Core.Snippet.Xml
         /// </summary>
         /// <param name="xmlNodeList">The xml node list.</param>
         /// <returns>The built snippet.</returns>
-        private Model.Snippet BuildSnippet(XmlNodeList xmlNodeList)
+        private Extension.Model.Snippet BuildSnippet(XmlNodeList xmlNodeList)
         {
             // Data validation
             Ensure.That(() => xmlNodeList).IsNotNull();
@@ -148,7 +148,7 @@ namespace Projbook.Core.Snippet.Xml
             output = Regex.Replace(output, @" ?xmlns\s*(:[^=]+)?\s*=\s*""[^""]*""", string.Empty);
 
             // Create the snippet from the exctracted code
-            return new Model.Snippet(output);
+            return new Extension.Model.Snippet(output);
         }
     }
 }

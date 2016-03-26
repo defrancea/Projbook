@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(SolutionDir)build\Projbook.settings" Condition="Exists('$(SolutionDir)build\Projbook.settings')" />
   <PropertyGroup>
@@ -339,6 +339,10 @@
     <ProjectReference Include="..\Projbook.Core\Projbook.Core.csproj">
       <Project>{f0cd4edc-5873-4d81-9458-7cfba3e49fe5}</Project>
       <Name>Projbook.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Projbook.Extension\Projbook.Extension.csproj">
+      <Project>{8338b756-0519-4d20-ba04-3a8f4839237a}</Project>
+      <Name>Projbook.Extension</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

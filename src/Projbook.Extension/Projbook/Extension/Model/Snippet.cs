@@ -1,6 +1,6 @@
-﻿using EnsureThat;
+﻿using System;
 
-namespace Projbook.Core.Model
+namespace Projbook.Extension.Model
 {
     /// <summary>
     /// Represents a snippet that has been extracted from source directories.
@@ -19,7 +19,8 @@ namespace Projbook.Core.Model
         public Snippet(string content)
         {
             // Data validation
-            Ensure.That(() => content).IsNotNull();
+            if (null == content)
+                throw new ArgumentNullException();
 
             // Initialize
             this.Content = content;

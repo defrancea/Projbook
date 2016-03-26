@@ -135,10 +135,8 @@
     <Compile Include="Projbook\Core\Snippet\CSharp\CSharpSyntaxMatchingNode.cs" />
     <Compile Include="Projbook\Core\Model\Page.cs" />
     <Compile Include="Projbook\Core\Model\Configuration\Configuration.cs" />
-    <Compile Include="Projbook\Core\Model\Snippet.cs" />
     <Compile Include="Projbook\Core\Snippet\CSharp\CSharpSyntaxWalkerMatchingBuilder.cs" />
     <Compile Include="Projbook\Core\Snippet\DefaultSnippetExtractor.cs" />
-    <Compile Include="Projbook\Core\Snippet\ISnippetExtractor.cs" />
     <Compile Include="Projbook\Core\Snippet\CSharp\CSharpSnippetExtractor.cs" />
     <Compile Include="Projbook\Core\ProjbookEngine.cs" />
     <Compile Include="Projbook\Core\Model\Anchor.cs" />
@@ -165,6 +163,12 @@
       <SubType>Designer</SubType>
       <LastGenOutput>ConfigurationValidation.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Projbook.Extension\Projbook.Extension.csproj">
+      <Project>{8338b756-0519-4d20-ba04-3a8f4839237a}</Project>
+      <Name>Projbook.Extension</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

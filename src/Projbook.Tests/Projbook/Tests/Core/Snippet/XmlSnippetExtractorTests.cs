@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Projbook.Core.Exception;
-using Projbook.Core.Snippet;
 using Projbook.Core.Snippet.Xml;
+using Projbook.Extension.Spi;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -57,7 +57,7 @@ namespace Projbook.Tests.Core.Snippet
                 snippetExtractor = new XmlSnippetExtractor();
                 this.extractorCache[fileName] = snippetExtractor;
             }
-            Projbook.Core.Model.Snippet snippet = snippetExtractor.Extract(new StreamReader(this.LocateFile(fileName).OpenRead()), pattern);
+            Projbook.Extension.Model.Snippet snippet = snippetExtractor.Extract(new StreamReader(this.LocateFile(fileName).OpenRead()), pattern);
 
             // Load the expected file content
             MemoryStream memoryStream = new MemoryStream();
@@ -99,7 +99,7 @@ namespace Projbook.Tests.Core.Snippet
             
             // Run the extraction
             XmlSnippetExtractor extractor = new XmlSnippetExtractor();
-            Projbook.Core.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)).OpenRead()), pattern);
+            Projbook.Extension.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)).OpenRead()), pattern);
         }
     }
 }

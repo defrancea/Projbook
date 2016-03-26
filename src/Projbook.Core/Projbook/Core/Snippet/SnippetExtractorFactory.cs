@@ -1,9 +1,8 @@
 ﻿using EnsureThat;
 using Projbook.Core.Snippet.CSharp;
 using Projbook.Core.Snippet.Xml;
-using System.Collections.Generic;
+using Projbook.Extension.Spi;
 using System.IO;
-using System.Xml;
 
 namespace Projbook.Core.Snippet
 {
