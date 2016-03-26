@@ -1,4 +1,4 @@
-﻿namespace Projbook.Core.Projbook.Core.Snippet.CSharp
+﻿namespace Projbook.Core.Snippet.CSharp
 {
     /// <summary>
     /// Represents the extraction mode.
