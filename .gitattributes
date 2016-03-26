@@ -1,0 +1,13 @@
+*.cs text eol=lf
+*.xml text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.js text eol=lf
+*.csproj text eol=lf
+*.sln text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+*.nuspec text eol=lf
+*.ps1 text eol=lf
+*.props text eol=lf
+*.targets text eol=lf
