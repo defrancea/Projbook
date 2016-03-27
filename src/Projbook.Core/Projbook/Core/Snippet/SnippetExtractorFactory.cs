@@ -3,9 +3,11 @@ using Projbook.Extension;
 using Projbook.Extension.Spi;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
+using System.ComponentModel.Composition.ReflectionModel;
 using System.IO;
+using System.Linq;
 
 namespace Projbook.Core.Snippet
 {
@@ -20,20 +22,14 @@ namespace Projbook.Core.Snippet
         public FileInfo CsprojFile { get; private set; }
 
         /// <summary>
-        /// Discovered extractors filled by MEF during extension loading.
+        /// Loaded extractor types.
         /// </summary>
-        [ImportMany]
-        private IEnumerable<ISnippetExtractor> discoveredExtractors;
+        Dictionary<string, Type> loadedExtractorTypes = new Dictionary<string, Type>();
 
         /// <summary>
-        /// Loaded extractors.
+        /// The default extractor type.
         /// </summary>
-        Dictionary<string, ISnippetExtractor> loadedExtractors = new Dictionary<string, ISnippetExtractor>();
-
-        /// <summary>
-        /// The default extractor.
-        /// </summary>
-        private ISnippetExtractor defaultExtractor;
+        private Type defaultExtractorType;
 
         /// <summary>
         /// Initializes a new instance of <see cref="SnippetExtractorFactory"/>.
@@ -47,7 +43,7 @@ namespace Projbook.Core.Snippet
 
             // Initialize
             this.CsprojFile = csprojFile;
-            this.defaultExtractor = new DefaultSnippetExtractor();
+            this.defaultExtractorType = typeof(DefaultSnippetExtractor);
 
             // Load extensions
             this.LoadExtensions();
@@ -66,15 +62,15 @@ namespace Projbook.Core.Snippet
                 return null;
             }
 
-            // Lookup in loaded extractors
-            ISnippetExtractor matchingExtractor;
-            if (loadedExtractors.TryGetValue(snippetExtractionRule.Language, out matchingExtractor))
+            // Lookup type in loaded extractors
+            Type matchingExtractorType;
+            if (loadedExtractorTypes.TryGetValue(snippetExtractionRule.Language, out matchingExtractorType))
             {
-                return matchingExtractor;
+                return Activator.CreateInstance(matchingExtractorType) as ISnippetExtractor;
             }
 
             // Return default extractor
-            return this.defaultExtractor;
+            return Activator.CreateInstance(defaultExtractorType) as ISnippetExtractor;
         }
 
         /// <summary>
@@ -86,29 +82,37 @@ namespace Projbook.Core.Snippet
             DirectoryCatalog directoryCatalog = new DirectoryCatalog(".");
             AggregateCatalog catalog = new AggregateCatalog(directoryCatalog);
             CompositionContainer container = new CompositionContainer(catalog);
-
-            // Load extensions
-            container.ComposeParts(this);
-
-            // Determine syntax of discovered extractors
-            foreach (ISnippetExtractor extractor in this.discoveredExtractors)
+            
+            // Load ISnippetExtractor types
+            string metadataName = "ExportTypeIdentity";
+            string targetTypeFullName = typeof(ISnippetExtractor).FullName;
+            foreach (ComposablePartDefinition composablePartDefinition in catalog.Parts.AsEnumerable())
             {
-                // Try to retrieve syntax attribute
-                SyntaxAttribute syntax = Attribute.GetCustomAttribute(extractor.GetType(), typeof(SyntaxAttribute)) as SyntaxAttribute;
-
-                // Add the extractor to loaded extractors if a syntax attribute is found
-                if (null != syntax)
+                // Look for composable part definition being an ISnippetExtracttor
+                if (composablePartDefinition.ExportDefinitions.Any(d =>
+                    d.Metadata.ContainsKey(metadataName) &&
+                    d.Metadata[metadataName].ToString() == targetTypeFullName))
                 {
-                    loadedExtractors.Add(syntax.Name, extractor);
+                    // Fetch the extension type from the composable part definition
+                    Type extensionType = ReflectionModelServices.GetPartType(composablePartDefinition).Value;
+
+                    // Try to retrieve syntax attribute
+                    SyntaxAttribute syntax = Attribute.GetCustomAttribute(extensionType, typeof(SyntaxAttribute)) as SyntaxAttribute;
+                    
+                    // Add the extractor type to loaded ones if a syntax attribute is found and the type has a default contructor
+                    if (null != syntax && null != extensionType.GetConstructor(Type.EmptyTypes))
+                    {
+                        this.loadedExtractorTypes.Add(syntax.Name, extensionType);
+                    }
                 }
             }
 
             // Lookup in loaded extractors to detect custom default extractor
-            ISnippetExtractor customDefaultExtractor;
-            if (loadedExtractors.TryGetValue("*", out customDefaultExtractor))
+            Type customDefaultExtractorType;
+            if (this.loadedExtractorTypes.TryGetValue("*", out customDefaultExtractorType))
             {
                 // Set the custom default extractor
-                this.defaultExtractor = customDefaultExtractor;
+                this.defaultExtractorType = customDefaultExtractorType;
             }
         }
     }
