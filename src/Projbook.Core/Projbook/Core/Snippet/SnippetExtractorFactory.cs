@@ -8,6 +8,7 @@ using System.ComponentModel.Composition.Primitives;
 using System.ComponentModel.Composition.ReflectionModel;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Projbook.Core.Snippet
 {
@@ -22,14 +23,14 @@ namespace Projbook.Core.Snippet
         public FileInfo CsprojFile { get; private set; }
 
         /// <summary>
-        /// Loaded extractor types.
+        /// Loaded extractor factories.
         /// </summary>
-        Dictionary<string, Type> loadedExtractorTypes = new Dictionary<string, Type>();
+        Dictionary<string, Func<ISnippetExtractor>> loadedExtractorFactories = new Dictionary<string, Func<ISnippetExtractor>>();
 
         /// <summary>
-        /// The default extractor type.
+        /// The default extractor factory.
         /// </summary>
-        private Type defaultExtractorType;
+        private Func<ISnippetExtractor> defaultExtractorFactory;
 
         /// <summary>
         /// Initializes a new instance of <see cref="SnippetExtractorFactory"/>.
@@ -43,7 +44,7 @@ namespace Projbook.Core.Snippet
 
             // Initialize
             this.CsprojFile = csprojFile;
-            this.defaultExtractorType = typeof(DefaultSnippetExtractor);
+            this.defaultExtractorFactory = () => new DefaultSnippetExtractor();
 
             // Load extensions
             this.LoadExtensions();
@@ -62,15 +63,16 @@ namespace Projbook.Core.Snippet
                 return null;
             }
 
-            // Lookup type in loaded extractors
-            Type matchingExtractorType;
-            if (loadedExtractorTypes.TryGetValue(snippetExtractionRule.Language, out matchingExtractorType))
+            // Lookup factory in loaded extractor factories
+            Func<ISnippetExtractor> matchingExtractorFactory;
+            if (loadedExtractorFactories.TryGetValue(snippetExtractionRule.Language, out matchingExtractorFactory))
             {
-                return Activator.CreateInstance(matchingExtractorType) as ISnippetExtractor;
+                // Create instance from the matching extractor factory
+                return matchingExtractorFactory();
             }
 
-            // Return default extractor
-            return Activator.CreateInstance(defaultExtractorType) as ISnippetExtractor;
+            // Create instance from default extractor factory
+            return this.defaultExtractorFactory();
         }
 
         /// <summary>
@@ -83,7 +85,7 @@ namespace Projbook.Core.Snippet
             AggregateCatalog catalog = new AggregateCatalog(directoryCatalog);
             CompositionContainer container = new CompositionContainer(catalog);
             
-            // Load ISnippetExtractor types
+            // Load ISnippetExtractor factories
             string metadataName = "ExportTypeIdentity";
             string targetTypeFullName = typeof(ISnippetExtractor).FullName;
             foreach (ComposablePartDefinition composablePartDefinition in catalog.Parts.AsEnumerable())
@@ -102,17 +104,21 @@ namespace Projbook.Core.Snippet
                     // Add the extractor type to loaded ones if a syntax attribute is found and the type has a default contructor
                     if (null != syntax && null != extensionType.GetConstructor(Type.EmptyTypes))
                     {
-                        this.loadedExtractorTypes.Add(syntax.Name, extensionType);
+                        // Create extractor factory
+                        Func<ISnippetExtractor> extractorFactory = Expression.Lambda<Func<ISnippetExtractor>>(Expression.New(extensionType)).Compile();
+
+                        // Record the created fectory as a loaded one
+                        this.loadedExtractorFactories.Add(syntax.Name, extractorFactory);
                     }
                 }
             }
 
             // Lookup in loaded extractors to detect custom default extractor
-            Type customDefaultExtractorType;
-            if (this.loadedExtractorTypes.TryGetValue("*", out customDefaultExtractorType))
+            Func<ISnippetExtractor> customDefaultExtractorFactory;
+            if (this.loadedExtractorFactories.TryGetValue("*", out customDefaultExtractorFactory))
             {
                 // Set the custom default extractor
-                this.defaultExtractorType = customDefaultExtractorType;
+                this.defaultExtractorFactory = customDefaultExtractorFactory;
             }
         }
     }
