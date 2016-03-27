@@ -7,7 +7,7 @@
     <ProjectGuid>{8338B756-0519-4D20-BA04-3A8F4839237A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Projbook.Extensionn</RootNamespace>
+    <RootNamespace>Projbook.Extension</RootNamespace>
     <AssemblyName>Projbook.Extension</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
