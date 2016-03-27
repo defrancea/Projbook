@@ -1,10 +1,10 @@
 ﻿using CommonMark;
 using CommonMark.Syntax;
 using EnsureThat;
-using Projbook.Core.Exception;
 using Projbook.Core.Markdown;
 using Projbook.Core.Model.Configuration;
 using Projbook.Core.Snippet;
+using Projbook.Extension.Exception;
 using Projbook.Extension.Spi;
 using RazorEngine;
 using RazorEngine.Configuration;

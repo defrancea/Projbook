@@ -1,4 +1,4 @@
-﻿namespace Projbook.Core.Exception
+﻿namespace Projbook.Extension.Exception
 {
     /// <summary>
     /// Represents a snippet extraction exception.

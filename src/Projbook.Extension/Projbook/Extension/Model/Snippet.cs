@@ -1,4 +1,4 @@
-﻿using System;
+﻿using EnsureThat;
 
 namespace Projbook.Extension.Model
 {
@@ -19,8 +19,7 @@ namespace Projbook.Extension.Model
         public Snippet(string content)
         {
             // Data validation
-            if (null == content)
-                throw new ArgumentNullException();
+            Ensure.That(() => content).IsNotNull();
 
             // Initialize
             this.Content = content;

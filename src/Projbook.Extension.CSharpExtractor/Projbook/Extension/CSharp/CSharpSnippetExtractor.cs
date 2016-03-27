@@ -3,17 +3,19 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using Projbook.Core.Exception;
+using Projbook.Extension.Exception;
+using Projbook.Extension.Spi;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Projbook.Core.Snippet.CSharp
+namespace Projbook.Extension.CSharpExtractor
 {
     /// <summary>
     /// Extractor in charge of browsing source directories. load file content and extract requested member.
     /// </summary>
+    [Syntax(name: "csharp")]
     public class CSharpSnippetExtractor : DefaultSnippetExtractor
     {
         /// <summary>
@@ -28,7 +30,7 @@ namespace Projbook.Core.Snippet.CSharp
         /// <param name="streamReader">The streak reader.</param>
         /// <param name="memberPattern">The member pattern to extract.</param>
         /// <returns>The extracted snippet.</returns>
-        public override Extension.Model.Snippet Extract(StreamReader streamReader, string memberPattern)
+        public override Model.Snippet Extract(StreamReader streamReader, string memberPattern)
         {
             // Return the entire code if no member is specified
             if (string.IsNullOrWhiteSpace(memberPattern))
@@ -74,7 +76,7 @@ namespace Projbook.Core.Snippet.CSharp
         /// <param name="nodes">The exctracted nodes.</param>
         /// <param name="extractionMode">The extraction mode.</param>
         /// <returns>The built snippet.</returns>
-        private Extension.Model.Snippet BuildSnippet(SyntaxNode[] nodes, CSharpExtractionMode extractionMode)
+        private Model.Snippet BuildSnippet(SyntaxNode[] nodes, CSharpExtractionMode extractionMode)
         {
             // Data validation
             Ensure.That(() => nodes).IsNotNull();
@@ -102,7 +104,7 @@ namespace Projbook.Core.Snippet.CSharp
             }
             
             // Create the snippet from the exctracted code
-            return new Extension.Model.Snippet(stringBuilder.ToString());
+            return new Model.Snippet(stringBuilder.ToString());
         }
 
         /// <summary>

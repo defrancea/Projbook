@@ -1,9 +1,9 @@
-﻿using Projbook.Core.Exception;
+﻿using Projbook.Extension.Exception;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Projbook.Core.Snippet.CSharp
+namespace Projbook.Extension.CSharpExtractor
 {
     /// <summary>
     /// Represents a matching rule for referencing a C# member.

@@ -2,7 +2,7 @@
 using System.IO;
 using Projbook.Extension.Spi;
 
-namespace Projbook.Core.Snippet
+namespace Projbook.Extension
 {
     /// <summary>
     /// Extractor in charge of browsing source directories. load file content and extract requested member.
@@ -15,13 +15,13 @@ namespace Projbook.Core.Snippet
         /// <param name="streamReader">The streak reader.</param>
         /// <param name="pattern">The extraction pattern, never used for this implementation.</param>
         /// <returns>The extracted snippet.</returns>
-        public virtual Extension.Model.Snippet Extract(StreamReader streamReader, string pattern)
+        public virtual Model.Snippet Extract(StreamReader streamReader, string pattern)
         {
             // Extract file content
             string sourceCode = this.LoadFile(streamReader);
 
             // Return the entire code
-            return new Extension.Model.Snippet(sourceCode);
+            return new Model.Snippet(sourceCode);
         }
 
         /// <summary>

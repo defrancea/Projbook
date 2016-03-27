@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Projbook.Core.Snippet;
-using Projbook.Core.Snippet.CSharp;
+using Projbook.Extension;
+using Projbook.Extension.CSharpExtractor;
 using System;
 using System.IO;
 

@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using Projbook.Core.Snippet;
+using Projbook.Extension;
 using System;
 using System.IO;
 
@@ -19,7 +19,7 @@ namespace Projbook.Tests.Core.Snippet
         {
             // Run the extraction
             DefaultSnippetExtractor extractor = new DefaultSnippetExtractor();
-            Projbook.Extension.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "Expected", "content.txt")).OpenRead()), null);
+            Extension.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "Expected", "content.txt")).OpenRead()), null);
 
             // Load the expected file content
             MemoryStream memoryStream = new MemoryStream();

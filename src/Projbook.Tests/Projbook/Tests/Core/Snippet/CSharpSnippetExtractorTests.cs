@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
-using Projbook.Core.Exception;
-using Projbook.Core.Snippet;
-using Projbook.Core.Snippet.CSharp;
+using Projbook.Extension.CSharpExtractor;
+using Projbook.Extension.Exception;
 using Projbook.Extension.Spi;
 using System;
 using System.Collections.Generic;
@@ -260,7 +259,7 @@ namespace Projbook.Tests.Core.Snippet
 
             // Run the extraction
             CSharpSnippetExtractor extractor = new CSharpSnippetExtractor();
-            Projbook.Extension.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)).OpenRead()), pattern);
+            Extension.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)).OpenRead()), pattern);
         }
     }
 }

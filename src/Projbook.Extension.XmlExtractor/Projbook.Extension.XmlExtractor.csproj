@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8338B756-0519-4D20-BA04-3A8F4839237A}</ProjectGuid>
+    <ProjectGuid>{BC3E43EB-2263-49B4-883A-B720EDDF9298}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Projbook.Extensionn</RootNamespace>
-    <AssemblyName>Projbook.Extension</AssemblyName>
+    <RootNamespace>Projbook.Extension.XmlExtractor</RootNamespace>
+    <AssemblyName>Projbook.Extension.XmlExtractor</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -36,7 +36,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -46,12 +45,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Projbook\Extension\DefaultSnippetExtractor.cs" />
-    <Compile Include="Projbook\Extension\Model\Snippet.cs" />
-    <Compile Include="Projbook\Extension\Exception\SnippetExtractionException.cs" />
-    <Compile Include="Projbook\Extension\Spi\ISnippetExtractor.cs" />
-    <Compile Include="Projbook\Extension\Spi\SyntaxAttribute.cs" />
+    <Compile Include="Projbook\Extension\Xml\XmlSnippetExtractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Projbook.Extension\Projbook.Extension.csproj">
+      <Project>{8338b756-0519-4d20-ba04-3a8f4839237a}</Project>
+      <Name>Projbook.Extension</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

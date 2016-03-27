@@ -1,15 +1,17 @@
 ﻿using EnsureThat;
-using Projbook.Core.Exception;
+using Projbook.Extension.Exception;
+using Projbook.Extension.Spi;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace Projbook.Core.Snippet.Xml
+namespace Projbook.Extension.XmlExtractor
 {
     /// <summary>
     /// Extractor in charge of browsing source directories. load file content and extract requested member.
     /// </summary>
+    [Syntax(name: "xml")]
     public class XmlSnippetExtractor : DefaultSnippetExtractor
     {
         /// <summary>

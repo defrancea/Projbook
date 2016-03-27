@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Projbook.Core.Snippet.CSharp
+namespace Projbook.Extension.CSharpExtractor
 {
     /// <summary>
     /// Represents a syntax matching node.

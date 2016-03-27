@@ -1,4 +1,5 @@
 using Projbook.Extension.Model;
+using System.ComponentModel.Composition;
 using System.IO;
 
 namespace Projbook.Extension.Spi
@@ -6,6 +7,7 @@ namespace Projbook.Extension.Spi
     /// <summary>
     /// Defines interface for snippet extractor.
     /// </summary>
+    [InheritedExport]
     public interface ISnippetExtractor
     {
         /// <summary>

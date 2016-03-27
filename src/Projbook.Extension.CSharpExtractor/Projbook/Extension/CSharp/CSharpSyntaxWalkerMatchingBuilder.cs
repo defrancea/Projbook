@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Linq;
 
-namespace Projbook.Core.Snippet.CSharp
+namespace Projbook.Extension.CSharpExtractor
 {
     /// <summary>
     /// Implements a syntax walker generating a Trie for pattern matching.
