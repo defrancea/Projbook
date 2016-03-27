@@ -3,18 +3,19 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using Projbook.Core.Exception;
-using Projbook.Core.Projbook.Core.Snippet.CSharp;
+using Projbook.Extension.Exception;
+using Projbook.Extension.Spi;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Projbook.Core.Snippet.CSharp
+namespace Projbook.Extension.CSharpExtractor
 {
     /// <summary>
     /// Extractor in charge of browsing source directories. load file content and extract requested member.
     /// </summary>
+    [Syntax(name: "csharp")]
     public class CSharpSnippetExtractor : DefaultSnippetExtractor
     {
         /// <summary>

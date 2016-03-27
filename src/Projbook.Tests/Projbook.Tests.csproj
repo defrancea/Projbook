@@ -340,6 +340,18 @@
       <Project>{f0cd4edc-5873-4d81-9458-7cfba3e49fe5}</Project>
       <Name>Projbook.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Projbook.Extension.CSharpExtractor\Projbook.Extension.CSharpExtractor.csproj">
+      <Project>{f5431901-29ac-46d4-a717-de2a9114e82d}</Project>
+      <Name>Projbook.Extension.CSharpExtractor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Projbook.Extension.XmlExtractor\Projbook.Extension.XmlExtractor.csproj">
+      <Project>{bc3e43eb-2263-49b4-883a-b720eddf9298}</Project>
+      <Name>Projbook.Extension.XmlExtractor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Projbook.Extension\Projbook.Extension.csproj">
+      <Project>{8338b756-0519-4d20-ba04-3a8f4839237a}</Project>
+      <Name>Projbook.Extension</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Choose>

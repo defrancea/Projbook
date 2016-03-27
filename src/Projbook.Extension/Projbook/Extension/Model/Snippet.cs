@@ -1,6 +1,6 @@
 ﻿using EnsureThat;
 
-namespace Projbook.Core.Model
+namespace Projbook.Extension.Model
 {
     /// <summary>
     /// Represents a snippet that has been extracted from source directories.

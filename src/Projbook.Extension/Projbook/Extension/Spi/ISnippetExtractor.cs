@@ -1,10 +1,13 @@
-﻿using System.IO;
+using Projbook.Extension.Model;
+using System.ComponentModel.Composition;
+using System.IO;
 
-namespace Projbook.Core.Snippet
+namespace Projbook.Extension.Spi
 {
     /// <summary>
     /// Defines interface for snippet extractor.
     /// </summary>
+    [InheritedExport]
     public interface ISnippetExtractor
     {
         /// <summary>
@@ -13,6 +16,6 @@ namespace Projbook.Core.Snippet
         /// <param name="streamReader">The streak reader.</param>
         /// <param name="pattern">The extraction pattern.</param>
         /// <returns>The extracted snippet.</returns>
-        Model.Snippet Extract(StreamReader streamReader, string pattern);
+        Snippet Extract(StreamReader streamReader, string pattern);
     }
 }

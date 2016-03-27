@@ -54,14 +54,6 @@
       <HintPath>..\packages\Ensure.That.3.1.1\lib\net45\EnsureThat.vDinasour.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.1.0.0\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -75,16 +67,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.1.36\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Reflection.Metadata, Version=1.0.21.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reflection.Metadata.1.0.21\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
@@ -120,7 +105,6 @@
   <ItemGroup>
     <Compile Include="Projbook\Core\ConfigurationLoader.cs" />
     <Compile Include="Projbook\Core\Exception\ConfigurationException.cs" />
-    <Compile Include="Projbook\Core\Exception\SnippetExtractionException.cs" />
     <Compile Include="Projbook\Core\Markdown\PageBreakInfo.cs" />
     <Compile Include="Projbook\Core\Markdown\ProjbookHtmlFormatter.cs" />
     <Compile Include="Projbook\Core\Model\Configuration\Page.cs" />
@@ -131,21 +115,12 @@
     </Compile>
     <Compile Include="Projbook\Core\Model\GenerationError.cs" />
     <Compile Include="Projbook\Core\Model\Section.cs" />
-    <Compile Include="Projbook\Core\Snippet\CSharp\CSharpExtractionMode.cs" />
-    <Compile Include="Projbook\Core\Snippet\CSharp\CSharpSyntaxMatchingNode.cs" />
     <Compile Include="Projbook\Core\Model\Page.cs" />
     <Compile Include="Projbook\Core\Model\Configuration\Configuration.cs" />
-    <Compile Include="Projbook\Core\Model\Snippet.cs" />
-    <Compile Include="Projbook\Core\Snippet\CSharp\CSharpSyntaxWalkerMatchingBuilder.cs" />
-    <Compile Include="Projbook\Core\Snippet\DefaultSnippetExtractor.cs" />
-    <Compile Include="Projbook\Core\Snippet\ISnippetExtractor.cs" />
-    <Compile Include="Projbook\Core\Snippet\CSharp\CSharpSnippetExtractor.cs" />
     <Compile Include="Projbook\Core\ProjbookEngine.cs" />
     <Compile Include="Projbook\Core\Model\Anchor.cs" />
     <Compile Include="Projbook\Core\Snippet\SnippetExtractionRule.cs" />
     <Compile Include="Projbook\Core\Snippet\SnippetExtractorFactory.cs" />
-    <Compile Include="Projbook\Core\Snippet\CSharp\CSharpMatchingRule.cs" />
-    <Compile Include="Projbook\Core\Snippet\Xml\XmlSnippetExtractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +140,12 @@
       <SubType>Designer</SubType>
       <LastGenOutput>ConfigurationValidation.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Projbook.Extension\Projbook.Extension.csproj">
+      <Project>{8338b756-0519-4d20-ba04-3a8f4839237a}</Project>
+      <Name>Projbook.Extension</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
