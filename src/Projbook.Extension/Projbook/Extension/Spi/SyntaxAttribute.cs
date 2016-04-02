@@ -1,5 +1,4 @@
-﻿using EnsureThat;
-using System;
+﻿using System;
 
 namespace Projbook.Extension.Spi
 {
@@ -21,7 +20,8 @@ namespace Projbook.Extension.Spi
         public SyntaxAttribute(string name)
         {
             // Data validation
-            Ensure.That(() => name).IsNotNull();
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException("name");
 
             // Initialize
             this.Name = name;

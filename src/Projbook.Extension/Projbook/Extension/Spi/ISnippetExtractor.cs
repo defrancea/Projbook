@@ -11,11 +11,16 @@ namespace Projbook.Extension.Spi
     public interface ISnippetExtractor
     {
         /// <summary>
+        /// Defines the target type.
+        /// </summary>
+        TargetType TargetType { get; }
+
+        /// <summary>
         /// Extracts a snippet.
         /// </summary>
-        /// <param name="streamReader">The streak reader.</param>
+        /// <param name="fileSystemInfo">The file system info.</param>
         /// <param name="pattern">The extraction pattern.</param>
         /// <returns>The extracted snippet.</returns>
-        Snippet Extract(StreamReader streamReader, string pattern);
+        Snippet Extract(FileSystemInfo fileSystemInfo, string pattern);
     }
 }

@@ -201,7 +201,7 @@ namespace Projbook.Tests.Core
             Assert.AreEqual("Cannot find member: NotFound", errors[1].Message);
             Assert.AreEqual(7, errors[1].Line);
             Assert.AreEqual(52, errors[1].Column);
-            Assert.IsTrue(errors[2].Message.StartsWith("Cannot find file 'Resources/FullGeneration/Source/NotFound.cs' in any referenced project"));
+            Assert.IsTrue(errors[2].Message.StartsWith("Cannot find target 'Resources/FullGeneration/Source/NotFound.cs' in any referenced project"));
             Assert.AreEqual(13, errors[2].Line);
             Assert.AreEqual(12, errors[2].Column);
 

@@ -217,7 +217,7 @@ namespace Projbook.Tests.Core.Snippet
                 snippetExtractor = new CSharpSnippetExtractor();
                 this.extractorCache[fileName] = snippetExtractor;
             }
-            Projbook.Extension.Model.Snippet snippet = snippetExtractor.Extract(new StreamReader(this.LocateFile(fileName).OpenRead()), pattern);
+            Projbook.Extension.Model.Snippet snippet = snippetExtractor.Extract(this.LocateFile(fileName), pattern);
 
             // Load the expected file content
             MemoryStream memoryStream = new MemoryStream();
@@ -242,7 +242,7 @@ namespace Projbook.Tests.Core.Snippet
         public void ExtractSnippetInvalidRule()
         {
             // Run the extraction
-            new CSharpSnippetExtractor().Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "SourcesA", "Sample.cs")).OpenRead()), "abc abc(abc");
+            new CSharpSnippetExtractor().Extract(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "SourcesA", "Sample.cs")), "abc abc(abc");
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace Projbook.Tests.Core.Snippet
 
             // Run the extraction
             CSharpSnippetExtractor extractor = new CSharpSnippetExtractor();
-            Extension.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)).OpenRead()), pattern);
+            Extension.Model.Snippet snippet = extractor.Extract(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)), pattern);
         }
     }
 }

@@ -124,49 +124,70 @@ namespace Projbook.Core
                             {
                                 // Retrieve the extractor instance
                                 ISnippetExtractor snippetExtractor;
-                                if (!this.extractorCache.TryGetValue(snippetExtractionRule.FileName, out snippetExtractor))
+                                if (!this.extractorCache.TryGetValue(snippetExtractionRule.TargetPath, out snippetExtractor))
                                 {
                                     snippetExtractor = this.snippetExtractorFactory.CreateExtractor(snippetExtractionRule);
-                                    this.extractorCache[snippetExtractionRule.FileName] = snippetExtractor;
+                                    this.extractorCache[snippetExtractionRule.TargetPath] = snippetExtractor;
                                 }
 
                                 // Look for the file in available source directories
-                                FileInfo fileInfo = null;
-                                DirectoryInfo[] directoryInfos = this.ExtractSourceDirectories(this.CsprojFile);
-                                foreach (DirectoryInfo directoryInfo in directoryInfos)
+                                FileSystemInfo fileSystemInfo = null;
+                                DirectoryInfo[] directoryInfos = null;
+                                if (TargetType.FreeText != snippetExtractor.TargetType)
                                 {
-                                    string fullFilePath = Path.Combine(directoryInfo.FullName, snippetExtractionRule.FileName ?? string.Empty);
-                                    if (File.Exists(fullFilePath))
+                                    directoryInfos = this.ExtractSourceDirectories(this.CsprojFile);
+                                    foreach (DirectoryInfo directoryInfo in directoryInfos)
                                     {
-                                        fileInfo = new FileInfo(fullFilePath);
-                                        break;
+                                        string fullFilePath = Path.Combine(directoryInfo.FullName, snippetExtractionRule.TargetPath ?? string.Empty);
+                                        switch (snippetExtractor.TargetType)
+                                        {
+                                            case TargetType.File:
+                                                if (File.Exists(fullFilePath))
+                                                {
+                                                    fileSystemInfo = new FileInfo(fullFilePath);
+                                                }
+                                                break;
+                                            case TargetType.Folder:
+                                                if (Directory.Exists(fullFilePath))
+                                                {
+                                                    fileSystemInfo = new DirectoryInfo(fullFilePath);
+                                                }
+                                                break;
+                                        }
+
+                                        // Stop lookup if the file system info is found
+                                        if (null != fileSystemInfo)
+                                        {
+                                            break;
+                                        }
                                     }
                                 }
 
                                 // Raise an error if cannot find the file
-                                if (null == fileInfo)
+                                if (null == fileSystemInfo && TargetType.FreeText != snippetExtractor.TargetType)
                                 {
                                     // Locate block line
                                     int line = this.LocateBlockLine(node.Block, page);
 
                                     // Compute error column: Index of the path in the fenced code + 3 (for the ``` prefix) + 1 (to be 1 based)
-                                    int column = fencedCode.IndexOf(snippetExtractionRule.FileName) + 4;
+                                    int column = fencedCode.IndexOf(snippetExtractionRule.TargetPath) + 4;
 
                                     // Report error
                                     generationError.Add(new Model.GenerationError(
                                         sourceFile: page.Path,
-                                        message: string.Format("Cannot find file '{0}' in any referenced project ({0})", snippetExtractionRule.FileName, string.Join(";", directoryInfos.Select(x => x.FullName))),
+                                        message: string.Format("Cannot find target '{0}' in any referenced project ({0})", snippetExtractionRule.TargetPath, string.Join(";", directoryInfos.Select(x => x.FullName))),
                                         line: line,
                                         column: column));
                                     continue;
                                 }
 
                                 // Extract the snippet
-                                Extension.Model.Snippet snippet = null;
-                                using (StreamReader streamReader = new StreamReader(fileInfo.OpenRead()))
-                                {
-                                    snippet = snippetExtractor.Extract(streamReader, snippetExtractionRule.Pattern);
-                                }
+                                Extension.Model.Snippet snippet =
+                                    TargetType.FreeText == snippetExtractor.TargetType
+                                    ? snippetExtractor.Extract(null, snippetExtractionRule.TargetPath)
+                                    : snippetExtractor.Extract(fileSystemInfo, snippetExtractionRule.Pattern);
+
+                                // Inject snippet
                                 StringContent code = new StringContent();
                                 code.Append(snippet.Content, 0, snippet.Content.Length);
                                 node.Block.StringContent = code;

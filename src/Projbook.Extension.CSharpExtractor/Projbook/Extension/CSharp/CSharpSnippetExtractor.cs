@@ -27,15 +27,15 @@ namespace Projbook.Extension.CSharpExtractor
         /// <summary>
         /// Extracts a snippet from a given rule pattern.
         /// </summary>
-        /// <param name="streamReader">The streak reader.</param>
+        /// <param name="fileSystemInfo">The file system info.</param>
         /// <param name="memberPattern">The member pattern to extract.</param>
         /// <returns>The extracted snippet.</returns>
-        public override Model.Snippet Extract(StreamReader streamReader, string memberPattern)
+        public override Model.Snippet Extract(FileSystemInfo fileSystemInfo, string memberPattern)
         {
             // Return the entire code if no member is specified
             if (string.IsNullOrWhiteSpace(memberPattern))
             {
-                return base.Extract(streamReader, memberPattern);
+                return base.Extract(fileSystemInfo, memberPattern);
             }
 
             // Parse the matching rule from the pattern
@@ -45,7 +45,7 @@ namespace Projbook.Extension.CSharpExtractor
             if (null == this.syntaxTrie)
             {
                 // Load file content
-                string sourceCode = base.LoadFile(streamReader);
+                string sourceCode = base.LoadFile(this.ConvertToFile(fileSystemInfo));
 
                 // Build a syntax tree from the source code
                 SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceCode);

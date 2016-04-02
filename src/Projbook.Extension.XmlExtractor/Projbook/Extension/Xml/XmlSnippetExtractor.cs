@@ -32,22 +32,22 @@ namespace Projbook.Extension.XmlExtractor
         /// <summary>
         /// Extracts a snippet from a given rule pattern.
         /// </summary>
-        /// <param name="streamReader">The streak reader.</param>
+        /// <param name="fileSystemInfo">The file system info.</param>
         /// <param name="memberPattern">The member pattern to extract.</param>
         /// <returns>The extracted snippet.</returns>
-        public override Extension.Model.Snippet Extract(StreamReader streamReader, string memberPattern)
+        public override Extension.Model.Snippet Extract(FileSystemInfo fileSystemInfo, string memberPattern)
         {
             // Return the entire code if no member is specified
             if (string.IsNullOrWhiteSpace(memberPattern))
             {
-                return base.Extract(streamReader, memberPattern);
+                return base.Extract(fileSystemInfo, memberPattern);
             }
 
             // Load the xml document for xpath execution
             if (null == this.xmlDocument)
             {
                 // Load file content
-                string sourceCode = base.LoadFile(streamReader);
+                string sourceCode = base.LoadFile(this.ConvertToFile(fileSystemInfo));
 
                 // Remove default avoiding to define and use a prefix for the default namespace
                 // This is not strictly correct in a xml point of view but it's closest to most needs
