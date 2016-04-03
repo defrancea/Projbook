@@ -81,8 +81,11 @@ namespace Projbook.Tests.Core.Snippet
         [ExpectedException(ExpectedException = typeof(SnippetExtractionException), ExpectedMessage = "Invalid extraction rule")]
         public void ExtractSnippetInvalidRule()
         {
+            // Resolve path
+            string fileName = this.ComputeFilePath("Sample.xml");
+
             // Run the extraction
-            new XmlSnippetExtractor().Extract(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "SourcesA", "Sample.xml")), "abc abc(abc");
+            new XmlSnippetExtractor().Extract(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)), "abc abc(abc");
         }
 
         /// <summary>

@@ -43,7 +43,7 @@ namespace Projbook.Tests.Core
         /// <returns>The file path.</returns>
         protected string ComputeFilePath(string fileName)
         {
-            return Path.Combine("Resources", "SourcesA", fileName);
+            return Path.Combine("Resources", "Sources", fileName);
         }
 
         /// <summary>

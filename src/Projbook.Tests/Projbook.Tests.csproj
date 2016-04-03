@@ -76,12 +76,12 @@
   <ItemGroup>
     <Compile Include="Projbook\Tests\Core\Snippet\XmlSnippetExtractorTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\DefaultSnippetExtractorTests.cs" />
-    <Compile Include="Resources\SourcesA\Options.cs" />
-    <Compile Include="Resources\SourcesA\Empty.cs" />
-    <Compile Include="Resources\SourcesA\NeedCleanup.cs">
+    <Compile Include="Resources\Sources\Options.cs" />
+    <Compile Include="Resources\Sources\Empty.cs" />
+    <Compile Include="Resources\Sources\NeedCleanup.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Resources\SourcesA\Sample.cs" />
+    <Compile Include="Resources\Sources\Sample.cs" />
     <Content Include="Resources\Expected\BlockOnlyEscapedClass2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -291,11 +291,11 @@
     <Compile Include="Projbook\Tests\Core\AbstractTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\SnippetExtractorFactoryTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\CSharpSnippetExtractorTests.cs" />
-    <Content Include="Resources\SourcesA\content.txt" />
-    <Content Include="Resources\SourcesA\SampleNoNamespace.xml">
+    <Content Include="Resources\Sources\content.txt" />
+    <Content Include="Resources\Sources\SampleNoNamespace.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Resources\SourcesA\Sample.xml">
+    <Content Include="Resources\Sources\Sample.xml">
       <SubType>Designer</SubType>
     </Content>
     <None Include="Resources\FullGeneration\Page\unexistingMembers.md">
@@ -310,7 +310,7 @@
     <None Include="Resources\FullGeneration\Page\firstPage.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="Resources\SourcesA\AnyClass.cs">
+    <Compile Include="Resources\Sources\AnyClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Projbook\Tests\FullGenerationTests.cs" />
