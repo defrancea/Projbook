@@ -6,6 +6,7 @@ using Projbook.Core.Model.Configuration;
 using Projbook.Core.Projbook.Core.Model.Configuration.Validation;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Text.RegularExpressions;
 
 namespace Projbook.Core
@@ -16,9 +17,27 @@ namespace Projbook.Core
     public class ConfigurationLoader
     {
         /// <summary>
+        /// The file system abstraction.
+        /// </summary>
+        private IFileSystem fileSystem;
+
+        /// <summary>
         /// Json deserialization error line and column extractor.
         /// </summary>
         private static Regex errorLocationExtractor = new Regex(@"line (\d+), position (\d+)", RegexOptions.Compiled);
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="IFileSystem"/>
+        /// </summary>
+        /// <param name="fileSystem">The file system abstraction.</param>
+        public ConfigurationLoader(IFileSystem fileSystem)
+        {
+            // Data validation
+            Ensure.That(() => fileSystem).IsNotNull();
+
+            // Initialize
+            this.fileSystem = fileSystem;
+        }
 
         /// <summary>
         /// Load the configuraiton
@@ -31,16 +50,16 @@ namespace Projbook.Core
             // Data validation
             Ensure.That(() => projectLocation).IsNotNull();
             Ensure.That(() => configurationFile).IsNotNull();
-            Ensure.That(Directory.Exists(projectLocation), string.Format("Could not find '{0}': Directory not found", projectLocation)).IsTrue();
+            Ensure.That(this.fileSystem.Directory.Exists(projectLocation), string.Format("Could not find '{0}': Directory not found", projectLocation)).IsTrue();
 
             // Compute and validate configuration path
-            string configurationPath = Path.Combine(projectLocation, configurationFile);
-            Ensure.That(File.Exists(configurationPath), string.Format("Could not load configuration '{0}': File not found", configurationPath)).IsTrue();
+            string configurationPath = this.fileSystem.Path.Combine(projectLocation, configurationFile);
+            Ensure.That(this.fileSystem.File.Exists(configurationPath), string.Format("Could not load configuration '{0}': File not found", configurationPath)).IsTrue();
             
             // Deserialize configuration
             Configuration[] configurations;
             string content = string.Empty;
-            using (var reader = new StreamReader(new FileStream(configurationPath, FileMode.Open, FileAccess.Read)))
+            using (var reader = new StreamReader(this.fileSystem.File.Open(configurationPath, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
                 // Read the content
                 content = reader.ReadToEnd();
@@ -114,22 +133,22 @@ namespace Projbook.Core
                 string originalHtmlTemplateValue = configuration.TemplateHtml;
                 if (!string.IsNullOrWhiteSpace(configuration.TemplateHtml))
                 {
-                    configuration.TemplateHtml = Path.Combine(projectLocation, configuration.TemplateHtml);
+                    configuration.TemplateHtml = this.fileSystem.Path.Combine(projectLocation, configuration.TemplateHtml);
                 }
 
                 // Resolve pdf template path
                 string originalPdfTemplateValue = configuration.TemplatePdf;
                 if (!string.IsNullOrWhiteSpace(configuration.TemplatePdf))
                 {
-                    configuration.TemplatePdf = Path.Combine(projectLocation, configuration.TemplatePdf);
+                    configuration.TemplatePdf = this.fileSystem.Path.Combine(projectLocation, configuration.TemplatePdf);
                 }
 
                 // Detect if generation is enabled and validate the file
-                if (!string.IsNullOrWhiteSpace(configuration.TemplateHtml) && !File.Exists(configuration.TemplateHtml))
+                if (!string.IsNullOrWhiteSpace(configuration.TemplateHtml) && !this.fileSystem.File.Exists(configuration.TemplateHtml))
                 {
                     htmlTemplateNotFound.Add(originalHtmlTemplateValue);
                 }
-                if (!string.IsNullOrWhiteSpace(configuration.TemplatePdf) && !File.Exists(configuration.TemplatePdf))
+                if (!string.IsNullOrWhiteSpace(configuration.TemplatePdf) && !this.fileSystem.File.Exists(configuration.TemplatePdf))
                 {
                     pdfTemplateNotFound.Add(originalPdfTemplateValue);
                 }
@@ -155,8 +174,8 @@ namespace Projbook.Core
                 {
                     foreach (Page page in configuration.Pages)
                     {
-                        string pagePath = Path.Combine(projectLocation, page.Path);
-                        if (File.Exists(page.Path))
+                        string pagePath = this.fileSystem.Path.Combine(projectLocation, page.Path);
+                        if (this.fileSystem.File.Exists(page.Path))
                         {
                             page.FileSystemPath = pagePath;
                         }
@@ -212,7 +231,7 @@ namespace Projbook.Core
             Ensure.That(() => suffix).IsNotNullOrWhiteSpace();
 
             // Inject the suffix
-            return string.Format("{0}-{1}{2}", Path.GetFileNameWithoutExtension(filename), suffix, Path.GetExtension(filename));
+            return string.Format("{0}-{1}{2}", this.fileSystem.Path.GetFileNameWithoutExtension(filename), suffix, this.fileSystem.Path.GetExtension(filename));
         }
 
         /// <summary>

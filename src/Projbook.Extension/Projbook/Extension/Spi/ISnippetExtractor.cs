@@ -1,6 +1,6 @@
 using Projbook.Extension.Model;
 using System.ComponentModel.Composition;
-using System.IO;
+using System.IO.Abstractions;
 
 namespace Projbook.Extension.Spi
 {
@@ -21,6 +21,6 @@ namespace Projbook.Extension.Spi
         /// <param name="fileSystemInfo">The file system info.</param>
         /// <param name="pattern">The extraction pattern.</param>
         /// <returns>The extracted snippet.</returns>
-        Snippet Extract(FileSystemInfo fileSystemInfo, string pattern);
+        Snippet Extract(FileSystemInfoBase fileSystemInfo, string pattern);
     }
 }

@@ -5,6 +5,7 @@ using Projbook.Extension.Spi;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 
 namespace Projbook.Tests.Core.Snippet
 {
@@ -242,7 +243,7 @@ namespace Projbook.Tests.Core.Snippet
         public void ExtractSnippetInvalidRule()
         {
             // Run the extraction
-            new CSharpSnippetExtractor().Extract(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "SourcesA", "Sample.cs")), "abc abc(abc");
+            new CSharpSnippetExtractor().Extract((FileInfoBase)new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "SourcesA", "Sample.cs")), "abc abc(abc");
         }
 
         /// <summary>
@@ -259,7 +260,7 @@ namespace Projbook.Tests.Core.Snippet
 
             // Run the extraction
             CSharpSnippetExtractor extractor = new CSharpSnippetExtractor();
-            Extension.Model.Snippet snippet = extractor.Extract(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)), pattern);
+            Extension.Model.Snippet snippet = extractor.Extract((FileInfoBase)new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)), pattern);
         }
     }
 }

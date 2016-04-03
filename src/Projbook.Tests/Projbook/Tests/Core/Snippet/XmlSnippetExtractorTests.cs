@@ -5,6 +5,7 @@ using Projbook.Extension.XmlExtractor;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 
 namespace Projbook.Tests.Core.Snippet
 {
@@ -85,7 +86,7 @@ namespace Projbook.Tests.Core.Snippet
             string fileName = this.ComputeFilePath("Sample.xml");
 
             // Run the extraction
-            new XmlSnippetExtractor().Extract(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)), "abc abc(abc");
+            new XmlSnippetExtractor().Extract((FileInfoBase)new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)), "abc abc(abc");
         }
 
         /// <summary>
@@ -102,7 +103,7 @@ namespace Projbook.Tests.Core.Snippet
             
             // Run the extraction
             XmlSnippetExtractor extractor = new XmlSnippetExtractor();
-            Extension.Model.Snippet snippet = extractor.Extract(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)), pattern);
+            Extension.Model.Snippet snippet = extractor.Extract((FileInfoBase)new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)), pattern);
         }
     }
 }

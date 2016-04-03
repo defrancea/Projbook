@@ -4,6 +4,7 @@ using Projbook.Core.Model;
 using Projbook.Core.Model.Configuration;
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 
 namespace Projbook.Tests.Core
@@ -35,7 +36,7 @@ namespace Projbook.Tests.Core
             this.EnsureNoFile(generatedPdfFileName);
 
             // Perform generation
-            Configuration configuration = new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, "Resources/" + configFileName)[0];
+            Configuration configuration = new ConfigurationLoader(new FileSystem()).Load(this.SourceDirectories[0].FullName, "Resources/" + configFileName)[0];
             string htmlTemplatePath = configuration.TemplateHtml;
             string pdfTemplatePath = configuration.TemplatePdf;
             string firstPagePath = new FileInfo(configuration.Pages.First().Path).FullName;
@@ -82,7 +83,7 @@ namespace Projbook.Tests.Core
             try
             {
                 // Execute generation
-                GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".").Generate();
+                GenerationError[] errors = new ProjbookEngine(new FileSystem(), "../../Projbook.Tests.csproj", configuration, ".").Generate();
 
                 // Read expected ouput
                 string expectedContent = this.LoadFile("Resources/FullGeneration/" + expectedHtmlFileName);
@@ -144,8 +145,8 @@ namespace Projbook.Tests.Core
         public void FullGenerationErrorTemplate(string configFileName, string firstErrorFile, string secondErrorFile)
         {
             // Perform generation
-            Configuration configuration = new ConfigurationLoader().Load(this.SourceDirectories[0].FullName,"Resources/" + configFileName)[0];
-            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".").Generate();
+            Configuration configuration = new ConfigurationLoader(new FileSystem()).Load(this.SourceDirectories[0].FullName,"Resources/" + configFileName)[0];
+            GenerationError[] errors = new ProjbookEngine(new FileSystem(), "../../Projbook.Tests.csproj", configuration, ".").Generate();
 
             // Assert result
             Assert.IsNotNull(errors);
@@ -168,8 +169,8 @@ namespace Projbook.Tests.Core
         public void FullGenerationErrorInPdfTemplate()
         {
             // Perform generation
-            Configuration configuration = new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, "Resources/testConfigErrorInPdf.json")[0];
-            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".").Generate();
+            Configuration configuration = new ConfigurationLoader(new FileSystem()).Load(this.SourceDirectories[0].FullName, "Resources/testConfigErrorInPdf.json")[0];
+            GenerationError[] errors = new ProjbookEngine(new FileSystem(), "../../Projbook.Tests.csproj", configuration, ".").Generate();
 
             // Assert result
             Assert.IsNotNull(errors);
@@ -189,8 +190,8 @@ namespace Projbook.Tests.Core
         public void FullGenerationUnexistingMembers()
         {
             // Perform generation
-            Configuration configuration = new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, "Resources/testConfigUnexistingMembers.json")[0];
-            GenerationError[] errors = new ProjbookEngine("../../Projbook.Tests.csproj", configuration, ".").Generate();
+            Configuration configuration = new ConfigurationLoader(new FileSystem()).Load(this.SourceDirectories[0].FullName, "Resources/testConfigUnexistingMembers.json")[0];
+            GenerationError[] errors = new ProjbookEngine(new FileSystem(), "../../Projbook.Tests.csproj", configuration, ".").Generate();
 
             // Assert result
             Assert.IsNotNull(errors);

@@ -4,6 +4,7 @@ using Projbook.Core.Exception;
 using Projbook.Core.Model.Configuration;
 using System;
 using System.IO;
+using System.IO.Abstractions;
 
 namespace Projbook.Tests.Core
 {
@@ -28,7 +29,7 @@ namespace Projbook.Tests.Core
             base.Setup();
 
             // Initialize configuration loader
-            this.ConfigurationLoader = new ConfigurationLoader();
+            this.ConfigurationLoader = new ConfigurationLoader(new FileSystem());
         }
 
         /// <summary>
@@ -169,7 +170,7 @@ namespace Projbook.Tests.Core
             // Try to generate configuration with error
             try
             {
-                new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, Path.Combine("Resources", configFile));
+                new ConfigurationLoader(new FileSystem()).Load(this.SourceDirectories[0].FullName, Path.Combine("Resources", configFile));
                 Assert.Fail("Expected to fail");
             }
             // Assert correct error
@@ -192,7 +193,7 @@ namespace Projbook.Tests.Core
             // Try to generate configuration with error
             try
             {
-                new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, "none.json");
+                new ConfigurationLoader(new FileSystem()).Load(this.SourceDirectories[0].FullName, "none.json");
                 Assert.Fail("Expected to fail");
             }
             // Assert correct error
@@ -211,7 +212,7 @@ namespace Projbook.Tests.Core
             // Try to generate configuration with error
             try
             {
-                new ConfigurationLoader().Load(this.SourceDirectories[0].FullName, Path.Combine("Resources", "testConfigManyErrors.json"));
+                new ConfigurationLoader(new FileSystem()).Load(this.SourceDirectories[0].FullName, Path.Combine("Resources", "testConfigManyErrors.json"));
                 Assert.Fail("Expected to fail");
             }
             // Assert correct error

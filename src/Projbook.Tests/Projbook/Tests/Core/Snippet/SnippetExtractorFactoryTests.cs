@@ -26,27 +26,7 @@ namespace Projbook.Tests.Core.Snippet
         {
             // Initialize extractor
             base.Setup();
-            this.SnippetExtractorFactory = new SnippetExtractorFactory(this.CsprojFile);
-        }
-
-        /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void WrongInitSourceNull()
-        {
-            new SnippetExtractorFactory(null);
-        }
-
-        /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void WrongInitSourceEmpty()
-        {
-            new SnippetExtractorFactory(new FileInfo(""));
+            this.SnippetExtractorFactory = new SnippetExtractorFactory();
         }
 
         /// <summary>

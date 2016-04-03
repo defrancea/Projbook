@@ -1,7 +1,7 @@
 ﻿using EnsureThat;
 using Projbook.Extension.Exception;
 using Projbook.Extension.Spi;
-using System.IO;
+using System.IO.Abstractions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -35,7 +35,7 @@ namespace Projbook.Extension.XmlExtractor
         /// <param name="fileSystemInfo">The file system info.</param>
         /// <param name="memberPattern">The member pattern to extract.</param>
         /// <returns>The extracted snippet.</returns>
-        public override Extension.Model.Snippet Extract(FileSystemInfo fileSystemInfo, string memberPattern)
+        public override Extension.Model.Snippet Extract(FileSystemInfoBase fileSystemInfo, string memberPattern)
         {
             // Return the entire code if no member is specified
             if (string.IsNullOrWhiteSpace(memberPattern))

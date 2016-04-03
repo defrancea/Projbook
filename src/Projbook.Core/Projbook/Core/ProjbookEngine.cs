@@ -13,6 +13,7 @@ using RazorEngine.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Xml;
 using WkHtmlToXSharp;
@@ -29,7 +30,7 @@ namespace Projbook.Core
         /// The csproj file of the documentation project.
         /// Snippets location will be determined from the file's director and project references.
         /// </summary>
-        public FileInfo CsprojFile { get; private set; }
+        public FileInfoBase CsprojFile { get; private set; }
 
         /// <summary>
         /// The configuration.
@@ -39,7 +40,12 @@ namespace Projbook.Core
         /// <summary>
         /// The output directory where generated content will be written.
         /// </summary>
-        public DirectoryInfo OutputDirectory { get; private set; }
+        public DirectoryInfoBase OutputDirectory { get; private set; }
+
+        /// <summary>
+        /// The file system abstraction.
+        /// </summary>
+        private readonly IFileSystem fileSystem;
 
         /// <summary>
         /// Snippet extractor factory.
@@ -54,22 +60,25 @@ namespace Projbook.Core
         /// <summary>
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
         /// </summary>
+        /// <param name="fileSystem">Initializes the required file system abstraction.</param>
         /// <param name="csprojFile">Initializes the required <see cref="CsprojFile"/>.</param>
         /// <param name="configuration">Initializes the required <see cref="Configuration"/>.</param>
         /// <param name="outputDirectoryPath">Initializes the required <see cref="OutputDirectory"/>.</param>
-        public ProjbookEngine(string csprojFile, Configuration configuration, string outputDirectoryPath)
+        public ProjbookEngine(IFileSystem fileSystem, string csprojFile, Configuration configuration, string outputDirectoryPath)
         {
             // Data validation
+            Ensure.That(() => fileSystem).IsNotNull();
             Ensure.That(() => csprojFile).IsNotNullOrWhiteSpace();
             Ensure.That(() => configuration).IsNotNull();
             Ensure.That(() => outputDirectoryPath).IsNotNullOrWhiteSpace();
-            Ensure.That(File.Exists(csprojFile), string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
+            Ensure.That(fileSystem.File.Exists(csprojFile), string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
 
             // Initialize
-            this.CsprojFile = new FileInfo(csprojFile);
+            this.fileSystem = fileSystem;
+            this.CsprojFile = this.fileSystem.FileInfo.FromFileName(csprojFile);
             this.Configuration = configuration;
-            this.OutputDirectory = new DirectoryInfo(outputDirectoryPath);
-            this.snippetExtractorFactory = new SnippetExtractorFactory(this.CsprojFile);
+            this.OutputDirectory = this.fileSystem.DirectoryInfo.FromDirectoryName(outputDirectoryPath);
+            this.snippetExtractorFactory = new SnippetExtractorFactory();
         }
 
         /// <summary>
@@ -97,7 +106,8 @@ namespace Projbook.Core
                 Block document;
 
                 // Process the page
-                using (StreamReader reader = new StreamReader(new FileStream(new FileInfo(page.FileSystemPath).FullName, FileMode.Open, FileAccess.Read)))
+                string pageFilePath = this.fileSystem.FileInfo.FromFileName(page.FileSystemPath).FullName;
+                using (StreamReader reader = new StreamReader(this.fileSystem.File.Open(pageFilePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
                 {
                     document = CommonMarkConverter.ProcessStage1(reader);
                 }
@@ -131,26 +141,26 @@ namespace Projbook.Core
                                 }
 
                                 // Look for the file in available source directories
-                                FileSystemInfo fileSystemInfo = null;
-                                DirectoryInfo[] directoryInfos = null;
+                                FileSystemInfoBase fileSystemInfo = null;
+                                DirectoryInfoBase[] directoryInfos = null;
                                 if (TargetType.FreeText != snippetExtractor.TargetType)
                                 {
                                     directoryInfos = this.ExtractSourceDirectories(this.CsprojFile);
-                                    foreach (DirectoryInfo directoryInfo in directoryInfos)
+                                    foreach (DirectoryInfoBase directoryInfo in directoryInfos)
                                     {
-                                        string fullFilePath = Path.Combine(directoryInfo.FullName, snippetExtractionRule.TargetPath ?? string.Empty);
+                                        string fullFilePath = this.fileSystem.Path.Combine(directoryInfo.FullName, snippetExtractionRule.TargetPath ?? string.Empty);
                                         switch (snippetExtractor.TargetType)
                                         {
                                             case TargetType.File:
-                                                if (File.Exists(fullFilePath))
+                                                if (this.fileSystem.File.Exists(fullFilePath))
                                                 {
-                                                    fileSystemInfo = new FileInfo(fullFilePath);
+                                                    fileSystemInfo = this.fileSystem.FileInfo.FromFileName(fullFilePath);
                                                 }
                                                 break;
                                             case TargetType.Folder:
-                                                if (Directory.Exists(fullFilePath))
+                                                if (this.fileSystem.Directory.Exists(fullFilePath))
                                                 {
-                                                    fileSystemInfo = new DirectoryInfo(fullFilePath);
+                                                    fileSystemInfo = this.fileSystem.DirectoryInfo.FromDirectoryName(fullFilePath);
                                                 }
                                                 break;
                                         }
@@ -290,7 +300,7 @@ namespace Projbook.Core
             {
                 try
                 {
-                    string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputHtml);
+                    string outputFileHtml = this.fileSystem.Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputHtml);
                     this.GenerateFile(this.Configuration.TemplateHtml, outputFileHtml, this.Configuration, pages);  
                 }
                 catch (TemplateParsingException templateParsingException)
@@ -309,7 +319,7 @@ namespace Projbook.Core
                 try
                 {
                     // Generate the pdf template
-                    string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputPdf);
+                    string outputFileHtml = this.fileSystem.Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputPdf);
                     this.GenerateFile(this.Configuration.TemplatePdf, outputFileHtml, this.Configuration, pages);
                     
 #if !NOPDF
@@ -320,8 +330,8 @@ namespace Projbook.Core
                     WkHtmlToXLibrariesManager.Register(new Win64NativeBundle());
 
                     // Compute file names
-                    string outputPdf = Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
-                    string outputFilePdf = Path.Combine(this.OutputDirectory.FullName, outputPdf);
+                    string outputPdf = this.fileSystem.Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
+                    string outputFilePdf = this.fileSystem.Path.Combine(this.OutputDirectory.FullName, outputPdf);
 
                     // Prepare the converter
                     MultiplexingConverter pdfConverter = new MultiplexingConverter();
@@ -332,7 +342,7 @@ namespace Projbook.Core
 
                     // Run pdf convertion
                     using (pdfConverter)
-                    using (var outputFileStream = new FileStream(outputFilePdf, FileMode.Create, FileAccess.Write))
+                    using (Stream outputFileStream = this.fileSystem.File.Open(outputFilePdf, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
                         try
                         {
@@ -385,8 +395,8 @@ namespace Projbook.Core
         private void GenerateFile(string templateName, string outputFileHtml, Configuration configuration, List<Model.Page> pages)
         {
             // Generate final documentation from the template using razor engine
-            using (var reader = new StreamReader(new FileStream(templateName, FileMode.Open, FileAccess.Read)))
-            using (var writer = new StreamWriter(new FileStream(outputFileHtml, FileMode.Create, FileAccess.Write)))
+            using (var reader = new StreamReader(this.fileSystem.File.Open(templateName, FileMode.Open, FileAccess.Read, FileShare.Read)))
+            using (var writer = new StreamWriter(this.fileSystem.File.Open(outputFileHtml, FileMode.Create, FileAccess.Write, FileShare.None)))
             {
                 var config = new TemplateServiceConfiguration();
                 config.Language = Language.CSharp;
@@ -411,7 +421,8 @@ namespace Projbook.Core
 
             // Load the page until the block source position
             char[] buffer = new char[block.SourcePosition];
-            using (StreamReader reader = new StreamReader(new FileStream(new FileInfo(page.Path).FullName, FileMode.Open, FileAccess.Read)))
+            string pagePath = this.fileSystem.FileInfo.FromFileName(page.Path).FullName;
+            using (StreamReader reader = new StreamReader(this.fileSystem.File.Open(pagePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
                 reader.Read(buffer, 0, buffer.Length);
             }
@@ -435,17 +446,17 @@ namespace Projbook.Core
         /// </summary>
         /// <param name="csprojFile"></param>
         /// <returns></returns>
-        private DirectoryInfo[] ExtractSourceDirectories(FileInfo csprojFile)
+        private DirectoryInfoBase[] ExtractSourceDirectories(FileInfoBase csprojFile)
         {
             // Data validation
             Ensure.That(() => csprojFile).IsNotNull();
             Ensure.That(csprojFile.Exists, string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
 
             // Initialize the extracted directories
-            List<DirectoryInfo> extractedSourceDirectories = new List<DirectoryInfo>();
+            List<DirectoryInfoBase> extractedSourceDirectories = new List<DirectoryInfoBase>();
 
             // Add the csproj's directory
-            DirectoryInfo projectDirectory = new DirectoryInfo(Path.GetDirectoryName(csprojFile.FullName));
+            DirectoryInfoBase projectDirectory = this.fileSystem.DirectoryInfo.FromDirectoryName(this.fileSystem.Path.GetDirectoryName(csprojFile.FullName));
             extractedSourceDirectories.Add(projectDirectory);
 
             // Extract project reference path
@@ -458,7 +469,7 @@ namespace Projbook.Core
             {
                 XmlNode xmlNode = xmlNodes.Item(i);
                 string includeValue = xmlNode.Attributes["Include"].Value;
-                string combinedPath = Path.Combine(projectDirectory.FullName, includeValue);
+                string combinedPath = this.fileSystem.Path.Combine(projectDirectory.FullName, includeValue);
 
                 // The combinedPath can contains both forward and backslash path chunk.
                 // In linux environment we can end up having "/..\" in the path which make the GetDirectoryName method bugging (returns empty).
@@ -466,7 +477,7 @@ namespace Projbook.Core
                 combinedPath = combinedPath.Replace(@"\", "/");
 
                 // Add the combined path
-                extractedSourceDirectories.Add(new DirectoryInfo(Path.GetDirectoryName(Path.GetFullPath(combinedPath))));
+                extractedSourceDirectories.Add(this.fileSystem.DirectoryInfo.FromDirectoryName(this.fileSystem.Path.GetDirectoryName(this.fileSystem.Path.GetFullPath(combinedPath))));
             }
 
             // Returne the extracted directories
