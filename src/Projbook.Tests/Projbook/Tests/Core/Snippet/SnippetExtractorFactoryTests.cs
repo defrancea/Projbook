@@ -2,8 +2,6 @@
 using Projbook.Core.Snippet;
 using Projbook.Extension;
 using Projbook.Extension.CSharpExtractor;
-using System;
-using System.IO;
 
 namespace Projbook.Tests.Core.Snippet
 {
@@ -11,7 +9,7 @@ namespace Projbook.Tests.Core.Snippet
     /// Tests <see cref="SnippetExtractorFactory"/>.
     /// </summary>
     [TestFixture]
-    public class SnippetExtractorFactoryTests : AbstractTests
+    public class SnippetExtractorFactoryTests
     {
         /// <summary>
         /// The tested extractor factory.
@@ -22,10 +20,9 @@ namespace Projbook.Tests.Core.Snippet
         /// Initializes the test.
         /// </summary>
         [SetUp]
-        public override void Setup()
+        public void Setup()
         {
             // Initialize extractor
-            base.Setup();
             this.SnippetExtractorFactory = new SnippetExtractorFactory();
         }
 

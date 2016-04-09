@@ -56,7 +56,7 @@ namespace Projbook.Extension.CSharpExtractor
             foreach (string fragment in chunks)
             {
                 // Could not find any matching
-                if (!matchingNode.children.TryGetValue(fragment, out matchingNode))
+                if (null == matchingNode.children || !matchingNode.children.TryGetValue(fragment, out matchingNode))
                 {
                     return null;
                 }

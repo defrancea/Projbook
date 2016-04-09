@@ -1,0 +1,55 @@
+﻿<Title>Test title</Title>
+    <Id>PageContentmd</Id>
+    <Title>First page title</Title>
+	<PreSectionContent><![CDATA[<p>Before section…</p>
+]]></PreSectionContent>
+	<Sections>
+        <Section>
+			<Id>PageContentmd-foo</Id>
+			<Title>Foo</Title>
+			<Content>
+				<![CDATA[
+<h1>Foo</h1>
+]]>
+			</Content>
+        </Section>
+        <Section>
+			<Id>PageContentmd-sub-foo</Id>
+			<Title>Sub-foo</Title>
+			<Content>
+				<![CDATA[
+<h2>Sub-foo</h2>
+]]>
+			</Content>
+        </Section>
+	</Sections>
+    <Id>PageSnippetmd</Id>
+    <Title>Second page title</Title>
+	<PreSectionContent><![CDATA[]]></PreSectionContent>
+	<Sections>
+        <Section>
+			<Id>PageSnippetmd-bar</Id>
+			<Title>Bar</Title>
+			<Content>
+				<![CDATA[
+<h1>Bar</h1>
+<pre><code class="language-csharp">public class Foo
+{
+}</code></pre>
+]]>
+			</Content>
+        </Section>
+	</Sections>
+    <Id>PageTablemd</Id>
+    <Title>Third page title</Title>
+	<PreSectionContent><![CDATA[<p>No section</p>
+<table class="table"><tr><th class="text-left">left</th><th class="text-left">center</th><th class="text-left">right</th></tr><tr><td class="text-left">1</td><td class="text-center">2</td><td class="text-right">3</td></tr><tr><td class="text-left">4</td><td class="text-center">5</td><td class="text-right">6</td></tr></table></p>
+<table class="table"><tr><th class="text-left">left</th><th class="text-left">center</th><th class="text-left">right</th></tr><tr><td class="text-left"></td><td class="text-center">2</td><td class="text-right">3</td></tr><tr><td class="text-left"></td><td class="text-center">5</td><td class="text-right">6</td></tr></table></p>
+<table class="table"><tr><th class="text-left">left</th><th class="text-left">center</th><th class="text-left">right</th></tr><tr><td class="text-left">1</td><td class="text-center">2</td><td class="text-right">3</td></tr><tr><td class="text-left">4</td><td class="text-center">5</td><td class="text-right">6</td></tr></table></p>
+<table class="table"><tr><th class="text-left">left</th><th class="text-left">center</th><th class="text-left">right</th></tr><tr><td class="text-left">1</td><td class="text-center">2</td><td class="text-right">3</td></tr><tr><td class="text-left">4</td><td class="text-center">5</td><td class="text-right">6</td></tr></table></p>
+<table class="table"><tr><th class="text-left">left</th></tr><tr><td class="text-left">1</td></tr></table></p>
+<table class="table"><tr><th class="text-left">right</th><th class="text-left">center</th><th class="text-left">left</th></tr><tr><td class="text-right">1</td><td class="text-left">2</td><td class="text-left">3</td></tr><tr><td class="text-right">4</td><td class="text-left">5</td><td class="text-left">6</td></tr></table></p>
+]]></PreSectionContent>
+	<Sections>
+	</Sections>
+

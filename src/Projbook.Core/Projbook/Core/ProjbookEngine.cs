@@ -148,7 +148,13 @@ namespace Projbook.Core
                                     directoryInfos = this.ExtractSourceDirectories(this.CsprojFile);
                                     foreach (DirectoryInfoBase directoryInfo in directoryInfos)
                                     {
-                                        string fullFilePath = this.fileSystem.Path.Combine(directoryInfo.FullName, snippetExtractionRule.TargetPath ?? string.Empty);
+                                        // Get direcotry name
+                                        string directoryName = directoryInfo.FullName;
+                                        if (1 == directoryName.Length && Path.DirectorySeparatorChar == directoryName[0])
+                                            directoryName = string.Empty;
+
+                                        // Compute file full path
+                                        string fullFilePath = this.fileSystem.Path.Combine(directoryName, snippetExtractionRule.TargetPath ?? string.Empty);
                                         switch (snippetExtractor.TargetType)
                                         {
                                             case TargetType.File:
@@ -459,9 +465,14 @@ namespace Projbook.Core
             DirectoryInfoBase projectDirectory = this.fileSystem.DirectoryInfo.FromDirectoryName(this.fileSystem.Path.GetDirectoryName(csprojFile.FullName));
             extractedSourceDirectories.Add(projectDirectory);
 
-            // Extract project reference path
+            // Load xml document
             XmlDocument xmlDocument = new XmlDocument();
-            xmlDocument.Load(csprojFile.FullName);
+            using (Stream stream = csprojFile.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                xmlDocument.Load(stream);
+            }
+
+            // Extract
             XmlNamespaceManager xmlNamespaceManager = new XmlNamespaceManager(xmlDocument.NameTable);
             xmlNamespaceManager.AddNamespace("msbuild", "http://schemas.microsoft.com/developer/msbuild/2003");
             XmlNodeList xmlNodes = xmlDocument.SelectNodes("//msbuild:ProjectReference", xmlNamespaceManager);

@@ -1,0 +1,18 @@
+﻿{
+  "title": "Test title",
+  "template-pdf": "Template/Template-pdf.txt",
+  "pages": [
+    {
+      "path": "Page/Content.md",
+      "title": "First page title"
+    },
+    {
+      "path": "Page/Snippet.md",
+      "title": "Second page title"
+    },
+    {
+      "path": "Page/Table.md",
+      "title": "Third page title"
+    }
+  ]
+}
