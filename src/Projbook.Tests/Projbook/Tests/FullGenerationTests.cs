@@ -47,7 +47,7 @@ namespace Projbook.Tests.Core
                 { "Page/MissingMembers.md", new MockFileData(PageFiles.MissingMembers) },
                 { "Source/Foo.cs", new MockFileData(SourceCSharpFiles.Foo) },
                 { "Expected/Simple.txt", new MockFileData(ExpectedFullGenerationFiles.Simple) },
-                { "Expected/Simple-pdf.txt", new MockFileData(ExpectedFullGenerationFiles.Simple_pdf) },
+                { "Expected/Simple-pdf.txt", new MockFileData(ExpectedFullGenerationFiles.Simple_pdf) }
             });
         }
 
@@ -137,12 +137,9 @@ namespace Projbook.Tests.Core
                 
                 // Assert result
                 Assert.IsNotNull(errors);
+                Assert.AreEqual(0, errors.Length);
                 Assert.AreEqual(expectedContent, generatedContent);
                 Assert.AreEqual(expectedPdfContent, generatedPdfContent);
-
-                // PDF generation contains error becasue wkhtmltopdf doesn't abstract the file system
-                // The generated input html file for pdf generation is then missing and raise an error during unit tests
-                // Assert.AreEqual(0, errors.Length);
 
 #if !NOPDF
                 Assert.AreEqual(configuration.GeneratePdf, this.FileSystem.File.Exists(this.FileSystem.Path.ChangeExtension(configuration.OutputPdf, "pdf")));

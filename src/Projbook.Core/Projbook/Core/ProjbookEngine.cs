@@ -346,19 +346,38 @@ namespace Projbook.Core
                         generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", e.Value), 0, 0));
                     };
 
-                    // Run pdf convertion
-                    using (pdfConverter)
-                    using (Stream outputFileStream = this.fileSystem.File.Open(outputFilePdf, FileMode.Create, FileAccess.Write, FileShare.None))
+                    // Prepare file system if abstracted
+                    bool requireCopyToFileSystem = !File.Exists(outputFileHtml);
+                    try
                     {
-                        try
+                        // File system may be abstracted, this requires to copy the pdf generation file to the actual file system
+                        // in order to allow wkhtmltopdf to process the generated html as input file
+                        if (requireCopyToFileSystem)
                         {
-                            byte[] buffer = pdfConverter.Convert();
-                            outputFileStream.Write(buffer, 0, buffer.Length);
+                            File.WriteAllBytes(outputFileHtml, this.fileSystem.File.ReadAllBytes(outputFileHtml));
                         }
-                        catch
+                        
+                        // Run pdf convertion
+                        using (pdfConverter)
+                        using (Stream outputFileStream = this.fileSystem.File.Open(outputFilePdf, FileMode.Create, FileAccess.Write, FileShare.None))
                         {
-                            // Ignore generation errors at that level
-                            // Errors are handled by the error handling having the best description
+                            try
+                            {
+                                byte[] buffer = pdfConverter.Convert();
+                                outputFileStream.Write(buffer, 0, buffer.Length);
+                            }
+                            catch
+                            {
+                                // Ignore generation errors at that level
+                                // Errors are handled by the error handling having the best description
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        if (requireCopyToFileSystem && File.Exists(outputFileHtml))
+                        {
+                            File.Delete(outputFileHtml);
                         }
                     }
 #endif 
