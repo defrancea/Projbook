@@ -64,6 +64,14 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.IO.Abstractions, Version=2.0.0.124, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Abstractions.2.0.0.124\lib\net40\System.IO.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Abstractions.TestingHelpers, Version=2.0.0.124, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Abstractions.TestingHelpers.2.0.0.124\lib\net40\System.IO.Abstractions.TestingHelpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -76,264 +84,283 @@
   <ItemGroup>
     <Compile Include="Projbook\Tests\Core\Snippet\XmlSnippetExtractorTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\DefaultSnippetExtractorTests.cs" />
-    <Compile Include="Resources\SourcesA\Options.cs" />
-    <Compile Include="Resources\SourcesA\Empty.cs" />
-    <Compile Include="Resources\SourcesA\NeedCleanup.cs">
+    <Compile Include="Resources\ConfigFiles.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ConfigFiles.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ExpectedCSharpFiles.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExpectedCSharpFiles.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ExpectedFullGenerationFiles.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExpectedFullGenerationFiles.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ExpectedXmlFiles.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExpectedXmlFiles.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\PageFiles.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PageFiles.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\SourceCSharpFiles.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SourceCSharpFiles.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\SourceXmlFiles.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SourceXmlFiles.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Source\CSharp\Options.cs" />
+    <Compile Include="Resources\Source\CSharp\Empty.cs" />
+    <Compile Include="Resources\Source\CSharp\NeedCleanup.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Resources\SourcesA\Sample.cs" />
-    <Content Include="Resources\Expected\BlockOnlyEscapedClass2.txt">
+    <Compile Include="Resources\Source\CSharp\Sample.cs" />
+    <Compile Include="Resources\TemplateFiles.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TemplateFiles.resx</DependentUpon>
+    </Compile>
+    <Content Include="Resources\Expected\CSharp\BlockOnlyEscapedClass2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\BlockOnlyEscapedMethod2.txt">
+    <Content Include="Resources\Expected\CSharp\BlockOnlyEscapedMethod2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\BlockOnlyEscapedMethod.txt">
+    <Content Include="Resources\Expected\CSharp\BlockOnlyEscapedMethod.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\content.txt">
+    <Content Include="Resources\Expected\CSharp\BlockOnlyEmptyMethod.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\BlockOnlyEmptyMethod.txt">
+    <Content Include="Resources\Expected\CSharp\BlockOnlyEscapedClass.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\BlockOnlyEscapedClass.txt">
+    <Content Include="Resources\Expected\CSharp\ContentOnlyEscapedClass2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\ContentOnlyEscapedClass2.txt">
+    <Content Include="Resources\Expected\CSharp\ContentOnlyEscapedMethod.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\ContentOnlyEscapedMethod.txt">
+    <Content Include="Resources\Expected\CSharp\ContentOnlyEventadd.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\ContentOnlyEventadd.txt">
+    <Content Include="Resources\Expected\CSharp\ContentOnlyEscapedClass.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\ContentOnlyEscapedClass.txt">
+    <Content Include="Resources\Expected\CSharp\ContentOnlyProperty.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\ContentOnlyProperty.txt">
+    <Content Include="Resources\Expected\CSharp\ContentOnlyMethod.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\ContentOnlyMethod.txt">
+    <Content Include="Resources\Expected\CSharp\ContentOnlyEvent.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\ContentOnlyEvent.txt">
+    <Content Include="Resources\Expected\CSharp\ContentOnlyClass.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\ContentOnlyClass.txt">
+    <Content Include="Resources\Expected\CSharp\BlockOnlyEventadd.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\BlockOnlyEventadd.txt">
+    <Content Include="Resources\Expected\CSharp\BlockOnlyEvent.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\BlockOnlyEvent.txt">
+    <Content Include="Resources\Expected\CSharp\BlockOnlyProperty.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\BlockOnlyProperty.txt">
+    <Content Include="Resources\Expected\CSharp\BlockOnlyMethod.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\BlockOnlyMethod.txt">
+    <Content Include="Resources\Expected\CSharp\Eventremove.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\Eventremove.txt">
+    <Content Include="Resources\Expected\CSharp\Eventadd.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\Eventadd.txt">
+    <Content Include="Resources\Expected\CSharp\IMethod.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\IMethod.txt">
+    <Content Include="Resources\Expected\CSharp\I.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\I.txt">
+    <Content Include="Resources\Expected\Xml\SecondLevel.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\SecondLevel.txt">
+    <Content Include="Resources\Expected\Xml\FirstLevel.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\SampleXmlNoNamespaceWholeFile.txt">
+    <Content Include="Resources\Expected\Xml\SecondLevelWithNamespace.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\FirstLevel.txt">
+    <Content Include="Resources\Expected\Xml\FirstLevelWithNamespace.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
-    <Content Include="Resources\Expected\SecondLevelWithMNamespace.txt">
+    <Content Include="Resources\Expected\Xml\Core.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\FirstLevelWithNNamespace.txt">
+    <Content Include="Resources\Expected\Xml\FirstLevelNoNamespace.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\ProjectCoreXml.txt">
+    <Content Include="Resources\Expected\CSharp\GenericMethod.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\FirstLevelNoNamespace.txt">
+    <Content Include="Resources\Expected\CSharp\GenericClass.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\SampleXmlWholeFile.txt">
+    <Content Include="Resources\Expected\CSharp\Destructor.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\GenericMethod.txt">
+    <Content Include="Resources\Expected\CSharp\Constructor.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\GenericClass.txt">
+    <Content Include="Resources\Expected\CSharp\Empty.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\Destructor.txt">
+    <Content Include="Resources\Expected\CSharp\Event.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\Constructor.txt">
+    <Content Include="Resources\Expected\CSharp\Indexerget.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\Empty.txt">
+    <Content Include="Resources\Expected\CSharp\Indexerset.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\Event.txt">
+    <Content Include="Resources\Expected\CSharp\Indexer.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\Indexerget.txt">
+    <Content Include="Resources\Expected\CSharp\BlockOnlyClass.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\Indexerset.txt">
+    <Content Include="Resources\Expected\CSharp\WhateverPropertyset.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\Indexer.txt">
+    <Content Include="Resources\Expected\CSharp\WhateverPropertyget.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\BlockOnlyClass.txt">
+    <Content Include="Resources\Expected\CSharp\NeedCleanupClass.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\FromCore.txt">
+    <Content Include="Resources\Expected\CSharp\NeedCleanup.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\WhateverPropertyset.txt">
+    <Content Include="Resources\Expected\CSharp\AnyClass.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\WhateverPropertyget.txt">
+    <Content Include="Resources\Expected\CSharp\FooStringInt.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\NeedCleanupClass.txt">
+    <Content Include="Resources\Expected\CSharp\FooString.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\NeedCleanup.txt">
+    <Content Include="Resources\Expected\CSharp\A.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\AnyClass.txt">
+    <Content Include="Resources\Expected\CSharp\NS2NS3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\FooStringInt.txt">
+    <Content Include="Resources\Expected\CSharp\NS2NS2NS3A.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\FooString.txt">
+    <Content Include="Resources\Expected\CSharp\NS2NS2NS3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\A.txt">
+    <Content Include="Resources\Expected\CSharp\NS2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\NS2NS3.txt">
+    <Content Include="Resources\Expected\CSharp\NSNS2NS3A.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\NS2NS2NS3A.txt">
+    <Content Include="Resources\Expected\CSharp\NSNS2NS3.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\NS2NS2NS3.txt">
+    <Content Include="Resources\Expected\CSharp\set.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\NS2.txt">
+    <Content Include="Resources\Expected\CSharp\get.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\NSNS2NS3A.txt">
+    <Content Include="Resources\Expected\CSharp\Foo.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\NSNS2NS3.txt">
+    <Content Include="Resources\Expected\CSharp\WhateverProperty.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\set.txt">
+    <Content Include="Resources\Expected\CSharp\SubClass.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\get.txt">
+    <Content Include="Resources\Expected\CSharp\OneClassSomewhere.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\Foo.txt">
+    <Content Include="Resources\Expected\FullGeneration\Simple-pdf.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\WhateverProperty.txt">
+    <Content Include="Resources\Expected\FullGeneration\Simple.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\SubClass.txt">
+    <Content Include="Resources\Expected\CSharp\NS.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Expected\OneClassSomewhere.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\FullGeneration\expectedNoPdf.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\FullGeneration\expected-pdf.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\FullGeneration\expected.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Expected\NS.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\FullGeneration\testTemplateErrorInPdf-pdf.txt" />
-    <Content Include="Resources\FullGeneration\testTemplateErrorInPdf.txt" />
-    <Content Include="Resources\FullGeneration\testTemplateError-pdf.txt" />
-    <Content Include="Resources\FullGeneration\testTemplateErrorNoPdf.txt" />
-    <Content Include="Resources\FullGeneration\testTemplateNoPdf.txt" />
-    <Content Include="Resources\FullGeneration\testTemplateError.txt" />
-    <Content Include="Resources\FullGeneration\testTemplate-pdf.txt" />
-    <Content Include="Resources\FullGeneration\testTemplate.txt" />
-    <Compile Include="Resources\FullGeneration\Source\Foo.cs" />
+    <Content Include="Resources\Template\Malformated.txt" />
+    <Content Include="Resources\Template\Simple-pdf.txt" />
+    <Content Include="Resources\Template\Simple.txt" />
+    <Compile Include="Resources\Source\CSharp\Foo.cs" />
     <Compile Include="Projbook\Tests\Core\ConfigurationLoaderTests.cs" />
     <Compile Include="Projbook\Tests\Core\Markdown\ProjbookHtmlFormatterTests.cs" />
-    <Compile Include="Projbook\Tests\Core\AbstractTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\SnippetExtractorFactoryTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\CSharpSnippetExtractorTests.cs" />
-    <Content Include="Resources\SourcesA\content.txt" />
-    <Content Include="Resources\SourcesA\SampleNoNamespace.xml">
+    <None Include="Resources\Source\Xml\Projbook.Core.csproj" />
+    <Content Include="Resources\Source\Xml\SimpleNoNamespace.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Resources\SourcesA\Sample.xml">
+    <Content Include="Resources\Source\Xml\Simple.xml">
       <SubType>Designer</SubType>
     </Content>
-    <None Include="Resources\FullGeneration\Page\unexistingMembers.md">
+    <None Include="Resources\Page\MissingMembers.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\FullGeneration\Page\thirdPage.md">
+    <None Include="Resources\Page\Table.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\FullGeneration\Page\secondPage.md">
+    <None Include="Resources\Page\Snippet.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\FullGeneration\Page\firstPage.md">
+    <None Include="Resources\Page\Content.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="Resources\SourcesA\AnyClass.cs">
+    <Compile Include="Resources\Source\CSharp\AnyClass.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Projbook\Tests\FullGenerationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Resources\Config\MissingMembersInPage.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Resources\testConfigUnexistingMembers.json" />
-    <None Include="Resources\testConfigManyErrors.json" />
-    <None Include="Resources\testConfigEmptyArray.json" />
-    <None Include="Resources\testConfigTwoGenerations.json" />
-    <None Include="Resources\testConfigAllValues.json" />
-    <None Include="Resources\testConfigNoTemplate.json" />
-    <None Include="Resources\testConfigNoHtml.json" />
-    <None Include="Resources\testConfigNoPdf.json" />
-    <None Include="Resources\testConfigErrorInHtmlNoPdf.json" />
-    <None Include="Resources\testConfigErrorInHtml.json" />
-    <None Include="Resources\testConfigErrorInPdf.json" />
-    <None Include="Resources\testConfigMissingPage.json" />
-    <None Include="Resources\testConfigError.json" />
-    <None Include="Resources\testConfig.json" />
+    <None Include="Resources\Config\Simple.json" />
+    <None Include="Resources\Config\ManyErrors.json" />
+    <None Include="Resources\Config\EmptyArray.json" />
+    <None Include="Resources\Config\TwoGenerations.json" />
+    <None Include="Resources\Config\AllValues.json" />
+    <None Include="Resources\Config\NoTemplate.json" />
+    <None Include="Resources\Config\NoHtml.json" />
+    <None Include="Resources\Config\NoPdf.json" />
+    <None Include="Resources\Config\ErrorInHtmlNoPdf.json" />
+    <None Include="Resources\Config\ErrorInHtml.json" />
+    <None Include="Resources\Config\MissingPage.json" />
+    <None Include="Resources\Config\Error.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Projbook.Core\Projbook.Core.csproj">
@@ -352,6 +379,40 @@
       <Project>{8338b756-0519-4d20-ba04-3a8f4839237a}</Project>
       <Name>Projbook.Extension</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ConfigFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ConfigFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ExpectedCSharpFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExpectedCSharpFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ExpectedFullGenerationFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExpectedFullGenerationFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ExpectedXmlFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExpectedXmlFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\PageFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>PageFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SourceCSharpFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SourceCSharpFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\SourceXmlFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SourceXmlFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\TemplateFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>TemplateFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <Choose>

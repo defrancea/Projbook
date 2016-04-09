@@ -1,10 +1,10 @@
 ﻿using NUnit.Framework;
 using Projbook.Extension.Exception;
-using Projbook.Extension.Spi;
 using Projbook.Extension.XmlExtractor;
-using System;
+using Projbook.Tests.Resources;
 using System.Collections.Generic;
-using System.IO;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 
 namespace Projbook.Tests.Core.Snippet
 {
@@ -12,94 +12,88 @@ namespace Projbook.Tests.Core.Snippet
     /// Tests <see cref="XmlSnippetExtractor"/>.
     /// </summary>
     [TestFixture]
-    public class XmlSnippetExtractorTests : AbstractTests
+    public class XmlSnippetExtractorTests
     {
         /// <summary>
-        /// Use a cache for unit testing in order to speed up execution and simulate an actual usage.
+        /// Represents a file system abstraction.
         /// </summary>
-        private Dictionary<string, ISnippetExtractor> extractorCache = new Dictionary<string, ISnippetExtractor>();
+        public IFileSystem FileSystem { get; private set; }
+
+        /// <summary>
+        /// Initializes the test.
+        /// </summary>
+        [SetUp]
+        public void Setup()
+        {
+            // Mock file system
+            this.FileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { "Source/Simple.xml", new MockFileData(SourceXmlFiles.Simple) },
+                { "Source/SimpleNoNamespace.xml", new MockFileData(SourceXmlFiles.SimpleNoNamespace) },
+                { "Source/Core.csproj", new MockFileData(SourceXmlFiles.CoreCsproj) },
+                { "Expected/Simple.txt", new MockFileData(SourceXmlFiles.Simple) },
+                { "Expected/SimpleNoNamespace.txt", new MockFileData(SourceXmlFiles.SimpleNoNamespace) },
+                { "Expected/FirstLevel.txt", new MockFileData(ExpectedXmlFiles.FirstLevel) },
+                { "Expected/SecondLevel.txt", new MockFileData(ExpectedXmlFiles.SecondLevel) },
+                { "Expected/FirstLevelNoNamespace.txt", new MockFileData(ExpectedXmlFiles.FirstLevelNoNamespace) },
+                { "Expected/FirstLevelWithNamespace.txt", new MockFileData(ExpectedXmlFiles.FirstLevelWithNamespace) },
+                { "Expected/SecondLevelWithNamespace.txt", new MockFileData(ExpectedXmlFiles.SecondLevelWithNamespace) },
+                { "Expected/Core.txt", new MockFileData(ExpectedXmlFiles.Core) },
+            });
+        }
 
         /// <summary>
         /// Tests extract snippet.
         /// </summary>
-        /// <param name="fileName">The file name.</param>
+        /// <param name="fileName">The source file name.</param>
         /// <param name="pattern">The pattern.</param>
-        /// <param name="expectedFile">The expected file.</param>
+        /// <param name="expectedFile">The expected file name.</param>
         [Test]
 
         // Whole file
-        [TestCase("SampleNoNamespace.xml", "", "SampleXmlNoNamespaceWholeFile.txt")]
-        [TestCase("Sample.xml", "", "SampleXmlWholeFile.txt")]
+        [TestCase("Source/SimpleNoNamespace.xml", "", "Expected/SimpleNoNamespace.txt")]
+        [TestCase("Source/Simple.xml", "", "Expected/Simple.txt")]
 
         // Member selection with no namespace
-        [TestCase("SampleNoNamespace.xml", "//FirstLevel", "FirstLevel.txt")]
-        [TestCase("SampleNoNamespace.xml", "//SecondLevel", "SecondLevel.txt")]
+        [TestCase("Source/SimpleNoNamespace.xml", "//FirstLevel", "Expected/FirstLevel.txt")]
+        [TestCase("Source/SimpleNoNamespace.xml", "//SecondLevel", "Expected/SecondLevel.txt")]
 
         // Member selection with namespace
-        [TestCase("Sample.xml", "//FirstLevelNoNamespace", "FirstLevelNoNamespace.txt")]
-        [TestCase("Sample.xml", "//n:FirstLevelWithNNamespace", "FirstLevelWithNNamespace.txt")]
-        [TestCase("Sample.xml", "//m:SecondLevelWithMNamespace", "SecondLevelWithMNamespace.txt")]
+        [TestCase("Source/Simple.xml", "//FirstLevelNoNamespace", "Expected/FirstLevelNoNamespace.txt")]
+        [TestCase("Source/Simple.xml", "//n:FirstLevelWithNamespace", "Expected/FirstLevelWithNamespace.txt")]
+        [TestCase("Source/Simple.xml", "//m:SecondLevelWithNamespace", "Expected/SecondLevelWithNamespace.txt")]
 
-        // Acrual file extraction
-        [TestCase("Projbook.Core.csproj", "//ProjectGuid", "ProjectCoreXml.txt")]
+        // Actual file extraction
+        [TestCase("Source/Core.csproj", "//ProjectGuid", "Expected/Core.txt")]
         public void ExtractSnippet(string fileName, string pattern, string expectedFile)
         {
-            // Resolve path
-            if (!fileName.EndsWith("csproj"))
-            {
-                fileName = this.ComputeFilePath(fileName);
-            }
-            
             // Run the extraction
-            ISnippetExtractor snippetExtractor;
-            if (!this.extractorCache.TryGetValue(fileName, out snippetExtractor))
-            {
-                snippetExtractor = new XmlSnippetExtractor();
-                this.extractorCache[fileName] = snippetExtractor;
-            }
-            Extension.Model.Snippet snippet = snippetExtractor.Extract(this.LocateFile(fileName), pattern);
-
-            // Load the expected file content
-            MemoryStream memoryStream = new MemoryStream();
-            using (var fileReader = new StreamReader(new FileStream(Path.GetFullPath(Path.Combine("Resources", "Expected", expectedFile)), FileMode.Open)))
-            using (var fileWriter = new StreamWriter(memoryStream))
-            {
-                fileWriter.Write(fileReader.ReadToEnd());
-            }
+            Extension.Model.Snippet snippet = new XmlSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName(fileName), pattern);
 
             // Assert
-            Assert.AreEqual(
-                System.Text.Encoding.UTF8.GetString(memoryStream.ToArray()).Replace("\r\n", Environment.NewLine),
-                snippet.Content.Replace("\r\n", Environment.NewLine));
+            Assert.AreEqual(this.FileSystem.File.ReadAllText(expectedFile), snippet.Content.Replace("\r\n", "\n"));
         }
 
         /// <summary>
         /// Tests extract snippet with invalid rule.
         /// </summary>
-        /// <param name="pattern">The pattern.</param>
         [Test]
         [ExpectedException(ExpectedException = typeof(SnippetExtractionException), ExpectedMessage = "Invalid extraction rule")]
         public void ExtractSnippetInvalidRule()
         {
             // Run the extraction
-            new XmlSnippetExtractor().Extract(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "SourcesA", "Sample.xml")), "abc abc(abc");
+            new XmlSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName("Source/Simple.xml"), "abc abc(abc");
         }
 
         /// <summary>
         /// Tests extract snippet with non matching member.
         /// </summary>
-        /// <param name="pattern">The pattern.</param>
         [Test]
-        [TestCase("Sample.xml", "//DoesntExist")]
         [ExpectedException(ExpectedException = typeof(SnippetExtractionException), ExpectedMessage = "Cannot find member")]
-        public void ExtractSnippetNotFound(string fileName, string pattern)
+        public void ExtractSnippetNotFound()
         {
-            // Resolve path
-            fileName = this.ComputeFilePath(fileName);
-            
             // Run the extraction
-            XmlSnippetExtractor extractor = new XmlSnippetExtractor();
-            Extension.Model.Snippet snippet = extractor.Extract(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)), pattern);
+            new XmlSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName("Source/Simple.xml"), "//DoesntExist");
         }
     }
 }

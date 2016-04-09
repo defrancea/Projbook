@@ -1,0 +1,14 @@
+﻿{
+  "title": "Test title",
+  "template-html": "Template/Template.txt",
+  "pages": [
+    {
+      "path": "Page/Missing.md",
+      "title": "Missing"
+    },
+    {
+      "path": "Page/Snippet.md",
+      "title": "Second page title"
+    }
+  ]
+}

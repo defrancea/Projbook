@@ -1,8 +1,8 @@
 ﻿using System.Text;
-using System.IO;
-using Projbook.Extension.Spi;
 using System;
-using Projbook.Extension.Exception;
+using System.IO.Abstractions;
+using Projbook.Extension.Spi;
+using System.IO;
 
 namespace Projbook.Extension
 {
@@ -22,7 +22,7 @@ namespace Projbook.Extension
         /// <param name="fileSystemInfo">The file system info.</param>
         /// <param name="pattern">The extraction pattern, never used for this implementation.</param>
         /// <returns>The extracted snippet.</returns>
-        public virtual Model.Snippet Extract(FileSystemInfo fileSystemInfo, string pattern)
+        public virtual Model.Snippet Extract(FileSystemInfoBase fileSystemInfo, string pattern)
         {
             // Data validation
             if (null == fileSystemInfo)
@@ -40,7 +40,7 @@ namespace Projbook.Extension
         /// </summary>
         /// <param name="fileInfo">The file info.</param>
         /// <returns>The file's content.</returns>
-        protected string LoadFile(FileInfo fileInfo)
+        protected string LoadFile(FileInfoBase fileInfo)
         {
             // Data validation
             if (null == fileInfo)
@@ -63,14 +63,14 @@ namespace Projbook.Extension
         /// </summary>
         /// <param name="fileSystemInfo">The file system info.</param>
         /// <returns>The file info.</returns>
-        protected FileInfo ConvertToFile(FileSystemInfo fileSystemInfo)
+        protected FileInfoBase ConvertToFile(FileSystemInfoBase fileSystemInfo)
         {
             // Data validation
             if (null == fileSystemInfo)
                 throw new ArgumentNullException("fileSystemInfo");
 
             // Cast to FileInfo
-            FileInfo fileInfo = fileSystemInfo as FileInfo;
+            FileInfoBase fileInfo = fileSystemInfo as FileInfoBase;
             if (null == fileInfo)
                 throw new ArgumentException("fileInfo");
 

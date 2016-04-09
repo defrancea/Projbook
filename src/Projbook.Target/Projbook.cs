@@ -6,7 +6,7 @@ using Projbook.Core.Model;
 using Projbook.Core.Model.Configuration;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.IO.Abstractions;
 
 namespace Projbook.Target
 {
@@ -40,11 +40,12 @@ namespace Projbook.Target
         public override bool Execute()
         {
             // Load configuration
-            ConfigurationLoader configurationLoader = new ConfigurationLoader();
+            FileSystem fileSystem = new FileSystem();
+            ConfigurationLoader configurationLoader = new ConfigurationLoader(fileSystem);
             Configuration[] configurations;
             try
             {
-                configurations = configurationLoader.Load(Path.GetDirectoryName(this.ProjectPath), this.ConfigurationFile);
+                configurations = configurationLoader.Load(fileSystem.Path.GetDirectoryName(this.ProjectPath), this.ConfigurationFile);
             }
             catch (ConfigurationException configurationException)
             {
@@ -63,7 +64,7 @@ namespace Projbook.Target
             foreach (Configuration configuration in configurations)
             {
                 // Run generation
-                ProjbookEngine projbookEngine = new ProjbookEngine(this.ProjectPath, configuration, this.OutputDirectory);
+                ProjbookEngine projbookEngine = new ProjbookEngine(fileSystem, this.ProjectPath, configuration, this.OutputDirectory);
                 GenerationError[] errors = projbookEngine.Generate();
 
                 // Report generation errors

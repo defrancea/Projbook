@@ -1,0 +1,5 @@
+﻿{
+  "title": "Test title",
+  "template-html": "Template/TemplateErrorNoPdf.txt",
+  "template-pdf": "Template/TemplateErrorNoPdf.txt"
+}

@@ -1,12 +1,10 @@
-﻿using EnsureThat;
-using Projbook.Extension;
+﻿using Projbook.Extension;
 using Projbook.Extension.Spi;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.ComponentModel.Composition.ReflectionModel;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -17,11 +15,6 @@ namespace Projbook.Core.Snippet
     /// </summary>
     public class SnippetExtractorFactory
     {
-        /// <summary>
-        /// The csproj file.
-        /// </summary>
-        public FileInfo CsprojFile { get; private set; }
-
         /// <summary>
         /// Loaded extractor factories.
         /// </summary>
@@ -35,15 +28,9 @@ namespace Projbook.Core.Snippet
         /// <summary>
         /// Initializes a new instance of <see cref="SnippetExtractorFactory"/>.
         /// </summary>
-        /// <param name="csprojFile">Initializes the required <see cref="SourceDictionaries"/>.</param>
-        public SnippetExtractorFactory(FileInfo csprojFile)
+        public SnippetExtractorFactory()
         {
-            // Data validation
-            Ensure.That(() => csprojFile).IsNotNull();
-            Ensure.That(csprojFile.Exists, string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
-
             // Initialize
-            this.CsprojFile = csprojFile;
             this.defaultExtractorFactory = () => new DefaultSnippetExtractor();
 
             // Load extensions

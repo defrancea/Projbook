@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Text;
 using Projbook.Extension.Exception;
 using Projbook.Extension.Spi;
 using System;
-using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 
@@ -30,7 +30,7 @@ namespace Projbook.Extension.CSharpExtractor
         /// <param name="fileSystemInfo">The file system info.</param>
         /// <param name="memberPattern">The member pattern to extract.</param>
         /// <returns>The extracted snippet.</returns>
-        public override Model.Snippet Extract(FileSystemInfo fileSystemInfo, string memberPattern)
+        public override Model.Snippet Extract(FileSystemInfoBase fileSystemInfo, string memberPattern)
         {
             // Return the entire code if no member is specified
             if (string.IsNullOrWhiteSpace(memberPattern))
