@@ -51,6 +51,11 @@ namespace Projbook.Core
         private Dictionary<string, ISnippetExtractor> extractorCache = new Dictionary<string, ISnippetExtractor>();
 
         /// <summary>
+        /// HResult representing an incorrect format during native dll loading.
+        /// </summary>
+        private const int INCORRECT_FORMAT_HRESULT = unchecked((int)0x8007000B);
+
+        /// <summary>
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
         /// </summary>
         /// <param name="csprojFile">Initializes the required <see cref="CsprojFile"/>.</param>
@@ -289,7 +294,7 @@ namespace Projbook.Core
                     // Generate the pdf template
                     string outputFileHtml = Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputPdf);
                     this.GenerateFile(this.Configuration.TemplatePdf, outputFileHtml, this.Configuration, pages);
-                    
+
 #if !NOPDF
                     // Register bundles
                     WkHtmlToXLibrariesManager.Register(new Linux32NativeBundle());
@@ -331,7 +336,18 @@ namespace Projbook.Core
                 }
                 catch (System.Exception exception)
                 {
-                    generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", exception.Message), 0, 0));
+                    if (null != exception.InnerException && INCORRECT_FORMAT_HRESULT == exception.InnerException.HResult)
+                    {
+                        // Report detailed error message for wrong architecture loading
+                        string runningArchitectureProccess = IntPtr.Size == 8 ? "x64" : "x86";
+                        string otherRunningArchitectureProccess = IntPtr.Size != 8 ? "x64" : "x86";
+                        generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: Could not load wkhtmltopdf for {0}. Try again running as a {1} process.", runningArchitectureProccess, otherRunningArchitectureProccess), 0, 0));
+                    }
+                    else
+                    {
+                        // Report unknown error
+                        generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", exception.Message), 0, 0));
+                    }
                 }
             }
 
