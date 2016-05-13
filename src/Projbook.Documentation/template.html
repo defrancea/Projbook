@@ -60,22 +60,12 @@
                     @(page.PreSectionContent)
                     @foreach (var section in page.Sections)
                     {
-                    <div id="@(section.Id)" disqus="true">
+                    <div id="@(section.Id)" data-disqus-identifier="@Model.Title-@(page.Id)-@(section.Id)">
                         @(section.Content)
                     </div>
                     
                     }
                     <div id="disqus_thread"></div>
-                    <!--<script>
-                        (function() {  // DON'T EDIT BELOW THIS LINE
-                            var d = document, s = d.createElement('script');
-
-                            s.src = '//projbookcomments.disqus.com/embed.js';
-
-                            s.setAttribute('data-timestamp', +new Date());
-                            (d.head || d.body).appendChild(s);
-                        })();
-                    </script>-->
                 </section>
                 }
             </div>
@@ -88,8 +78,8 @@
 
     <script>
         disqus_shortname = 'projbookcomments';
-        jQuery("div[disqus=true]").ready(function() {
-            jQuery("div[disqus=true]").inlineDisqussions();
+        jQuery("[data-disqus-identifier]").ready(function () {
+            jQuery("[data-disqus-identifier]").inlineDisqussions();
         });
     </script>
 </body>
