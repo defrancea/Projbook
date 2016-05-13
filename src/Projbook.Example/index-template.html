@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Bootstrap -->
+    <link href="Content/bootstrap.min.css" rel="stylesheet">
+    <link href="Content/bootstrap-theme.min.css" rel="stylesheet">
+</head>
+<body role="document">
+    <div class="container">
+        <br/>
+        <header class="jumbotron hero-spacer">
+            <img style="float:left" height="170" src="@Model.IndexConfiguration.Icon" />
+            <div style="margin-left:200px">
+                <h1>@Model.IndexConfiguration.Title</h1>
+                <p>@Model.IndexConfiguration.Description</p>
+            </div>
+        </header>
+        <div class="row text-center">
+            @foreach (var configuration in Model.IndexConfiguration.Configurations)
+            {
+            <div class="col-md-3 col-sm-6 hero-feature">
+                <div class="thumbnail">
+                    <img src="@(configuration.Icon)">
+                    <div class="caption">
+                        <h3><a href="@(configuration.OutputHtml)">@(configuration.Title)</a></h3>
+                        <p>@(configuration.Description)</p>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    <script src="Scripts/jquery-1.9.0.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+</body>
+</html>

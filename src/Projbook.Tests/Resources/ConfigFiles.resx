@@ -133,6 +133,9 @@
   <data name="ErrorInHtmlNoPdf" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Config\ErrorInHtmlNoPdf.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="ErrorInIndexHtml" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Config\ErrorInIndexHtml.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="ManyErrors" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Config\ManyErrors.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -156,5 +159,8 @@
   </data>
   <data name="TwoGenerations" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Config\TwoGenerations.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="WithIndex" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Config\WithIndex.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

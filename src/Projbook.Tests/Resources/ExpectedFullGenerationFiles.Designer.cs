@@ -62,13 +62,13 @@ namespace Projbook.Tests.Resources {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;Title&gt;Test title&lt;/Title&gt;
-        ///    &lt;Id&gt;ResourcesFullGenerationPagefirstPagemd&lt;/Id&gt;
+        ///    &lt;Id&gt;PageContentmd&lt;/Id&gt;
         ///    &lt;Title&gt;First page title&lt;/Title&gt;
         ///	&lt;PreSectionContent&gt;&lt;![CDATA[&lt;p&gt;Before section…&lt;/p&gt;
         ///]]&gt;&lt;/PreSectionContent&gt;
         ///	&lt;Sections&gt;
         ///        &lt;Section&gt;
-        ///			&lt;Id&gt;ResourcesFullGenerationPagefirstPagemd-foo&lt;/Id&gt;
+        ///			&lt;Id&gt;PageContentmd-foo&lt;/Id&gt;
         ///			&lt;Title&gt;Foo&lt;/Title&gt;
         ///			&lt;Content&gt;
         ///				&lt;![CDATA[
@@ -77,11 +77,16 @@ namespace Projbook.Tests.Resources {
         ///			&lt;/Content&gt;
         ///        &lt;/Section&gt;
         ///        &lt;Section&gt;
-        ///			&lt;Id&gt;ResourcesFullGenerationPagefirstPagemd-sub-foo&lt;/Id&gt;
+        ///			&lt;Id&gt;PageContentmd-sub-foo&lt;/Id&gt;
         ///			&lt;Title&gt;Sub-foo&lt;/Title&gt;
         ///			&lt;Content&gt;
         ///				&lt;![CDATA[
-        ///&lt;h2&gt;Sub- [rest of string was truncated]&quot;;.
+        ///&lt;h2&gt;Sub-foo&lt;/h2&gt;
+        ///]]&gt;
+        ///			&lt;/Content&gt;
+        ///        &lt;/Section&gt;
+        ///	&lt;/Sections&gt;
+        ///    &lt;Id&gt;PageSnip [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Simple {
             get {
@@ -91,13 +96,13 @@ namespace Projbook.Tests.Resources {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;Title&gt;Test title - PDF&lt;/Title&gt;
-        ///    &lt;Id&gt;ResourcesFullGenerationPagefirstPagemd&lt;/Id&gt;
+        ///    &lt;Id&gt;PageContentmd&lt;/Id&gt;
         ///    &lt;Title&gt;First page title&lt;/Title&gt;
         ///	&lt;PreSectionContent&gt;&lt;![CDATA[&lt;p&gt;Before section…&lt;/p&gt;
         ///]]&gt;&lt;/PreSectionContent&gt;
         ///	&lt;Sections&gt;
         ///        &lt;Section&gt;
-        ///			&lt;Id&gt;ResourcesFullGenerationPagefirstPagemd-foo&lt;/Id&gt;
+        ///			&lt;Id&gt;PageContentmd-foo&lt;/Id&gt;
         ///			&lt;Title&gt;Foo&lt;/Title&gt;
         ///			&lt;Content&gt;
         ///				&lt;![CDATA[
@@ -106,15 +111,30 @@ namespace Projbook.Tests.Resources {
         ///			&lt;/Content&gt;
         ///        &lt;/Section&gt;
         ///        &lt;Section&gt;
-        ///			&lt;Id&gt;ResourcesFullGenerationPagefirstPagemd-sub-foo&lt;/Id&gt;
+        ///			&lt;Id&gt;PageContentmd-sub-foo&lt;/Id&gt;
         ///			&lt;Title&gt;Sub-foo&lt;/Title&gt;
         ///			&lt;Content&gt;
         ///				&lt;![CDATA[
-        ///&lt;h [rest of string was truncated]&quot;;.
+        ///&lt;h2&gt;Sub-foo&lt;/h2&gt;
+        ///]]&gt;
+        ///			&lt;/Content&gt;
+        ///        &lt;/Section&gt;
+        ///	&lt;/Sections&gt;
+        ///    &lt;Id&gt;Pa [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Simple_pdf {
             get {
                 return ResourceManager.GetString("Simple_pdf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;Title&gt;Test title&lt;/Title&gt;
+        ///&lt;OutputHtml&gt;doc.html&lt;/OutputHtml&gt;.
+        /// </summary>
+        internal static string SimpleIndex {
+            get {
+                return ResourceManager.GetString("SimpleIndex", resourceCulture);
             }
         }
     }

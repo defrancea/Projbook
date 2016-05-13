@@ -13,6 +13,16 @@ namespace Projbook.Core.Model.Configuration
         public string Title { get; set; }
 
         /// <summary>
+        /// The document description.
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// The document icon.
+        /// </summary>
+        public string Icon { get; set; }
+
+        /// <summary>
         /// The template file for html generation.
         /// </summary>
         [JsonProperty("template-html")]

@@ -36,8 +36,8 @@ namespace Projbook.Core.Markdown
 
         /// <summary>
         /// Internal dictionary to resolve section conflicts.
-        /// In case of no conflict the dictionary will remaings empty, however any conflict will create a slot with an integer representing the next available index.
-        /// Everytime we meet a conflict, the section generation will increment the index and use it as suffix.
+        /// In case of no conflict the dictionary will remain empty, however any conflict will create a slot with an integer representing the next available index.
+        /// Every time we meet a conflict, the section generation will increment the index and use it as suffix.
         /// </summary>
         private Dictionary<string, int> sectionConflict = new Dictionary<string, int>();
 
@@ -75,7 +75,7 @@ namespace Projbook.Core.Markdown
         /// Initializes a new instance of <see cref="ProjbookHtmlFormatter"/>.
         /// </summary>
         /// <param name="contextName">Initializes the required <see cref="ContextName"/></param>
-        /// <param name="target">Initializes the required text writter used as output.</param>
+        /// <param name="target">Initializes the required text writer used as output.</param>
         /// <param name="settings">Initializes the required common mark settings used by the formatting.</param>
         /// <param name="sectionTitleBase">Initializes the section title base.</param>
         /// <param name="snippetDictionary">Initializes the snippet directory.</param>

@@ -11,6 +11,8 @@
     "required": [ "title" ],
     "properties": {
       "title": { "type": "string" },
+      "description": { "type": "string" },
+      "icon": { "type": "string" },
       "template-html": { "type": "string" },
       "template-pdf": { "type": "string" },
       "output-html": { "type": "string" },

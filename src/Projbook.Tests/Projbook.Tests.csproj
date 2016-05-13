@@ -195,6 +195,7 @@
     <Content Include="Resources\Expected\CSharp\I.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Expected\FullGeneration\SimpleIndex.txt" />
     <Content Include="Resources\Expected\Xml\SecondLevel.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -321,6 +322,9 @@
     <Compile Include="Projbook\Tests\Core\Markdown\ProjbookHtmlFormatterTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\SnippetExtractorFactoryTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\CSharpSnippetExtractorTests.cs" />
+    <Content Include="Resources\Template\SimpleIndex.txt" />
+    <None Include="Resources\Config\ErrorInIndexHtml.json" />
+    <None Include="Resources\Config\WithIndex.json" />
     <None Include="Resources\Source\Xml\Projbook.Core.csproj" />
     <Content Include="Resources\Source\Xml\SimpleNoNamespace.xml">
       <SubType>Designer</SubType>

@@ -1,5 +1,7 @@
 ﻿{
   "title": "Test title",
+  "description": "Test description",
+  "icon": "icon.png",
   "template-html": "Template/Template.txt",
   "template-pdf": "Template/Template-pdf.txt",
   "output-html": "doc.html",

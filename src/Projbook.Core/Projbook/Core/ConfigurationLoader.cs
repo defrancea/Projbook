@@ -7,6 +7,7 @@ using Projbook.Core.Projbook.Core.Model.Configuration.Validation;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
+using System.Runtime.ExceptionServices;
 using System.Text.RegularExpressions;
 
 namespace Projbook.Core
@@ -40,12 +41,12 @@ namespace Projbook.Core
         }
 
         /// <summary>
-        /// Load the configuraiton
+        /// Load the configuration.
         /// </summary>
         /// <param name="projectLocation">The project location.</param>
         /// <param name="configurationFile">The configuration to load.</param>
         /// <returns>The loaded configuration.</returns>
-        public Configuration[] Load(string projectLocation, string configurationFile)
+        public IndexConfiguration Load(string projectLocation, string configurationFile)
         {
             // Data validation
             Ensure.That(() => projectLocation).IsNotNull();
@@ -55,43 +56,48 @@ namespace Projbook.Core
             // Compute and validate configuration path
             string configurationPath = this.fileSystem.Path.Combine(projectLocation, configurationFile);
             Ensure.That(this.fileSystem.File.Exists(configurationPath), string.Format("Could not load configuration '{0}': File not found", configurationPath)).IsTrue();
-            
+
             // Deserialize configuration
-            Configuration[] configurations;
+            IndexConfiguration indexConfiguration = null;
             string content = string.Empty;
             using (var reader = new StreamReader(this.fileSystem.File.Open(configurationPath, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
                 // Read the content
                 content = reader.ReadToEnd();
 
-                // Deserialize as contiguration array if the configuration content looks containing many generation configuraiton
+                // Deserialize as configuration array if the configuration content looks containing many generation configuration
                 try
                 {
-                    // Prepare configuration parsing
-                    JsonTextReader jsonReader = new JsonTextReader(new StringReader(content));
-                    JSchemaValidatingReader jsonValidatingReader = new JSchemaValidatingReader(jsonReader);
-                    JsonSerializer jsonSerializer = new JsonSerializer();
-
                     // Parse the configuration against the right schema
                     if (content.TrimStart().StartsWith("["))
                     {
-                        // Load schema
-                        JSchema schemaJson = JSchema.Parse(ConfigurationValidation.ConfigurationArraySchema);
-                        jsonValidatingReader.Schema = schemaJson;
-
-                        // Deserialize condiguration
-                        configurations = jsonSerializer.Deserialize<Configuration[]>(jsonValidatingReader);
+                        indexConfiguration = new IndexConfiguration { Configurations = this.Deserialize<Configuration[]>(content, ConfigurationValidation.ConfigurationArraySchema) };
                     }
 
                     // Otherwise Deserialize as simple configuration
                     else
                     {
-                        // Load schema
-                        JSchema schemaJson = JSchema.Parse(ConfigurationValidation.ConfigurationSchema);
-                        jsonValidatingReader.Schema = schemaJson;
-                        
-                        // Deserialize condiguration
-                        configurations = new Configuration[] { jsonSerializer.Deserialize<Configuration>(jsonValidatingReader) };
+                        try
+                        {
+                            indexConfiguration = this.Deserialize<IndexConfiguration>(content, ConfigurationValidation.IndexConfigurationSchema);
+                        }
+                        catch (JSchemaValidationException validationException)
+                        {
+                            // Capture original index generaration exception
+                            ExceptionDispatchInfo capturedException = ExceptionDispatchInfo.Capture(validationException);
+
+                            // Fallback to legacy non-index configuration
+                            try
+                            {
+                                indexConfiguration = new IndexConfiguration { Configurations = new Configuration[] { this.Deserialize<Configuration>(content, ConfigurationValidation.ConfigurationSchema) } };
+                            }
+
+                            // Report original index-based generation error
+                            catch (System.Exception exception)
+                            {
+                                capturedException.Throw();
+                            }
+                        }
                     }
                 }
 
@@ -122,12 +128,26 @@ namespace Projbook.Core
                     throw new ConfigurationException(new Model.GenerationError(configurationPath, exception.Message, line, column));
                 }
             }
+            
+            // Resolve index template path
+            string originalIndexTemplateValue = indexConfiguration.Template;
+            if (!string.IsNullOrWhiteSpace(indexConfiguration.Template))
+            {
+                indexConfiguration.Template = this.fileSystem.Path.Combine(projectLocation, indexConfiguration.Template);
+            }
+
+            // Detect if index generation is enabled and validate the file
+            string indexTemplateNotFound = null;
+            if (!string.IsNullOrWhiteSpace(indexConfiguration.Template) && !this.fileSystem.File.Exists(indexConfiguration.Template))
+            {
+                indexTemplateNotFound = originalIndexTemplateValue;
+            }
 
             // Ensure valid references
             HashSet<string> htmlTemplateNotFound = new HashSet<string>();
             HashSet<string> pdfTemplateNotFound = new HashSet<string>();
             HashSet<string> pageNotFound = new HashSet<string>();
-            foreach (Configuration configuration in configurations)
+            foreach (Configuration configuration in indexConfiguration.Configurations)
             {
                 // Resolve html template path
                 string originalHtmlTemplateValue = configuration.TemplateHtml;
@@ -163,6 +183,12 @@ namespace Projbook.Core
                     configuration.OutputPdf = this.InjectSuffix(configuration.TemplatePdf, "generated");
                 }
 
+                // Set default index out file name
+                if (!string.IsNullOrWhiteSpace(indexConfiguration.Template) && string.IsNullOrWhiteSpace(indexConfiguration.Output))
+                {
+                    indexConfiguration.Output = this.InjectSuffix(indexConfiguration.Template, "generated");
+                }
+
                 // Initialize pages to empty array if none are defined
                 if (null == configuration.Pages)
                 {
@@ -190,6 +216,12 @@ namespace Projbook.Core
             // Build generation errors
             List<Model.GenerationError> generationErrors = new List<Model.GenerationError>();
 
+            // Process html index template not found error
+            if (!string.IsNullOrWhiteSpace(indexTemplateNotFound))
+            {
+                generationErrors.AddRange(this.ComputeErrors(configurationPath, content, "Could not find index template '{0}'", @"""template"":\s*""({0})""", new string[] { indexTemplateNotFound }));
+            }
+
             // Process html template not found error
             if (htmlTemplateNotFound.Count > 0)
             {
@@ -215,9 +247,34 @@ namespace Projbook.Core
             }
             
             // Return the configuration
-            return configurations;
+            return indexConfiguration;
         }
+        
+        /// <summary>
+        /// Deserializes a configuration part.
+        /// </summary>
+        /// <param name="content">The configuration content.</param>
+        /// <param name="jsonSchema">The json schema.</param>
+        /// <returns>The deserialized configuration part.</returns>
+        private T Deserialize<T>(string content, string jsonSchema)
+        {
+            // Data validation
+            Ensure.That(() => content).IsNotNullOrWhiteSpace();
+            Ensure.That(() => jsonSchema).IsNotNullOrWhiteSpace();
 
+            // Prepare configuration reader
+            JsonTextReader jsonReader = new JsonTextReader(new StringReader(content));
+            JSchemaValidatingReader jsonValidatingReader = new JSchemaValidatingReader(jsonReader);
+            JsonSerializer jsonSerializer = new JsonSerializer();
+
+            // Load schema
+            JSchema schemaJson = JSchema.Parse(jsonSchema);
+            jsonValidatingReader.Schema = schemaJson;
+
+            // Reserialize and return
+            return jsonSerializer.Deserialize<T>(jsonValidatingReader);
+        }
+        
         /// <summary>
         /// Injects a sufix right before the extension.
         /// </summary>

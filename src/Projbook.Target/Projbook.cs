@@ -11,7 +11,7 @@ using System.IO.Abstractions;
 namespace Projbook.Target
 {
     /// <summary>
-    /// Define MSBuild task trigerring documentation generation.
+    /// Define MSBuild task triggering documentation generation.
     /// </summary>
     public class Projbook : Task
     {
@@ -48,10 +48,10 @@ namespace Projbook.Target
             // Load configuration
             FileSystem fileSystem = new FileSystem();
             ConfigurationLoader configurationLoader = new ConfigurationLoader(fileSystem);
-            Configuration[] configurations;
+            IndexConfiguration indexConfiguration;
             try
             {
-                configurations = configurationLoader.Load(fileSystem.Path.GetDirectoryName(this.ProjectPath), this.ConfigurationFile);
+                indexConfiguration = configurationLoader.Load(fileSystem.Path.GetDirectoryName(this.ProjectPath), this.ConfigurationFile);
             }
             catch (ConfigurationException configurationException)
             {
@@ -64,24 +64,21 @@ namespace Projbook.Target
                 this.Log.LogError(string.Empty, string.Empty, string.Empty, this.ConfigurationFile, 0, 0, 0, 0, string.Format("Error during loading configuration: {0}", exception.Message));
                 return false;
             }
+            
+            // Instantiate a ProjBook engine
+            ProjbookEngine projbookEngine = new ProjbookEngine(fileSystem, this.ProjectPath, this.ExtensionPath, indexConfiguration, this.OutputDirectory);
 
-            // Run generation for each configuration
+            // Run generation
             bool success = true;
-            foreach (Configuration configuration in configurations)
-            {
-                // Run generation
-                ProjbookEngine projbookEngine = new ProjbookEngine(fileSystem, this.ProjectPath, this.ExtensionPath, configuration, this.OutputDirectory);
-                GenerationError[] errors = projbookEngine.Generate();
+            GenerationError[] errors = projbookEngine.GenerateAll();
 
-                // Report generation errors
-                this.ReportErrors(errors);
+            // Report generation errors
+            this.ReportErrors(errors);
 
-                // Stop processing in case of error
-                if (errors.Length > 0)
-                    success = false;
-            }
+            // Stop processing in case of error
+            if (errors.Length > 0)
+                success = false;
 
-            // Report processing successful
             return success;
         }
 

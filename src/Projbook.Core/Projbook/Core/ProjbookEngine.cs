@@ -2,6 +2,7 @@
 using CommonMark.Syntax;
 using EnsureThat;
 using Projbook.Core.Markdown;
+using Projbook.Core.Model;
 using Projbook.Core.Model.Configuration;
 using Projbook.Core.Snippet;
 using Projbook.Extension.Exception;
@@ -18,8 +19,9 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Xml;
 using WkHtmlToXSharp;
+using Page = Projbook.Core.Model.Configuration.Page;
 
-namespace Projbook.Core
+namespace Projbook.Core 
 {
     /// <summary>
     /// Entry point for document generation.
@@ -34,9 +36,9 @@ namespace Projbook.Core
         public FileInfoBase CsprojFile { get; private set; }
 
         /// <summary>
-        /// The configuration.
+        /// The index configurations.
         /// </summary>
-        public Configuration Configuration { get; private set; }
+        public IndexConfiguration IndexConfiguration { get; private set; }
 
         /// <summary>
         /// The output directory where generated content will be written.
@@ -74,34 +76,60 @@ namespace Projbook.Core
         /// <param name="fileSystem">Initializes the required file system abstraction.</param>
         /// <param name="extensionPath">Initializes the required extension path.</param>
         /// <param name="csprojFile">Initializes the required <see cref="CsprojFile"/>.</param>
-        /// <param name="configuration">Initializes the required <see cref="Configuration"/>.</param>
+        /// <param name="indexConfiguration">Initializes the required <see cref="IndexConfiguration"/>.</param>
         /// <param name="outputDirectoryPath">Initializes the required <see cref="OutputDirectory"/>.</param>
-        public ProjbookEngine(IFileSystem fileSystem, string csprojFile, string extensionPath, Configuration configuration, string outputDirectoryPath)
+        public ProjbookEngine(IFileSystem fileSystem, string csprojFile, string extensionPath, IndexConfiguration indexConfiguration, string outputDirectoryPath)
         {
             // Data validation
             Ensure.That(() => fileSystem).IsNotNull();
             Ensure.That(() => csprojFile).IsNotNullOrWhiteSpace();
-            Ensure.That(() => configuration).IsNotNull();
+            Ensure.That(() => indexConfiguration).IsNotNull();
+            Ensure.That(() => indexConfiguration.Configurations).HasItems();
             Ensure.That(() => outputDirectoryPath).IsNotNullOrWhiteSpace();
             Ensure.That(fileSystem.File.Exists(csprojFile), string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
 
             // Initialize
             this.fileSystem = fileSystem;
             this.CsprojFile = this.fileSystem.FileInfo.FromFileName(csprojFile);
-            this.Configuration = configuration;
+            this.IndexConfiguration = indexConfiguration;
             this.OutputDirectory = this.fileSystem.DirectoryInfo.FromDirectoryName(outputDirectoryPath);
             this.snippetExtractorFactory = new SnippetExtractorFactory(this.fileSystem.DirectoryInfo.FromDirectoryName(this.fileSystem.Path.GetFullPath(extensionPath)));
         }
 
         /// <summary>
+        /// Generates all documents.
+        /// </summary>
+        /// <returns>The generation errors.</returns>
+        public GenerationError[] GenerateAll()
+        {
+            // Run generation for each configuration
+            List<GenerationError> errors = new List<GenerationError>();
+            foreach (Configuration configuration in this.IndexConfiguration.Configurations)
+            {
+                // Generate the documentation
+                errors.AddRange(this.Generate(configuration));
+            }
+
+            // Generate the index html file if any index template is set
+            if (!string.IsNullOrWhiteSpace(this.IndexConfiguration.Template))
+            {
+                errors.AddRange(this.GenerateIndex(this.IndexConfiguration));
+            }
+
+            // Report processing successful
+            return errors.ToArray();
+        }
+
+        /// <summary>
         /// Generates documentation.
         /// </summary>
-        public Model.GenerationError[] Generate()
+        /// <returns>The generation errors.</returns>
+        public Model.GenerationError[] Generate(Configuration configuration)
         {
             // Initialize the list containing all generation errors
             List<Model.GenerationError> generationError = new List<Model.GenerationError>();
 
-            // Ensute output directory exists
+            // Ensure output directory exists
             if (!this.OutputDirectory.Exists)
             {
                 this.OutputDirectory.Create();
@@ -109,7 +137,7 @@ namespace Projbook.Core
             
             // Process all pages
             List<Model.Page> pages = new List<Model.Page>();
-            foreach (Page page in this.Configuration.Pages)
+            foreach (Page page in configuration.Pages)
             {
                 // Compute the page id used as a tab id and page prefix for bookmarking
                 string pageId = page.Path.Replace(".", string.Empty).Replace("/", string.Empty);
@@ -161,7 +189,7 @@ namespace Projbook.Core
                                     directoryInfos = this.ExtractSourceDirectories(this.CsprojFile);
                                     foreach (DirectoryInfoBase directoryInfo in directoryInfos)
                                     {
-                                        // Get direcotry name
+                                        // Get directory name
                                         string directoryName = directoryInfo.FullName;
                                         if (1 == directoryName.Length && Path.DirectorySeparatorChar == directoryName[0])
                                             directoryName = string.Empty;
@@ -266,7 +294,7 @@ namespace Projbook.Core
                 using (StreamWriter writer = new StreamWriter(documentStream))
                 {
                     // Setup custom formatter
-                    CommonMarkSettings.Default.OutputDelegate = (d, o, s) => (projbookHtmlFormatter = new ProjbookHtmlFormatter(pageId, o, s, this.Configuration.SectionTitleBase, snippetDictionary, SNIPPET_REFERENCE_PREFIX)).WriteDocument(d);
+                    CommonMarkSettings.Default.OutputDelegate = (d, o, s) => (projbookHtmlFormatter = new ProjbookHtmlFormatter(pageId, o, s, configuration.SectionTitleBase, snippetDictionary, SNIPPET_REFERENCE_PREFIX)).WriteDocument(d);
 
                     // Render
                     CommonMarkConverter.ProcessStage3(document, writer);
@@ -327,31 +355,31 @@ namespace Projbook.Core
             }
 
             // Html generation
-            if (this.Configuration.GenerateHtml)
+            if (configuration.GenerateHtml)
             {
                 try
                 {
-                    string outputFileHtml = this.fileSystem.Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputHtml);
-                    this.GenerateFile(this.Configuration.TemplateHtml, outputFileHtml, this.Configuration, pages);  
+                    string outputFileHtml = this.fileSystem.Path.Combine(this.OutputDirectory.FullName, configuration.OutputHtml);
+                    this.GenerateFile(configuration.TemplateHtml, outputFileHtml, configuration, pages);  
                 }
                 catch (TemplateParsingException templateParsingException)
                 {
-                    generationError.Add(new Model.GenerationError(this.Configuration.TemplateHtml, string.Format("Error during HTML generation: {0}", templateParsingException.Message), templateParsingException.Line, templateParsingException.Column));
+                    generationError.Add(new Model.GenerationError(configuration.TemplateHtml, string.Format("Error during HTML generation: {0}", templateParsingException.Message), templateParsingException.Line, templateParsingException.Column));
                 }
                 catch (System.Exception exception)
                 {
-                    generationError.Add(new Model.GenerationError(this.Configuration.TemplateHtml, string.Format("Error during HTML generation: {0}", exception.Message), 0, 0));
+                    generationError.Add(new Model.GenerationError(configuration.TemplateHtml, string.Format("Error during HTML generation: {0}", exception.Message), 0, 0));
                 }
             }
 
             // Pdf generation
-            if (this.Configuration.GeneratePdf)
+            if (configuration.GeneratePdf)
             {
                 try
                 {
                     // Generate the pdf template
-                    string outputFileHtml = this.fileSystem.Path.Combine(this.OutputDirectory.FullName, this.Configuration.OutputPdf);
-                    this.GenerateFile(this.Configuration.TemplatePdf, outputFileHtml, this.Configuration, pages);
+                    string outputFileHtml = this.fileSystem.Path.Combine(this.OutputDirectory.FullName, configuration.OutputPdf);
+                    this.GenerateFile(configuration.TemplatePdf, outputFileHtml, configuration, pages);
 
 #if !NOPDF
                     // Register bundles
@@ -361,14 +389,14 @@ namespace Projbook.Core
                     WkHtmlToXLibrariesManager.Register(new Win64NativeBundle());
 
                     // Compute file names
-                    string outputPdf = this.fileSystem.Path.ChangeExtension(this.Configuration.OutputPdf, ".pdf");
+                    string outputPdf = this.fileSystem.Path.ChangeExtension(configuration.OutputPdf, ".pdf");
                     string outputFilePdf = this.fileSystem.Path.Combine(this.OutputDirectory.FullName, outputPdf);
 
                     // Prepare the converter
                     MultiplexingConverter pdfConverter = new MultiplexingConverter();
                     pdfConverter.ObjectSettings.Page = outputFileHtml;
                     pdfConverter.Error += (s, e) => {
-                        generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", e.Value), 0, 0));
+                        generationError.Add(new Model.GenerationError(configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", e.Value), 0, 0));
                     };
 
                     // Prepare file system if abstracted
@@ -382,7 +410,7 @@ namespace Projbook.Core
                             File.WriteAllBytes(outputFileHtml, this.fileSystem.File.ReadAllBytes(outputFileHtml));
                         }
                         
-                        // Run pdf convertion
+                        // Run pdf converter
                         using (pdfConverter)
                         using (Stream outputFileStream = this.fileSystem.File.Open(outputFilePdf, FileMode.Create, FileAccess.Write, FileShare.None))
                         {
@@ -409,7 +437,7 @@ namespace Projbook.Core
                 }
                 catch (TemplateParsingException templateParsingException)
                 {
-                    generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", templateParsingException.Message), templateParsingException.Line, templateParsingException.Column));
+                    generationError.Add(new Model.GenerationError(configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", templateParsingException.Message), templateParsingException.Line, templateParsingException.Column));
                 }
                 catch (System.Exception exception)
                 {
@@ -418,17 +446,47 @@ namespace Projbook.Core
                         // Report detailed error message for wrong architecture loading
                         string runningArchitectureProccess = IntPtr.Size == 8 ? "x64" : "x86";
                         string otherRunningArchitectureProccess = IntPtr.Size != 8 ? "x64" : "x86";
-                        generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: Could not load wkhtmltopdf for {0}. Try again running as a {1} process.", runningArchitectureProccess, otherRunningArchitectureProccess), 0, 0));
+                        generationError.Add(new Model.GenerationError(configuration.TemplatePdf, string.Format("Error during PDF generation: Could not load wkhtmltopdf for {0}. Try again running as a {1} process.", runningArchitectureProccess, otherRunningArchitectureProccess), 0, 0));
                     }
                     else
                     {
                         // Report unknown error
-                        generationError.Add(new Model.GenerationError(this.Configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", exception.Message), 0, 0));
+                        generationError.Add(new Model.GenerationError(configuration.TemplatePdf, string.Format("Error during PDF generation: {0}", exception.Message), 0, 0));
                     }
                 }
             }
 
             // Return the generation errors
+            return generationError.ToArray();
+        }
+
+        /// <summary>
+        /// Generates the index page for the documentation.
+        /// </summary>
+        /// <param name="indexConfiguration">The index configuration.</param>
+        /// <returns>The generation errors.</returns>
+        public GenerationError[] GenerateIndex(IndexConfiguration indexConfiguration)
+        {
+            // Data validation
+            Ensure.That(() => indexConfiguration).IsNotNull();
+
+            // Try to generate the index html file
+            List<GenerationError> generationError = new List<GenerationError>();
+            try
+            {
+                string outputFileHtml = this.fileSystem.Path.Combine(this.OutputDirectory.FullName, indexConfiguration.Output);
+                this.GenerateIndexFile(indexConfiguration.Template, outputFileHtml, indexConfiguration);
+            }
+            catch (TemplateParsingException templateParsingException)
+            {
+                generationError.Add(new Model.GenerationError(indexConfiguration.Template, string.Format("Error during HTML generation: {0}", templateParsingException.Message), templateParsingException.Line, templateParsingException.Column));
+            }
+            catch (System.Exception exception)
+            {
+                generationError.Add(new Model.GenerationError(indexConfiguration.Template, string.Format("Error during HTML generation: {0}", exception.Message), 0, 0));
+            }
+
+            // Return generation errors
             return generationError.ToArray();
         }
 
@@ -456,6 +514,31 @@ namespace Projbook.Core
         private void GenerateFile(string templateName, string outputFileHtml, Configuration configuration, List<Model.Page> pages)
         {
             // Generate final documentation from the template using razor engine
+            var fileConfiguration = new { Title = configuration.Title, Pages = pages };
+            this.WriteFile(templateName, outputFileHtml, fileConfiguration);
+        }
+
+        /// <summary>
+        /// Generates the index file.
+        /// </summary>
+        /// <param name="templateName">The template name.</param>
+        /// <param name="outputFileHtml">The file to output to.</param>
+        /// <param name="indexConfiguration">The index configuration.</param>
+        private void GenerateIndexFile(string templateName, string outputFileHtml, IndexConfiguration indexConfiguration)
+        {
+            // Generate the index html for the configurations using Razor
+            var fileConfiguration = new { IndexConfiguration = indexConfiguration };
+            this.WriteFile(templateName, outputFileHtml, fileConfiguration);
+        }
+
+        /// <summary>
+        /// Write to the documentation file.
+        /// </summary>
+        /// <param name="templateName">The template name.</param>
+        /// <param name="outputFileHtml">The file to output to.</param>
+        /// <param name="fileConfiguration">The file configuration object.</param>
+        private void WriteFile(string templateName, string outputFileHtml, Object fileConfiguration)
+        {
             using (var reader = new StreamReader(this.fileSystem.File.Open(templateName, FileMode.Open, FileAccess.Read, FileShare.Read)))
             using (var writer = new StreamWriter(this.fileSystem.File.Open(outputFileHtml, FileMode.Create, FileAccess.Write, FileShare.None)))
             {
@@ -464,7 +547,7 @@ namespace Projbook.Core
                 config.EncodedStringFactory = new RawStringFactory();
                 var service = RazorEngineService.Create(config);
                 Engine.Razor = service;
-                string processed = Engine.Razor.RunCompile(new LoadedTemplateSource(reader.ReadToEnd()), string.Empty, null, new { Title = configuration.Title, Pages = pages });
+                string processed = Engine.Razor.RunCompile(new LoadedTemplateSource(reader.ReadToEnd()), string.Empty, null, fileConfiguration);
                 writer.WriteLine(processed);
             }
         }
@@ -503,7 +586,7 @@ namespace Projbook.Core
 
         /// <summary>
         /// Extracts source directories from the csproj file.
-        /// The extected directory info list is the csproj's directory and all project references.
+        /// The expected directory info list is the csproj's directory and all project references.
         /// </summary>
         /// <param name="csprojFile"></param>
         /// <returns></returns>
@@ -546,7 +629,7 @@ namespace Projbook.Core
                 extractedSourceDirectories.Add(this.fileSystem.DirectoryInfo.FromDirectoryName(this.fileSystem.Path.GetDirectoryName(this.fileSystem.Path.GetFullPath(combinedPath))));
             }
 
-            // Returne the extracted directories
+            // Return the extracted directories
             return extractedSourceDirectories.ToArray();
         }
     }

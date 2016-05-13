@@ -113,6 +113,16 @@ namespace Projbook.Tests.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] ErrorInIndexHtml {
+            get {
+                object obj = ResourceManager.GetObject("ErrorInIndexHtml", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] ManyErrors {
             get {
                 object obj = ResourceManager.GetObject("ManyErrors", resourceCulture);
@@ -186,6 +196,16 @@ namespace Projbook.Tests.Resources {
         internal static byte[] TwoGenerations {
             get {
                 object obj = ResourceManager.GetObject("TwoGenerations", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] WithIndex {
+            get {
+                object obj = ResourceManager.GetObject("WithIndex", resourceCulture);
                 return ((byte[])(obj));
             }
         }

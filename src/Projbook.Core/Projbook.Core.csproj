@@ -111,6 +111,7 @@
     <Compile Include="Projbook\Core\Exception\ConfigurationException.cs" />
     <Compile Include="Projbook\Core\Markdown\PageBreakInfo.cs" />
     <Compile Include="Projbook\Core\Markdown\ProjbookHtmlFormatter.cs" />
+    <Compile Include="Projbook\Core\Model\Configuration\IndexConfiguration.cs" />
     <Compile Include="Projbook\Core\Model\Configuration\Page.cs" />
     <Compile Include="Projbook\Core\Model\Configuration\Validation\ConfigurationValidation.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -133,6 +134,7 @@
     </None>
     <EmbeddedResource Include="Projbook\Core\Model\Configuration\Validation\configuration-array-schema.json" />
     <EmbeddedResource Include="Projbook\Core\Model\Configuration\Validation\configuration-schema.json" />
+    <EmbeddedResource Include="Projbook\Core\Model\Configuration\Validation\index-configuration.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Projbook\Core\Model\Configuration\Validation\ConfigurationValidation.resx">

@@ -1,0 +1,10 @@
+﻿<Title>@Model.IndexConfiguration.Title</Title>
+<Description>@Model.IndexConfiguration.Description</Description>
+<Icon>@Model.IndexConfiguration.Icon</Icon>
+@foreach (var configuration in Model.IndexConfiguration.Configurations)
+{
+<DocumentTitle>@configuration.Title</DocumentTitle>
+<DocumentDescription>@configuration.Description</DocumentDescription>
+<DocumentIcon>@configuration.Icon</DocumentIcon>
+<DocumentPath>@configuration.OutputHtml</DocumentPath>
+}

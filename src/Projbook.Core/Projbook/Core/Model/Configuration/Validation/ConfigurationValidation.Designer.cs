@@ -102,14 +102,37 @@ namespace Projbook.Core.Projbook.Core.Model.Configuration.Validation {
         ///    &quot;template-pdf&quot;: { &quot;type&quot;: &quot;string&quot; },
         ///    &quot;output-html&quot;: { &quot;type&quot;: &quot;string&quot; },
         ///    &quot;output-pdf&quot;: { &quot;type&quot;: &quot;string&quot; },
-        ///    &quot;pages&quot;: {
-        ///      &quot;type&quot;: &quot;array&quot;,
-        ///      &quot;minItems&quot;: 1,
-        ///      &quot;items&quot;:  [rest of string was truncated]&quot;;.
+        ///    &quot;section-title-base&quot;: { &quot;type&quot;: &quot;integer&quot;, &quot;minimum&quot;: 0, &quot;exclusiveMinimu [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ConfigurationSchema {
             get {
                 return ResourceManager.GetString("ConfigurationSchema", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {
+        ///  &quot;$schema&quot;: &quot;http://json-schema.org/draft-04/schema&quot;,
+        ///  &quot;type&quot;: &quot;object&quot;,
+        ///  &quot;required&quot;: [ &quot;template&quot; ],
+        ///  &quot;properties&quot;: {
+        ///    &quot;title&quot;: { &quot;type&quot;: &quot;string&quot; },
+        ///    &quot;description&quot;: { &quot;type&quot;: &quot;string&quot; },
+        ///    &quot;template&quot;: { &quot;type&quot;: &quot;string&quot; },
+        ///    &quot;output&quot;: { &quot;type&quot;: &quot;string&quot; },
+        ///    &quot;icon&quot;: { &quot;type&quot;: &quot;string&quot; },
+        ///    &quot;configurations&quot;: {
+        ///      &quot;type&quot;: &quot;array&quot;,
+        ///      &quot;minItems&quot;: 1,
+        ///      &quot;items&quot;: {
+        ///        &quot;type&quot;: &quot;object&quot;,
+        ///        &quot;anyOf&quot;: [
+        ///          { &quot;required&quot;: [ &quot;template-html&quot; ] },
+        ///          [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string IndexConfigurationSchema {
+            get {
+                return ResourceManager.GetString("IndexConfigurationSchema", resourceCulture);
             }
         }
     }

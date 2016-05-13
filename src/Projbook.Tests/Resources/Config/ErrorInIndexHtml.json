@@ -1,0 +1,7 @@
+﻿{
+  "template": "Template/Malformated.txt",
+  "configurations": [{
+      "title" :  "Title",
+      "template-html": "Template/Template.txt"
+    }]
+}

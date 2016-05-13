@@ -40,14 +40,17 @@ namespace Projbook.Tests.Core
             {
                 { "Project.csproj", new MockFileData("<Root></Root>") },
                 { "Config/AllValues.json", new MockFileData(ConfigFiles.AllValues) },
+                { "Config/WithIndex.json", new MockFileData(ConfigFiles.WithIndex) },
                 { "Config/NoPdf.json", new MockFileData(ConfigFiles.NoPdf) },
                 { "Config/NoHtml.json", new MockFileData(ConfigFiles.NoHtml) },
                 { "Config/ErrorInHtml.json", new MockFileData(ConfigFiles.ErrorInHtml) },
                 { "Config/ErrorInHtmlNoPdf.json", new MockFileData(ConfigFiles.ErrorInHtmlNoPdf) },
+                { "Config/ErrorInIndexHtml.json", new MockFileData(ConfigFiles.ErrorInIndexHtml) },
                 { "Config/MissingMembersInPage.json", new MockFileData(ConfigFiles.MissingMembersInPage) },
                 { "Template/Template.txt", new MockFileData(TemplateFiles.Simple) },
                 { "Template/Template-pdf.txt", new MockFileData(TemplateFiles.Simple_pdf) },
                 { "Template/Malformated.txt", new MockFileData(TemplateFiles.Malformated) },
+                { "Template/IndexTemplate.txt", new MockFileData(TemplateFiles.SimpleIndex) },
                 { "Page/Content.md", new MockFileData(PageFiles.Content) },
                 { "Page/Snippet.md", new MockFileData(PageFiles.Snippet) },
                 { "Page/Table.md", new MockFileData(PageFiles.Table) },
@@ -56,28 +59,34 @@ namespace Projbook.Tests.Core
                 { "Expected/Simple.txt", new MockFileData(ExpectedFullGenerationFiles.Simple) },
                 { "Expected/Simple-pdf.txt", new MockFileData(ExpectedFullGenerationFiles.Simple_pdf) },
                 { "Expected/Image.jpg", new MockFileData(string.Empty) },
+                { "Expected/SimpleIndex.txt", new MockFileData(ExpectedFullGenerationFiles.SimpleIndex) }
             });
             this.FileSystem.Directory.CreateDirectory(this.ExtensionDirectory.FullName);
         }
 
         /// <summary>
-        /// Run the full generation and compate the generated output with the expected output.
+        /// Run the full generation and compare the generated output with the expected output.
         /// </summary>
         /// <param name="configFileName">The config file name.</param>
         /// <param name="expectedHtmlFileName">The file name containing the expected content for HTML generation.</param>
+        /// <param name="expectedHtmlIndexFileName">The file name containing the expected content for index HTML generation.</param>
         /// <param name="expectedPdfFileName">The file name containing the expected content for PDF generation.</param>
         /// <param name="generatedHtmlFileName">The file name containing the generated content for HTML.</param>
+        /// <param name="generateddHtmlIndexFileName">The file name containing the expected content for index HTML generation.</param>
         /// <param name="generatedPdfFileName">The file name containing the generated content for PDF.</param>
         /// <param name="readOnly">Make files read only.</param>
         [Test]
-        [TestCase("Config/AllValues.json", "Expected/Simple.txt", "Expected/Simple-pdf.txt", "doc.html", "doc-pdf-input.html", false)]
-        [TestCase("Config/AllValues.json", "Expected/Simple.txt", "Expected/Simple-pdf.txt", "doc.html", "doc-pdf-input.html", true)]
-        [TestCase("Config/NoPdf.json", "Expected/Simple.txt", "", "Template-generated.txt", "Template-pdf-generation.txt", false)]
-        [TestCase("Config/NoHtml.json", "", "Expected/Simple-pdf.txt", "Template-generated.txt", "Template-pdf-generated.txt", false)]
-        public void FullGeneration(string configFileName, string expectedHtmlFileName, string expectedPdfFileName, string generatedHtmlFileName, string generatedPdfFileName, bool readOnly)
+        [TestCase("Config/AllValues.json", "Expected/Simple.txt", "", "Expected/Simple-pdf.txt", "doc.html", "", "doc-pdf-input.html", false)]
+        [TestCase("Config/AllValues.json", "Expected/Simple.txt", "", "Expected/Simple-pdf.txt", "doc.html", "", "doc-pdf-input.html", true)]
+        [TestCase("Config/WithIndex.json", "Expected/Simple.txt", "Expected/SimpleIndex.txt", "Expected/Simple-pdf.txt", "doc.html", "index.html", "doc-pdf-input.html", false)]
+        [TestCase("Config/NoPdf.json", "Expected/Simple.txt", "", "", "Template-generated.txt", "", "Template-pdf-generation.txt", false)]
+        [TestCase("Config/NoHtml.json", "", "", "Expected/Simple-pdf.txt", "Template-generated.txt", "", "Template-pdf-generated.txt", false)]
+        public void FullGeneration(string configFileName, string expectedHtmlFileName, string expectedHtmlIndexFileName, string expectedPdfFileName, string generatedHtmlFileName, string generatedHtmlIndexFileName, string generatedPdfFileName, bool readOnly)
         {
             // Prepare configuration
-            Configuration configuration = new ConfigurationLoader(this.FileSystem).Load(".", configFileName)[0];
+            IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", configFileName);
+            Configuration[] configurations = indexConfiguration.Configurations;
+            Configuration configuration = configurations[0];
             string htmlTemplatePath = configuration.TemplateHtml;
             string pdfTemplatePath = configuration.TemplatePdf;
             string firstPagePath = new FileInfo(configuration.Pages.First().Path).FullName;
@@ -124,30 +133,39 @@ namespace Projbook.Tests.Core
             try
             {
                 // Execute generation
-                GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, configuration, ".").Generate();
+                GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
 
-                // Read expected ouput
+                // Read expected output
                 string expectedContent = string.IsNullOrWhiteSpace(expectedHtmlFileName) ? string.Empty : this.FileSystem.File.ReadAllText(expectedHtmlFileName);
 
-                // Read expected ouput
+                // Read expected output for index
+                string expectedIndexContent = string.IsNullOrWhiteSpace(expectedHtmlIndexFileName) ? string.Empty : this.FileSystem.File.ReadAllText(expectedHtmlIndexFileName);
+
+                // Read expected output
                 string expectedPdfContent = string.IsNullOrWhiteSpace(expectedPdfFileName) ? string.Empty : this.FileSystem.File.ReadAllText(expectedPdfFileName);
 
-                // Read generated ouput
+                // Read generated output
                 string generatedContent = !this.FileSystem.File.Exists(generatedHtmlFileName) ? string.Empty : this.FileSystem.File.ReadAllText(generatedHtmlFileName);
+
+                // Read generated output for index
+                string generatedIndexContent = !this.FileSystem.File.Exists(generatedHtmlIndexFileName) ? string.Empty : this.FileSystem.File.ReadAllText(generatedHtmlIndexFileName);
 
                 // Read generated pdf ouput
                 string generatedPdfContent = !this.FileSystem.File.Exists(generatedPdfFileName) ? string.Empty : this.FileSystem.File.ReadAllText(generatedPdfFileName);
 
                 // Remove line return for cross platform platform testing
                 expectedContent = expectedContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+                expectedIndexContent = expectedIndexContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 expectedPdfContent = expectedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 generatedContent = generatedContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+                generatedIndexContent = generatedIndexContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 generatedPdfContent = generatedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 
                 // Assert result
                 Assert.IsNotNull(errors);
                 Assert.AreEqual(0, errors.Length);
                 Assert.AreEqual(expectedContent, generatedContent);
+                Assert.AreEqual(expectedIndexContent, generatedIndexContent);
                 Assert.AreEqual(expectedPdfContent, generatedPdfContent);
 
 #if !NOPDF
@@ -181,8 +199,9 @@ namespace Projbook.Tests.Core
         public void FullGenerationErrorTemplate()
         {
             // Perform generation
-            Configuration configuration = new ConfigurationLoader(this.FileSystem).Load(".", "Config/ErrorInHtml.json")[0];
-            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, configuration, ".").Generate();
+            IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", "Config/ErrorInHtml.json");
+            Configuration[] configurations = indexConfiguration.Configurations;
+            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
 
             // Assert result
             Assert.IsNotNull(errors);
@@ -198,6 +217,26 @@ namespace Projbook.Tests.Core
         }
 
         /// <summary>
+        /// Run the full generation with invalid index template.
+        /// </summary>
+        [Test]
+        public void FullGenerationErrorIndexTemplate()
+        {
+            // Perform generation
+            IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", "Config/ErrorInIndexHtml.json");
+            Configuration[] configurations = indexConfiguration.Configurations;
+            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
+
+            // Assert result
+            Assert.IsNotNull(errors);
+            Assert.AreEqual(1, errors.Length);
+            Assert.IsTrue(errors[0].SourceFile.EndsWith("Template/Malformated.txt"));
+            Assert.AreEqual(@"Error during HTML generation: (16:1) - Encountered end tag ""Sections"" with no matching start tag.  Are your start/end tags properly balanced?", errors[0].Message);
+            Assert.AreEqual(16, errors[0].Line);
+            Assert.AreEqual(1, errors[0].Column);
+        }
+
+        /// <summary>
         /// Run the full generation with unexistingMembers.
         /// </summary>
         [Test]
@@ -205,8 +244,9 @@ namespace Projbook.Tests.Core
         public void FullGenerationUnexistingMembers()
         {
             // Perform generation
-            Configuration configuration = new ConfigurationLoader(this.FileSystem).Load(".", "Config/MissingMembersInPage.json")[0];
-            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, configuration, ".").Generate();
+            IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", "Config/MissingMembersInPage.json");
+            Configuration[] configurations = indexConfiguration.Configurations;
+            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
 
             // Assert result
             Assert.IsNotNull(errors);
