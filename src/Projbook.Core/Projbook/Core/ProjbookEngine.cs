@@ -124,7 +124,7 @@ namespace Projbook.Core
                     // Filter fenced code
                     if (node.Block != null && node.Block.Tag == BlockTag.FencedCode)
                     {
-                        // Buil extraction rule
+                        // Build extraction rule
                         string fencedCode = node.Block.FencedCodeData.Info;
                         SnippetExtractionRule snippetExtractionRule = SnippetExtractionRule.Parse(fencedCode);
                         
