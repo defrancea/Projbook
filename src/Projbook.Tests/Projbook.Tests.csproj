@@ -82,6 +82,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Projbook\Tests\Core\Snippet\FileSystemSnippetExtractorTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\XmlSnippetExtractorTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\DefaultSnippetExtractorTests.cs" />
     <Compile Include="Projbook\Tests\TestsUtilities.cs" />
@@ -371,6 +372,10 @@
     <ProjectReference Include="..\Projbook.Extension.CSharpExtractor\Projbook.Extension.CSharpExtractor.csproj">
       <Project>{f5431901-29ac-46d4-a717-de2a9114e82d}</Project>
       <Name>Projbook.Extension.CSharpExtractor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Projbook.Extension.FileSystemExtractor\Projbook.Extension.FileSystemExtractor.csproj">
+      <Project>{266cfdee-304d-4067-8f82-118e8d284f37}</Project>
+      <Name>Projbook.Extension.FileSystemExtractor</Name>
     </ProjectReference>
     <ProjectReference Include="..\Projbook.Extension.XmlExtractor\Projbook.Extension.XmlExtractor.csproj">
       <Project>{bc3e43eb-2263-49b4-883a-b720eddf9298}</Project>

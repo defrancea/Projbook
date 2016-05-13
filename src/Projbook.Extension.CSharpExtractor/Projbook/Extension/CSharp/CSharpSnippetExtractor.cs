@@ -104,7 +104,7 @@ namespace Projbook.Extension.CSharpExtractor
             }
             
             // Create the snippet from the exctracted code
-            return new Model.Snippet(stringBuilder.ToString());
+            return new Model.PlainTextSnippet(stringBuilder.ToString());
         }
 
         /// <summary>

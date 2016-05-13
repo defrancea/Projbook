@@ -54,7 +54,8 @@ namespace Projbook.Tests.Core
                 { "Page/MissingMembers.md", new MockFileData(PageFiles.MissingMembers) },
                 { "Source/Foo.cs", new MockFileData(SourceCSharpFiles.Foo) },
                 { "Expected/Simple.txt", new MockFileData(ExpectedFullGenerationFiles.Simple) },
-                { "Expected/Simple-pdf.txt", new MockFileData(ExpectedFullGenerationFiles.Simple_pdf) }
+                { "Expected/Simple-pdf.txt", new MockFileData(ExpectedFullGenerationFiles.Simple_pdf) },
+                { "Expected/Image.jpg", new MockFileData(string.Empty) },
             });
             this.FileSystem.Directory.CreateDirectory(this.ExtensionDirectory.FullName);
         }

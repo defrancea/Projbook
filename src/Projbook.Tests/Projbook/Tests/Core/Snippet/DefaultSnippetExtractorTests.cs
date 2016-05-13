@@ -33,7 +33,7 @@ Here";
             // Run the extraction
             DefaultSnippetExtractor extractor = new DefaultSnippetExtractor();
             FileInfoBase fileInfoBase = fileSystem.FileInfo.FromFileName("Content.txt");
-            Extension.Model.Snippet snippet = extractor.Extract(fileInfoBase, null);
+            Extension.Model.PlainTextSnippet snippet = extractor.Extract(fileInfoBase, null) as Extension.Model.PlainTextSnippet;
 
             // Load the expected file content
             MemoryStream memoryStream = new MemoryStream();
@@ -44,7 +44,7 @@ Here";
             }
             
             // Assert
-            Assert.AreEqual(content, snippet.Content);
+            Assert.AreEqual(content, snippet.Text);
         }
     }
 }

@@ -31,6 +31,7 @@ namespace Projbook.Tests.Utilities
             // Ensure extension copied
             EnsureFileCopied(Directory.GetCurrentDirectory(), directoryPath, "Projbook.Extension.CSharpExtractor.dll");
             EnsureFileCopied(Directory.GetCurrentDirectory(), directoryPath, "Projbook.Extension.XmlExtractor.dll");
+            EnsureFileCopied(Directory.GetCurrentDirectory(), directoryPath, "Projbook.Extension.FileSystemExtractor.dll");
 
             // Return extension directory
             return extensionDirectory;

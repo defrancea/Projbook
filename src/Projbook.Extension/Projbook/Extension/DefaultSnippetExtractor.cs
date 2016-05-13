@@ -32,7 +32,7 @@ namespace Projbook.Extension
             string sourceCode = this.LoadFile(this.ConvertToFile(fileSystemInfo));
 
             // Return the entire code
-            return new Model.Snippet(sourceCode);
+            return new Model.PlainTextSnippet(sourceCode);
         }
 
         /// <summary>

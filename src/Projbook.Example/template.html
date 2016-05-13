@@ -18,8 +18,11 @@
     <script src="Scripts/prism.js"></script>
     <link href="Content/prism.css" rel="stylesheet" />
 
+    <!-- jsTree -->
+    <link href="Content/themes/default/style.min.css" rel="stylesheet" />
+
     <!-- Projbook -->
-    <link href="Content/projbook.css" rel="stylesheet">
+    <link href="Content/projbook.css" rel="stylesheet" />
 </head>
 <body role="document">
     <div class="container">
@@ -66,5 +69,26 @@
     <script src="Scripts/jquery-1.9.0.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
     <script src="Scripts/projbook.js"></script>
+
+    <!-- JsTree scripts -->
+    <script src="Scripts/jstree.min.js"></script>
+    <script>
+        $(function () {
+            $('.filetree').each(function () {
+                $(this).jstree({
+                    'types': {
+                        'file': {
+                            'icon': 'jstree-file'
+                        },
+                        'folder': {
+                            'icon': 'jstree-folder'
+                        },
+                    },
+                    "plugins": ["types"]
+                });
+                $(this).jstree("open_all");
+            })
+        });
+    </script>
 </body>
 </html>

@@ -68,10 +68,10 @@ namespace Projbook.Tests.Core.Snippet
         public void ExtractSnippet(string fileName, string pattern, string expectedFile)
         {
             // Run the extraction
-            Extension.Model.Snippet snippet = new XmlSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName(fileName), pattern);
+            Extension.Model.PlainTextSnippet snippet = new XmlSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName(fileName), pattern) as Extension.Model.PlainTextSnippet;
 
             // Assert
-            Assert.AreEqual(this.FileSystem.File.ReadAllText(expectedFile), snippet.Content.Replace("\r\n", "\n"));
+            Assert.AreEqual(this.FileSystem.File.ReadAllText(expectedFile), snippet.Text.Replace("\r\n", "\n"));
         }
 
         /// <summary>

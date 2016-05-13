@@ -5,6 +5,7 @@ using Projbook.Core.Markdown;
 using Projbook.Core.Model.Configuration;
 using Projbook.Core.Snippet;
 using Projbook.Extension.Exception;
+using Projbook.Extension.Model;
 using Projbook.Extension.Spi;
 using RazorEngine;
 using RazorEngine.Configuration;
@@ -61,6 +62,11 @@ namespace Projbook.Core
         /// HResult representing an incorrect format during native dll loading.
         /// </summary>
         private const int INCORRECT_FORMAT_HRESULT = unchecked((int)0x8007000B);
+
+        /// <summary>
+        /// Snippet reference prefix.
+        /// </summary>
+        private const string SNIPPET_REFERENCE_PREFIX = "projbooksnippet:";
 
         /// <summary>
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
@@ -120,12 +126,13 @@ namespace Projbook.Core
 
                 // Process snippet
                 CommonMarkConverter.ProcessStage2(document);
+                Dictionary<Guid, Extension.Model.Snippet> snippetDictionary = new Dictionary<Guid, Extension.Model.Snippet>();
                 foreach (var node in document.AsEnumerable())
                 {
                     // Filter fenced code
                     if (node.Block != null && node.Block.Tag == BlockTag.FencedCode)
                     {
-                        // Buil extraction rule
+                        // Build extraction rule
                         string fencedCode = node.Block.FencedCodeData.Info;
                         SnippetExtractionRule snippetExtractionRule = SnippetExtractionRule.Parse(fencedCode);
                         
@@ -160,7 +167,7 @@ namespace Projbook.Core
                                             directoryName = string.Empty;
 
                                         // Compute file full path
-                                        string fullFilePath = this.fileSystem.Path.Combine(directoryName, snippetExtractionRule.TargetPath ?? string.Empty);
+                                        string fullFilePath = this.fileSystem.Path.GetFullPath(this.fileSystem.Path.Combine(directoryName, snippetExtractionRule.TargetPath ?? string.Empty));
                                         switch (snippetExtractor.TargetType)
                                         {
                                             case TargetType.File:
@@ -202,17 +209,29 @@ namespace Projbook.Core
                                         column: column));
                                     continue;
                                 }
-
+                                
                                 // Extract the snippet
                                 Extension.Model.Snippet snippet =
                                     TargetType.FreeText == snippetExtractor.TargetType
                                     ? snippetExtractor.Extract(null, snippetExtractionRule.TargetPath)
                                     : snippetExtractor.Extract(fileSystemInfo, snippetExtractionRule.Pattern);
 
-                                // Inject snippet
+                                // Reference snippet
+                                Guid guid = Guid.NewGuid();
+                                snippetDictionary[guid] = snippet;
+
+                                // Inject reference as content
                                 StringContent code = new StringContent();
-                                code.Append(snippet.Content, 0, snippet.Content.Length);
+                                string content = SNIPPET_REFERENCE_PREFIX + guid;
+                                code.Append(content, 0, content.Length);
                                 node.Block.StringContent = code;
+
+                                // Change tag to html for node snippets
+                                NodeSnippet nodeSnippet = snippet as NodeSnippet;
+                                if (null != nodeSnippet)
+                                {
+                                    node.Block.Tag = BlockTag.HtmlBlock;
+                                }
                             }
                             catch (SnippetExtractionException snippetExtraction)
                             {
@@ -240,14 +259,14 @@ namespace Projbook.Core
                         }
                     }
                 }
-
+                
                 // Write to output
                 ProjbookHtmlFormatter projbookHtmlFormatter = null;
                 MemoryStream documentStream = new MemoryStream();
                 using (StreamWriter writer = new StreamWriter(documentStream))
                 {
                     // Setup custom formatter
-                    CommonMarkSettings.Default.OutputDelegate = (d, o, s) => (projbookHtmlFormatter = new ProjbookHtmlFormatter(pageId, o, s, this.Configuration.SectionTitleBase)).WriteDocument(d);
+                    CommonMarkSettings.Default.OutputDelegate = (d, o, s) => (projbookHtmlFormatter = new ProjbookHtmlFormatter(pageId, o, s, this.Configuration.SectionTitleBase, snippetDictionary, SNIPPET_REFERENCE_PREFIX)).WriteDocument(d);
 
                     // Render
                     CommonMarkConverter.ProcessStage3(document, writer);

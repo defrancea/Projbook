@@ -284,10 +284,10 @@ namespace Projbook.Tests.Core.Snippet
                 snippetExtractor = new CSharpSnippetExtractor();
                 this.extractorCache[fileName] = snippetExtractor;
             }
-            Projbook.Extension.Model.Snippet snippet = snippetExtractor.Extract(this.FileSystem.FileInfo.FromFileName(fileName), pattern);
+            Extension.Model.PlainTextSnippet snippet = snippetExtractor.Extract(this.FileSystem.FileInfo.FromFileName(fileName), pattern) as Extension.Model.PlainTextSnippet;
             
             // Assert
-            Assert.AreEqual(this.FileSystem.File.ReadAllText(expectedFile), snippet.Content.Replace("\r\n", "\n"));
+            Assert.AreEqual(this.FileSystem.File.ReadAllText(expectedFile), snippet.Text.Replace("\r\n", "\n"));
         }
 
         /// <summary>

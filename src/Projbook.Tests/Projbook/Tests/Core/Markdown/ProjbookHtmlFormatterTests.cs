@@ -2,6 +2,7 @@
 using CommonMark.Syntax;
 using NUnit.Framework;
 using Projbook.Core.Markdown;
+using Projbook.Extension.Model;
 using System;
 using System.IO;
 using System.Text;
@@ -40,7 +41,7 @@ namespace Projbook.Tests.Core
             this.StreamWriter = new StreamWriter(this.MemoryStream);
             
             // Initialize formatter
-            this.Formatter = new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default, 0);
+            this.Formatter = new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default, 0, new System.Collections.Generic.Dictionary<Guid, Extension.Model.Snippet>(), string.Empty);
         }
 
         /// <summary>
@@ -53,7 +54,7 @@ namespace Projbook.Tests.Core
         [ExpectedException(typeof(ArgumentException))]
         public void WrongInit(string contextName)
         {
-            new ProjbookHtmlFormatter(contextName, this.StreamWriter, CommonMarkSettings.Default, 0);
+            new ProjbookHtmlFormatter(contextName, this.StreamWriter, CommonMarkSettings.Default, 0, null, null);
         }
 
         /// <summary>
@@ -118,7 +119,7 @@ namespace Projbook.Tests.Core
         public void WriteSimpleHeaderDifferentBase()
         {
             // Reinit formatter
-            this.Formatter = new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default, 42);
+            this.Formatter = new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default, 42, new System.Collections.Generic.Dictionary<Guid, Extension.Model.Snippet>(), string.Empty);
 
             // Process
             Block block = new Block(BlockTag.AtxHeader, 0);
@@ -518,6 +519,56 @@ namespace Projbook.Tests.Core
 
             // Return output
             return Encoding.UTF8.GetString(this.MemoryStream.ToArray());
+        }
+
+        /// <summary>
+        /// Test Node rendering as jsTree.
+        /// </summary>
+        [Test]
+        public void RenderTree()
+        {
+            // Declare files
+            Node file1 = new Node("File1.txt", true);
+            Node file2 = new Node("File2.jpg", true);
+            Node file3 = new Node("File3.cs", true);
+            Node file4 = new Node("File4", true);
+
+            // Declare folders
+            Node root = new Node("Root", false);
+            Node folder1 = new Node("Folder1", false);
+            Node folder2 = new Node("Folder2", false);
+            Node folder3 = new Node("Folder3", false);
+
+            // Assign files to folders
+            folder3.Children.Add(file1.Name, file1);
+            folder3.Children.Add(file2.Name, file2);
+            folder1.Children.Add(file3.Name, file3);
+
+            // Assign folders to folders
+            folder2.Children.Add(folder3.Name, folder3);
+            root.Children.Add(folder1.Name, folder1);
+            root.Children.Add(folder2.Name, folder2);
+            root.Children.Add(file4.Name, file4);
+
+            // Create snippet reference
+            System.Collections.Generic.Dictionary<Guid, Extension.Model.Snippet> snippetReference = new System.Collections.Generic.Dictionary<Guid, Extension.Model.Snippet>();
+            Guid guid = Guid.NewGuid();
+            snippetReference[guid] = new NodeSnippet(root);
+
+            // Define formatter
+            this.Formatter = new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default, 0, snippetReference, "prefix:");
+
+            // Process
+            Block block = new Block(BlockTag.HtmlBlock, 0);
+            string content = "prefix:" + guid;
+            block.StringContent = new StringContent();
+            block.StringContent.Append(content, 0, content.Length);
+            string output = this.Process(block);
+
+            // Assert rendering
+            Assert.AreEqual(
+                @"<div class=""filetree""><ul><li data-jstree='{""type"":""folder""}'>Root<ul><li data-jstree='{""type"":""file""}'>File4</li></ul><ul><li data-jstree='{""type"":""folder""}'>Folder1<ul><li data-jstree='{""type"":""file""}'>File3.cs</li></ul></li></ul><ul><li data-jstree='{""type"":""folder""}'>Folder2<ul><li data-jstree='{""type"":""folder""}'>Folder3<ul><li data-jstree='{""type"":""file""}'>File1.txt</li></ul><ul><li data-jstree='{""type"":""file""}'>File2.jpg</li></ul></li></ul></li></ul></li></ul></div>",
+                output);
         }
     }
 }
