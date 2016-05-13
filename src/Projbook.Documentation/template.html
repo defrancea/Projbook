@@ -18,6 +18,9 @@
     <script src="Scripts/prism.js"></script>
     <link href="Content/prism.css" rel="stylesheet" />
 
+    <!-- Inline Disqussions -->
+    <link href="Content/inlineDisqussions.css" rel="stylesheet" type="text/css" />
+
     <!-- Projbook -->
     <link href="Content/projbook.css" rel="stylesheet">
 </head>
@@ -60,7 +63,24 @@
                     <div id="@(section.Id)">
                         @(section.Content)
                     </div>
+                    <script>
+                        disqus_shortname = 'projbookcomments';
+                        jQuery(document).ready(function() {
+                            jQuery("p").inlineDisqussions();
+                        });
+                    </script>
                     }
+                    <div id="disqus_thread"></div>
+                    <script>
+                        (function() {  // DON'T EDIT BELOW THIS LINE
+                            var d = document, s = d.createElement('script');
+
+                            s.src = '//projbookcomments.disqus.com/embed.js';
+
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
                 </section>
                 }
             </div>
@@ -69,5 +89,6 @@
     <script src="Scripts/jquery-1.9.0.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
     <script src="Scripts/projbook.js"></script>
+    <script src="Scripts/inlineDisqussions.js"></script>
 </body>
 </html>
