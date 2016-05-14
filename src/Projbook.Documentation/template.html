@@ -60,7 +60,7 @@
                     @(page.PreSectionContent)
                     @foreach (var section in page.Sections)
                     {
-                    <div id="@(section.Id)" data-disqus-identifier="@Model.Title-@(page.Id)-@(section.Id)">
+                    <div id="@(section.Id)" data-disqus-identifier-test="@Model.Title-@(page.Id)-@(section.Id)">
                         @(section.Content)
                     </div>
                     
@@ -78,8 +78,8 @@
 
     <script>
         disqus_shortname = 'projbookcomments';
-        jQuery("[data-disqus-identifier]").ready(function () {
-            jQuery("[data-disqus-identifier]").inlineDisqussions();
+        jQuery("[data-disqus-identifier-test]").ready(function () {
+            jQuery("[data-disqus-identifier-test]").inlineDisqussions({ maxWidth: 1000 });
         });
     </script>
 </body>
