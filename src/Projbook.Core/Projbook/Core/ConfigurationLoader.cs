@@ -40,7 +40,7 @@ namespace Projbook.Core
         }
 
         /// <summary>
-        /// Load the configuraiton
+        /// Load the configuration.
         /// </summary>
         /// <param name="projectLocation">The project location.</param>
         /// <param name="configurationFile">The configuration to load.</param>
@@ -64,7 +64,7 @@ namespace Projbook.Core
                 // Read the content
                 content = reader.ReadToEnd();
 
-                // Deserialize as contiguration array if the configuration content looks containing many generation configuraiton
+                // Deserialize as configuration array if the configuration content looks containing many generation configuration
                 try
                 {
                     // Prepare configuration parsing
@@ -79,7 +79,7 @@ namespace Projbook.Core
                         JSchema schemaJson = JSchema.Parse(ConfigurationValidation.ConfigurationArraySchema);
                         jsonValidatingReader.Schema = schemaJson;
 
-                        // Deserialize condiguration
+                        // Deserialize configuration
                         configurations = jsonSerializer.Deserialize<Configuration[]>(jsonValidatingReader);
                     }
 
@@ -90,7 +90,7 @@ namespace Projbook.Core
                         JSchema schemaJson = JSchema.Parse(ConfigurationValidation.ConfigurationSchema);
                         jsonValidatingReader.Schema = schemaJson;
                         
-                        // Deserialize condiguration
+                        // Deserialize configuration
                         configurations = new Configuration[] { jsonSerializer.Deserialize<Configuration>(jsonValidatingReader) };
                     }
                 }

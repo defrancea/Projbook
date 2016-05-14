@@ -1,104 +1,104 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
 
-namespace NS
-{
-    public class OneClassSomewhere
-    {
-        private class SubClass
-        {
-            public int WhateverProperty
-            {
-                get
-                {
-                    return 42;
-                }
-                set
-                {
-                    string foo = "foo";
-                }
-            }
-        }
+//namespace NS
+//{
+//    public class OneClassSomewhere
+//    {
+//        private class SubClass
+//        {
+//            public int WhateverProperty
+//            {
+//                get
+//                {
+//                    return 42;
+//                }
+//                set
+//                {
+//                    string foo = "foo";
+//                }
+//            }
+//        }
 
-        protected bool Foo(string foo)
-        {
-            return true;
-        }
+//        protected bool Foo(string foo)
+//        {
+//            return true;
+//        }
 
-        protected bool Foo(string foo, int bar)
-        {
-            return false;
-        }
-    }
-    namespace NS2.NS3
-    {
-        class A
-        {
-            // In NS.NS2.NS3
-        }
-    }
-}
+//        protected bool Foo(string foo, int bar)
+//        {
+//            return false;
+//        }
+//    }
+//    namespace NS2.NS3
+//    {
+//        class A
+//        {
+//            // In NS.NS2.NS3
+//        }
+//    }
+//}
 
-namespace NS2
-{
-    namespace NS2.NS3
-    {
-        class A
-        {
-            // In NS2.NS2.NS3
-        }
+//namespace NS2
+//{
+//    namespace NS2.NS3
+//    {
+//        class A
+//        {
+//            // In NS2.NS2.NS3
+//        }
 
-        class B
-        {
-            B(int foo)
-            {
-            }
+//        class B
+//        {
+//            B(int foo)
+//            {
+//            }
 
-            ~B()
-            {
-            }
-        }
+//            ~B()
+//            {
+//            }
+//        }
 
-        class C<T, U>
-        {
-            void CMethod<X, Y>(X x, Y y)
-            {
-            }
-        }
+//        class C<T, U>
+//        {
+//            void CMethod<X, Y>(X x, Y y)
+//            {
+//            }
+//        }
 
-        class D
-        {
-            public int this[string s, int i]
-            {
-                get
-                {
-                    return 51;
-                }
-                set
-                {
-                    string bar = "bar";
-                }
-            }
+//        class D
+//        {
+//            public int this[string s, int i]
+//            {
+//                get
+//                {
+//                    return 51;
+//                }
+//                set
+//                {
+//                    string bar = "bar";
+//                }
+//            }
 
-            public event Action Event
-            {
-                add
-                {
-                    // Add content
-                }
-                remove
-                {
-                    // Remove content
-                }
-            }
-        }
+//            public event Action Event
+//            {
+//                add
+//                {
+//                    // Add content
+//                }
+//                remove
+//                {
+//                    // Remove content
+//                }
+//            }
+//        }
 
-        interface I
-        {
-            void InterfaceMethod(bool v1, string v2, int v3);
-        }
-    }
-}
+//        interface I
+//        {
+//            void InterfaceMethod(bool v1, string v2, int v3);
+//        }
+//    }
+//}

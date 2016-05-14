@@ -52,7 +52,7 @@ namespace Projbook.Tests.Core
         }
 
         /// <summary>
-        /// Run the full generation and compate the generated output with the expected output.
+        /// Run the full generation and compare the generated output with the expected output.
         /// </summary>
         /// <param name="configFileName">The config file name.</param>
         /// <param name="expectedHtmlFileName">The file name containing the expected content for HTML generation.</param>
@@ -68,7 +68,8 @@ namespace Projbook.Tests.Core
         public void FullGeneration(string configFileName, string expectedHtmlFileName, string expectedPdfFileName, string generatedHtmlFileName, string generatedPdfFileName, bool readOnly)
         {
             // Prepare configuration
-            Configuration configuration = new ConfigurationLoader(this.FileSystem).Load(".", configFileName)[0];
+            Configuration[] configurations = new ConfigurationLoader(this.FileSystem).Load(".", configFileName);
+            Configuration configuration = configurations[0];
             string htmlTemplatePath = configuration.TemplateHtml;
             string pdfTemplatePath = configuration.TemplatePdf;
             string firstPagePath = new FileInfo(configuration.Pages.First().Path).FullName;
@@ -115,7 +116,7 @@ namespace Projbook.Tests.Core
             try
             {
                 // Execute generation
-                GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", configuration, ".").Generate();
+                GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", configurations, ".").GenerateAll();
 
                 // Read expected ouput
                 string expectedContent = string.IsNullOrWhiteSpace(expectedHtmlFileName) ? string.Empty : this.FileSystem.File.ReadAllText(expectedHtmlFileName);
@@ -172,8 +173,8 @@ namespace Projbook.Tests.Core
         public void FullGenerationErrorTemplate()
         {
             // Perform generation
-            Configuration configuration = new ConfigurationLoader(this.FileSystem).Load(".", "Config/ErrorInHtml.json")[0];
-            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", configuration, ".").Generate();
+            Configuration[] configurations = new ConfigurationLoader(this.FileSystem).Load(".", "Config/ErrorInHtml.json");
+            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", configurations, ".").GenerateAll();
 
             // Assert result
             Assert.IsNotNull(errors);
@@ -196,8 +197,8 @@ namespace Projbook.Tests.Core
         public void FullGenerationUnexistingMembers()
         {
             // Perform generation
-            Configuration configuration = new ConfigurationLoader(this.FileSystem).Load(".", "Config/MissingMembersInPage.json")[0];
-            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", configuration, ".").Generate();
+            Configuration[] configurations = new ConfigurationLoader(this.FileSystem).Load(".", "Config/MissingMembersInPage.json");
+            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", configurations, ".").GenerateAll();
 
             // Assert result
             Assert.IsNotNull(errors);
