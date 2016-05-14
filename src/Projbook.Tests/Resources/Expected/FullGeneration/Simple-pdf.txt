@@ -33,7 +33,7 @@
 			<Content>
 				<![CDATA[
 <h1>Bar</h1>
-<pre><code class="language-csharp">public class Foo
+<pre data-line="3,5"><code class="language-csharp">public class Foo
 {
 }</code></pre>
 ]]>

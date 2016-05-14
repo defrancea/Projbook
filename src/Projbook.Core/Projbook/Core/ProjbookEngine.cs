@@ -117,136 +117,17 @@ namespace Projbook.Core
                     document = CommonMarkConverter.ProcessStage1(reader);
                 }
 
-                // Process snippet
-                CommonMarkConverter.ProcessStage2(document);
-                foreach (var node in document.AsEnumerable())
-                {
-                    // Filter fenced code
-                    if (node.Block != null && node.Block.Tag == BlockTag.FencedCode)
-                    {
-                        // Buil extraction rule
-                        string fencedCode = node.Block.FencedCodeData.Info;
-                        SnippetExtractionRule snippetExtractionRule = SnippetExtractionRule.Parse(fencedCode);
-                        
-                        // Extract and inject snippet and the factory were able to create an extractor
-                        if (null != snippetExtractionRule)
-                        {
-                            // Cleanup Projbook specific syntax
-                            node.Block.FencedCodeData.Info = snippetExtractionRule.Language;
-
-                            // Inject snippet
-                            try
-                            {
-                                // Retrieve the extractor instance
-                                ISnippetExtractor snippetExtractor;
-                                if (!this.extractorCache.TryGetValue(snippetExtractionRule.TargetPath, out snippetExtractor))
-                                {
-                                    snippetExtractor = this.snippetExtractorFactory.CreateExtractor(snippetExtractionRule);
-                                    this.extractorCache[snippetExtractionRule.TargetPath] = snippetExtractor;
-                                }
-
-                                // Look for the file in available source directories
-                                FileSystemInfoBase fileSystemInfo = null;
-                                DirectoryInfoBase[] directoryInfos = null;
-                                if (TargetType.FreeText != snippetExtractor.TargetType)
-                                {
-                                    directoryInfos = this.ExtractSourceDirectories(this.CsprojFile);
-                                    foreach (DirectoryInfoBase directoryInfo in directoryInfos)
-                                    {
-                                        // Get direcotry name
-                                        string directoryName = directoryInfo.FullName;
-                                        if (1 == directoryName.Length && Path.DirectorySeparatorChar == directoryName[0])
-                                            directoryName = string.Empty;
-
-                                        // Compute file full path
-                                        string fullFilePath = this.fileSystem.Path.Combine(directoryName, snippetExtractionRule.TargetPath ?? string.Empty);
-                                        switch (snippetExtractor.TargetType)
-                                        {
-                                            case TargetType.File:
-                                                if (this.fileSystem.File.Exists(fullFilePath))
-                                                {
-                                                    fileSystemInfo = this.fileSystem.FileInfo.FromFileName(fullFilePath);
-                                                }
-                                                break;
-                                            case TargetType.Folder:
-                                                if (this.fileSystem.Directory.Exists(fullFilePath))
-                                                {
-                                                    fileSystemInfo = this.fileSystem.DirectoryInfo.FromDirectoryName(fullFilePath);
-                                                }
-                                                break;
-                                        }
-
-                                        // Stop lookup if the file system info is found
-                                        if (null != fileSystemInfo)
-                                        {
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                // Raise an error if cannot find the file
-                                if (null == fileSystemInfo && TargetType.FreeText != snippetExtractor.TargetType)
-                                {
-                                    // Locate block line
-                                    int line = this.LocateBlockLine(node.Block, page);
-
-                                    // Compute error column: Index of the path in the fenced code + 3 (for the ``` prefix) + 1 (to be 1 based)
-                                    int column = fencedCode.IndexOf(snippetExtractionRule.TargetPath) + 4;
-
-                                    // Report error
-                                    generationError.Add(new Model.GenerationError(
-                                        sourceFile: page.Path,
-                                        message: string.Format("Cannot find target '{0}' in any referenced project ({0})", snippetExtractionRule.TargetPath, string.Join(";", directoryInfos.Select(x => x.FullName))),
-                                        line: line,
-                                        column: column));
-                                    continue;
-                                }
-
-                                // Extract the snippet
-                                Extension.Model.Snippet snippet =
-                                    TargetType.FreeText == snippetExtractor.TargetType
-                                    ? snippetExtractor.Extract(null, snippetExtractionRule.TargetPath)
-                                    : snippetExtractor.Extract(fileSystemInfo, snippetExtractionRule.Pattern);
-
-                                // Inject snippet
-                                StringContent code = new StringContent();
-                                code.Append(snippet.Content, 0, snippet.Content.Length);
-                                node.Block.StringContent = code;
-                            }
-                            catch (SnippetExtractionException snippetExtraction)
-                            {
-                                // Locate block line
-                                int line = this.LocateBlockLine(node.Block, page);
-
-                                // Compute error column: Fenced code length - pattern length + 3 (for the ``` prefix) + 1 (to be 1 based)
-                                int column = fencedCode.Length - snippetExtractionRule.Pattern.Length + 4;
-
-                                // Report error
-                                generationError.Add(new Model.GenerationError(
-                                    sourceFile: page.Path,
-                                    message: string.Format("{0}: {1}", snippetExtraction.Message, snippetExtraction.Pattern),
-                                    line: line,
-                                    column: column));
-                            }
-                            catch (System.Exception exception)
-                            {
-                                generationError.Add(new Model.GenerationError(
-                                    sourceFile: page.Path,
-                                    message: exception.Message,
-                                    line: 0,
-                                    column: 0));
-                            }
-                        }
-                    }
-                }
-
+                // Process the snippets
+                Dictionary<Block, List<int>> dataLineDictionary;
+                this.ProcessSnippet(page, document, generationError, out dataLineDictionary);
+                
                 // Write to output
                 ProjbookHtmlFormatter projbookHtmlFormatter = null;
                 MemoryStream documentStream = new MemoryStream();
                 using (StreamWriter writer = new StreamWriter(documentStream))
                 {
                     // Setup custom formatter
-                    CommonMarkSettings.Default.OutputDelegate = (d, o, s) => (projbookHtmlFormatter = new ProjbookHtmlFormatter(pageId, o, s, this.Configuration.SectionTitleBase)).WriteDocument(d);
+                    CommonMarkSettings.Default.OutputDelegate = (d, o, s) => (projbookHtmlFormatter = new ProjbookHtmlFormatter(pageId, o, s, this.Configuration.SectionTitleBase, dataLineDictionary)).WriteDocument(d);
 
                     // Render
                     CommonMarkConverter.ProcessStage3(document, writer);
@@ -410,6 +291,145 @@ namespace Projbook.Core
 
             // Return the generation errors
             return generationError.ToArray();
+        }
+
+        /// <summary>
+        /// Processes the snippet.
+        /// </summary>
+        /// <param name="page">Page.</param>
+        /// <param name="document">Document.</param>
+        /// <param name="generationError">Generation error list.</param>
+        /// <param name="dataLineDictionary">Data-line dictionary.</param>
+        private void ProcessSnippet(Page page, Block document, List<Model.GenerationError> generationError, out Dictionary<Block, List<int>> dataLineDictionary)
+        {
+            // Initialize the data line dictionary
+            dataLineDictionary = new Dictionary<Block, List<int>>();
+
+            // Process snippet
+            CommonMarkConverter.ProcessStage2(document);
+            foreach (var node in document.AsEnumerable())
+            {
+                // Filter fenced code
+                if (node.Block == null || node.Block.Tag != BlockTag.FencedCode)
+                    continue;
+                
+                // Build extraction rule
+                string fencedCode = node.Block.FencedCodeData.Info;
+                SnippetExtractionRule snippetExtractionRule = SnippetExtractionRule.Parse(fencedCode);
+
+                // Extract and inject snippet and the factory were able to create an extractor
+                if (null != snippetExtractionRule)
+                {
+                    // Update the data line dictionary
+                    dataLineDictionary[node.Block] = snippetExtractionRule.DataLineList;
+
+                    // Cleanup Projbook specific syntax
+                    node.Block.FencedCodeData.Info = snippetExtractionRule.Language;
+
+                    // Inject snippet
+                    try
+                    {
+                        // Retrieve the extractor instance
+                        ISnippetExtractor snippetExtractor;
+                        if (!this.extractorCache.TryGetValue(snippetExtractionRule.TargetPath, out snippetExtractor))
+                        {
+                            snippetExtractor = this.snippetExtractorFactory.CreateExtractor(snippetExtractionRule);
+                            this.extractorCache[snippetExtractionRule.TargetPath] = snippetExtractor;
+                        }
+
+                        // Look for the file in available source directories
+                        FileSystemInfoBase fileSystemInfo = null;
+                        DirectoryInfoBase[] directoryInfos = null;
+                        if (TargetType.FreeText != snippetExtractor.TargetType)
+                        {
+                            directoryInfos = this.ExtractSourceDirectories(this.CsprojFile);
+                            foreach (DirectoryInfoBase directoryInfo in directoryInfos)
+                            {
+                                // Get directory name
+                                string directoryName = directoryInfo.FullName;
+                                if (1 == directoryName.Length && Path.DirectorySeparatorChar == directoryName[0])
+                                    directoryName = string.Empty;
+
+                                // Compute file full path
+                                string fullFilePath = this.fileSystem.Path.Combine(directoryName, snippetExtractionRule.TargetPath ?? string.Empty);
+                                switch (snippetExtractor.TargetType)
+                                {
+                                    case TargetType.File:
+                                        if (this.fileSystem.File.Exists(fullFilePath))
+                                        {
+                                            fileSystemInfo = this.fileSystem.FileInfo.FromFileName(fullFilePath);
+                                        }
+                                        break;
+                                    case TargetType.Folder:
+                                        if (this.fileSystem.Directory.Exists(fullFilePath))
+                                        {
+                                            fileSystemInfo = this.fileSystem.DirectoryInfo.FromDirectoryName(fullFilePath);
+                                        }
+                                        break;
+                                }
+
+                                // Stop lookup if the file system info is found
+                                if (null != fileSystemInfo)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+
+                        // Raise an error if cannot find the file
+                        if (null == fileSystemInfo && TargetType.FreeText != snippetExtractor.TargetType)
+                        {
+                            // Locate block line
+                            int line = this.LocateBlockLine(node.Block, page);
+
+                            // Compute error column: Index of the path in the fenced code + 3 (for the ``` prefix) + 1 (to be 1 based)
+                            int column = fencedCode.IndexOf(snippetExtractionRule.TargetPath) + 4;
+
+                            // Report error
+                            generationError.Add(new Model.GenerationError(
+                                sourceFile: page.Path,
+                                message: string.Format("Cannot find target '{0}' in any referenced project ({0})", snippetExtractionRule.TargetPath, string.Join(";", directoryInfos.Select(x => x.FullName))),
+                                line: line,
+                                column: column));
+                            continue;
+                        }
+
+                        // Extract the snippet
+                        Extension.Model.Snippet snippet =
+                            TargetType.FreeText == snippetExtractor.TargetType
+                            ? snippetExtractor.Extract(null, snippetExtractionRule.TargetPath)
+                            : snippetExtractor.Extract(fileSystemInfo, snippetExtractionRule.Pattern);
+
+                        // Inject snippet
+                        StringContent code = new StringContent();
+                        code.Append(snippet.Content, 0, snippet.Content.Length);
+                        node.Block.StringContent = code;
+                    }
+                    catch (SnippetExtractionException snippetExtraction)
+                    {
+                        // Locate block line
+                        int line = this.LocateBlockLine(node.Block, page);
+
+                        // Compute error column: Fenced code length - pattern length + 3 (for the ``` prefix) + 1 (to be 1 based)
+                        int column = fencedCode.Length - snippetExtractionRule.Pattern.Length + 4;
+
+                        // Report error
+                        generationError.Add(new Model.GenerationError(
+                            sourceFile: page.Path,
+                            message: string.Format("{0}: {1}", snippetExtraction.Message, snippetExtraction.Pattern),
+                            line: line,
+                            column: column));
+                    }
+                    catch (System.Exception exception)
+                    {
+                        generationError.Add(new Model.GenerationError(
+                            sourceFile: page.Path,
+                            message: exception.Message,
+                            line: 0,
+                            column: 0));
+                    }
+                }
+            }
         }
 
         /// <summary>

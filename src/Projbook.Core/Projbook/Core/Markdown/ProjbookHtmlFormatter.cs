@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace Projbook.Core.Markdown
 {
@@ -61,25 +62,33 @@ namespace Projbook.Core.Markdown
         private int sectionTitleBase;
 
         /// <summary>
+        /// Data-line dictionary.
+        /// </summary>
+        private Dictionary<Block, List<int>> dataLineDictionary;
+
+        /// <summary>
         /// Initializes a new instance of <see cref="ProjbookHtmlFormatter"/>.
         /// </summary>
         /// <param name="contextName">Initializes the required <see cref="ContextName"/></param>
         /// <param name="target">Initializes the required text writter used as output.</param>
         /// <param name="settings">Initializes the required common mark settings used by the formatting.</param>
         /// <param name="sectionTitleBase">Initializes the section title base.</param>
-        public ProjbookHtmlFormatter(string contextName, TextWriter target, CommonMarkSettings settings, int sectionTitleBase)
+        /// <param name="dataLineDictionary">Data-line dictionary.</param>
+        public ProjbookHtmlFormatter(string contextName, TextWriter target, CommonMarkSettings settings, int sectionTitleBase, Dictionary<Block, List<int>> dataLineDictionary)
             : base(target, settings)
         {
             // Data validation
             Ensure.That(() => contextName).IsNotNullOrWhiteSpace();
             Ensure.That(target is StreamWriter).IsTrue();
             Ensure.That(() => sectionTitleBase).IsGte(0);
+            Ensure.That(() => dataLineDictionary).IsNotNull();
 
             // Initialize
             this.ContextName = contextName;
             this.pageBreak = new List<PageBreakInfo>();
             this.writer = target as StreamWriter;
             this.sectionTitleBase = sectionTitleBase;
+            this.dataLineDictionary = dataLineDictionary;
         }
 
         /// <summary>
@@ -138,6 +147,27 @@ namespace Projbook.Core.Markdown
                 sectionConflict[sectionId] = 1;
             }
 
+            // Process tables
+            if (this.ProcessTables(block, isOpening, out ignoreChildNodes))
+                return;
+
+            // Process fenced code
+            if (this.ProcessFencedCode(block, isOpening, out ignoreChildNodes))
+                return;
+            
+            // Trigger parent rendering for the default html rendering
+            base.WriteBlock(block, isOpening, isClosing, out ignoreChildNodes);
+        }
+
+        /// <summary>
+        /// Processes the tables.
+        /// </summary>
+        /// <param name="block">The block to process.</param>
+        /// <param name="isOpening">Define whether the block is opening.</param>
+        /// <param name="ignoreChildNodes">return whether the processing ignored child nodes.</param>
+        /// <returns>True if the processing is done.</returns>
+        private bool ProcessTables(Block block, bool isOpening, out bool ignoreChildNodes)
+        {
             // Read all paragraph inline strings in order to make table detectable
             List<string> tableParts = new List<string>();
             List<string[]> splittedTableParts = new List<string[]>();
@@ -163,7 +193,7 @@ namespace Projbook.Core.Markdown
                             ++startPos;
                             --numbber;
                         }
-                        
+
                         // Ignore the last part if the line ends with '|'
                         if ('|' == line.Last())
                         {
@@ -176,7 +206,7 @@ namespace Projbook.Core.Markdown
                     inline = inline.NextSibling;
                 }
             }
-            
+
             // Detect tables
             Match[] matchingDelimiters = null;
             bool isTable = false;
@@ -186,56 +216,115 @@ namespace Projbook.Core.Markdown
                 matchingDelimiters = splittedTableParts[1].Select(x => dashDelimiter.Match(x)).ToArray();
                 isTable = matchingDelimiters.All(x => x.Success);
             }
-            
-            // Process table rendering
-            if (isTable)
+
+            // Return if there is no table
+            if (!isTable)
             {
-                // Remove the delimiter
-                splittedTableParts.RemoveAt(1);
+                ignoreChildNodes = false;
+                return false;
+            }
 
-                // Render table
-                this.Write(@"<table class=""table"">");
-                for (int i = 0; i < splittedTableParts.Count; ++i)
+            // Remove the delimiter
+            splittedTableParts.RemoveAt(1);
+
+            // Render table
+            this.Write(@"<table class=""table"">");
+            for (int i = 0; i < splittedTableParts.Count; ++i)
+            {
+                // Render rows
+                this.Write("<tr>");
+
+                // Render cells
+                for (int j = 0; j < splittedTableParts[i].Length; ++j)
                 {
-                    // Render rows
-                    this.Write("<tr>");
-
-                    // Render cells
-                    for (int j = 0; j < splittedTableParts[i].Length; ++j)
+                    // Determine text alignment
+                    string style = "text-left";
+                    if (matchingDelimiters.Length > j && 0 < i)
                     {
-                        // Determine text alignment
-                        string style = "text-left";
-                        if (matchingDelimiters.Length > j && 0 < i)
+                        Match match = matchingDelimiters[j];
+                        if (":" == match.Groups[1].Value && ":" == match.Groups[2].Value)
                         {
-                            Match match = matchingDelimiters[j];
-                            if (":" == match.Groups[1].Value && ":" == match.Groups[2].Value)
-                            {
-                                style = "text-center";
-                            }
-                            else if ("" == match.Groups[1].Value && ":" == match.Groups[2].Value)
-                            {
-                                style = "text-right";
-                            }
+                            style = "text-center";
                         }
-
-                        // Generate markup
-                        string tag = 0 == i ? "th" : "td";
-                        this.Write(string.Format(@"<{0} class=""{1}"">", tag, style));
-                        this.Write(splittedTableParts[i][j]);
-                        this.Write(string.Format("</{0}>", tag));
+                        else if ("" == match.Groups[1].Value && ":" == match.Groups[2].Value)
+                        {
+                            style = "text-right";
+                        }
                     }
 
-                    this.Write("</tr>");
+                    // Generate markup
+                    string tag = 0 == i ? "th" : "td";
+                    this.Write(string.Format(@"<{0} class=""{1}"">", tag, style));
+                    this.Write(splittedTableParts[i][j]);
+                    this.Write(string.Format("</{0}>", tag));
                 }
-                this.Write("</table>");
 
-                // Report rendering finished
-                ignoreChildNodes = true;
-                return;
+                this.Write("</tr>");
+            }
+            this.Write("</table>");
+
+            // Report rendering finished
+            ignoreChildNodes = true;
+            return true;
+        }
+
+        /// <summary>
+        /// Processes fenced code.
+        /// </summary>
+        /// <param name="block">The block to process.</param>
+        /// <param name="isOpening">Define whether the block is opening.</param>
+        /// <param name="ignoreChildNodes">return whether the processing ignored child nodes.</param>
+        /// <returns>True if the processing is done.</returns>
+        private bool ProcessFencedCode(Block block, bool isOpening, out bool ignoreChildNodes)
+        {
+            // Return if the block isn't fenced code
+            if (!isOpening || null == block || block.Tag != BlockTag.FencedCode)
+            {
+                ignoreChildNodes = false;
+                return false;
             }
             
-            // Trigger parent rendering for the default html rendering
-            base.WriteBlock(block, isOpening, isClosing, out ignoreChildNodes);
+            // Open the pre tag
+            this.EnsureNewLine();
+            this.Write("<pre");
+
+            // Add data lines
+            List<int> dataLineList;
+            if (this.dataLineDictionary.TryGetValue(block, out dataLineList) && (null != dataLineList) && (0 < dataLineList.Count))
+            {
+                this.Write(@" data-line=""");
+                this.Write(string.Join(",", dataLineList));
+                this.Write(@"""");
+            }
+
+            // Open the code tag
+            this.Write("><code");
+            if (Settings.TrackSourcePosition)
+                this.WritePositionAttribute(block);
+
+            // Add the programming language
+            var info = block.FencedCodeData == null ? null : block.FencedCodeData.Info;
+            if (info != null && info.Length > 0)
+            {
+                // Find the index of the programming language
+                int x = info.IndexOf(' ');
+                if (x == -1)
+                    x = info.Length;
+                
+                // Write the programming language
+                this.Write(" class=\"language-");
+                this.Write(info);
+                this.Write('\"');
+            }
+            
+            // Close the code and pre tags
+            this.Write('>');
+            this.WriteEncodedHtml(block.StringContent);
+            this.WriteLine("</code></pre>");
+            
+            // Report rendering finished
+            ignoreChildNodes = true;
+            return true;
         }
     }
 }
