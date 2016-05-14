@@ -180,6 +180,8 @@ var disqus_url;
       s.async = true;
       s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
       $('head').append(s);
+      this.page.identifier = disqus_identifier;
+      this.page.url = disqus_url;
 
     }
 
