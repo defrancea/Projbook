@@ -1,0 +1,27 @@
+﻿<Title>@Model.Title</Title>
+@foreach (var page in Model.Pages)
+{
+    <Id>@page.Id</Id>
+    <Title>@page.Title</Title>
+	<PreSectionContent><![CDATA[@(page.PreSectionContent)]]></PreSectionContent>
+	<Sections>
+    @foreach (var section in page.Sections)
+    {
+        <Section>
+			<Id>@(section.Id)</Id>
+			<Title>@(section.Title)</Title>
+			<Content>
+				@(section.Content)
+			</Content>
+        </Section>
+    }
+	</Sections>
+}
+<script>
+	$(function () { 
+		$('.filetree').each(function() {
+				$(this).jstree();
+			}
+		)
+	});
+</script>

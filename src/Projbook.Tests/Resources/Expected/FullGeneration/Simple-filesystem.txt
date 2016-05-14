@@ -1,0 +1,34 @@
+﻿<Title>Test file system title</Title>
+<Id>PageSnippet-filesystemmd</Id>
+    <Title>File system page title</Title>
+	<PreSectionContent><![CDATA[@(page.PreSectionContent)]]></PreSectionContent>
+	<Sections>
+		<Section>
+			<Id>PageSnippet-filesystemmd-foo-file-system</Id>
+			<Title>Foo file system</Title>
+			<Content>
+				<h1>Foo file system</h1>
+				<p>Source:</p>
+				<div class='filetree'>
+				Source
+				<ul>
+				<li>
+				Source
+				<ul>
+				<li>Foo.cs</li>
+				</ul>
+				</li>
+				<li>Foo.cs</li>
+				</ul>
+				</div>
+			</Content>
+        </Section>
+	</Sections>
+<script>
+	$(function () { 
+		$('.filetree').each(function() {
+				$(this).jstree();
+			}
+		)
+	});
+</script>
