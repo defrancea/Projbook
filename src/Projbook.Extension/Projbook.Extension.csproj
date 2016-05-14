@@ -50,6 +50,7 @@
     <Compile Include="Projbook\Extension\Model\Snippet.cs" />
     <Compile Include="Projbook\Extension\Exception\SnippetExtractionException.cs" />
     <Compile Include="Projbook\Extension\Spi\ISnippetExtractor.cs" />
+    <Compile Include="Projbook\Extension\Spi\RenderType.cs" />
     <Compile Include="Projbook\Extension\Spi\SyntaxAttribute.cs" />
     <Compile Include="Projbook\Extension\Spi\TargetType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

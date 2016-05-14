@@ -60,8 +60,11 @@ namespace Projbook.Extension.FileSystemExtractor
         private Snippet BuildSnippet(DirectoryInfoBase directoryInfo)
         {
             StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("<p>" + directoryInfo.Name + ":</p>");
+            stringBuilder.Append("<div class='filetree'>");
             this.BuildContent(directoryInfo, ref stringBuilder);
-            return new Snippet(stringBuilder.ToString());
+            stringBuilder.Append("</div>");
+            return new Snippet(stringBuilder.ToString(), RenderType.Override);
         }
 
         /// <summary>
