@@ -2,6 +2,7 @@
 using CommonMark.Syntax;
 using EnsureThat;
 using Projbook.Core.Markdown;
+using Projbook.Core.Model;
 using Projbook.Core.Model.Configuration;
 using Projbook.Core.Snippet;
 using Projbook.Extension.Exception;
@@ -17,7 +18,6 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Xml;
 using WkHtmlToXSharp;
-using Projbook.Core.Model;
 using Page = Projbook.Core.Model.Configuration.Page;
 
 namespace Projbook.Core 
