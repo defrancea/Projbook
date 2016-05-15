@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.ComponentModel.Composition.ReflectionModel;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -26,12 +27,19 @@ namespace Projbook.Core.Snippet
         private Func<ISnippetExtractor> defaultExtractorFactory;
 
         /// <summary>
+        /// The extension directory.
+        /// </summary>
+        private DirectoryInfoBase extensionDirectory;
+
+        /// <summary>
         /// Initializes a new instance of <see cref="SnippetExtractorFactory"/>.
         /// </summary>
-        public SnippetExtractorFactory()
+        /// <param name="extensionDirectory">The extension directory.</param>
+        public SnippetExtractorFactory(DirectoryInfoBase extensionDirectory)
         {
             // Initialize
             this.defaultExtractorFactory = () => new DefaultSnippetExtractor();
+            this.extensionDirectory = extensionDirectory;
 
             // Load extensions
             this.LoadExtensions();
@@ -67,11 +75,14 @@ namespace Projbook.Core.Snippet
         /// </summary>
         private void LoadExtensions()
         {
-            // Initialize container
-            DirectoryCatalog directoryCatalog = new DirectoryCatalog(".");
-            AggregateCatalog catalog = new AggregateCatalog(directoryCatalog);
-            CompositionContainer container = new CompositionContainer(catalog);
-            
+            // If the plugin directory doesn't exist, abort plugin loading
+            if (!this.extensionDirectory.Exists)
+                return;
+
+            // Initialize catalog
+            AggregateCatalog catalog = new AggregateCatalog();
+            catalog.Catalogs.Add(new DirectoryCatalog(this.extensionDirectory.FullName));
+
             // Load ISnippetExtractor factories
             string metadataName = "ExportTypeIdentity";
             string targetTypeFullName = typeof(ISnippetExtractor).FullName;

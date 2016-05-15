@@ -22,6 +22,12 @@ namespace Projbook.Target
         public string ProjectPath { get; set; }
 
         /// <summary>
+        /// The extension path.
+        /// </summary>
+        [Required]
+        public string ExtensionPath { get; set; }
+
+        /// <summary>
         /// The configuration file.
         /// </summary>
         [Required]
@@ -64,7 +70,7 @@ namespace Projbook.Target
             foreach (Configuration configuration in configurations)
             {
                 // Run generation
-                ProjbookEngine projbookEngine = new ProjbookEngine(fileSystem, this.ProjectPath, configuration, this.OutputDirectory);
+                ProjbookEngine projbookEngine = new ProjbookEngine(fileSystem, this.ProjectPath, this.ExtensionPath, configuration, this.OutputDirectory);
                 GenerationError[] errors = projbookEngine.Generate();
 
                 // Report generation errors

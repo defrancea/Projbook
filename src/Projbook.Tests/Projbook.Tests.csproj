@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="Projbook\Tests\Core\Snippet\XmlSnippetExtractorTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\DefaultSnippetExtractorTests.cs" />
+    <Compile Include="Projbook\Tests\TestsUtilities.cs" />
     <Compile Include="Resources\ConfigFiles.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

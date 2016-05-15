@@ -3,6 +3,7 @@ using Projbook.Core;
 using Projbook.Core.Model;
 using Projbook.Core.Model.Configuration;
 using Projbook.Tests.Resources;
+using Projbook.Tests.Utilities;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
@@ -23,12 +24,18 @@ namespace Projbook.Tests.Core
         public IFileSystem FileSystem { get; private set; }
 
         /// <summary>
+        /// Represents the extension directory.
+        /// </summary>
+        public DirectoryInfoBase ExtensionDirectory { get; private set; }
+
+        /// <summary>
         /// Initializes the test.
         /// </summary>
         [SetUp]
         public void Setup()
         {
             // Mock file system
+            this.ExtensionDirectory = TestsUtilities.EnsureExtensionsDeployed();
             this.FileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
                 { "Project.csproj", new MockFileData("<Root></Root>") },
@@ -49,6 +56,7 @@ namespace Projbook.Tests.Core
                 { "Expected/Simple.txt", new MockFileData(ExpectedFullGenerationFiles.Simple) },
                 { "Expected/Simple-pdf.txt", new MockFileData(ExpectedFullGenerationFiles.Simple_pdf) }
             });
+            this.FileSystem.Directory.CreateDirectory(this.ExtensionDirectory.FullName);
         }
 
         /// <summary>
@@ -115,7 +123,7 @@ namespace Projbook.Tests.Core
             try
             {
                 // Execute generation
-                GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", configuration, ".").Generate();
+                GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, configuration, ".").Generate();
 
                 // Read expected ouput
                 string expectedContent = string.IsNullOrWhiteSpace(expectedHtmlFileName) ? string.Empty : this.FileSystem.File.ReadAllText(expectedHtmlFileName);
@@ -173,7 +181,7 @@ namespace Projbook.Tests.Core
         {
             // Perform generation
             Configuration configuration = new ConfigurationLoader(this.FileSystem).Load(".", "Config/ErrorInHtml.json")[0];
-            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", configuration, ".").Generate();
+            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, configuration, ".").Generate();
 
             // Assert result
             Assert.IsNotNull(errors);
@@ -197,7 +205,7 @@ namespace Projbook.Tests.Core
         {
             // Perform generation
             Configuration configuration = new ConfigurationLoader(this.FileSystem).Load(".", "Config/MissingMembersInPage.json")[0];
-            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", configuration, ".").Generate();
+            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, configuration, ".").Generate();
 
             // Assert result
             Assert.IsNotNull(errors);

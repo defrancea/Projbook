@@ -66,10 +66,11 @@ namespace Projbook.Core
         /// Initializes a new instance of <see cref="ProjbookEngine"/>.
         /// </summary>
         /// <param name="fileSystem">Initializes the required file system abstraction.</param>
+        /// <param name="extensionPath">Initializes the required extension path.</param>
         /// <param name="csprojFile">Initializes the required <see cref="CsprojFile"/>.</param>
         /// <param name="configuration">Initializes the required <see cref="Configuration"/>.</param>
         /// <param name="outputDirectoryPath">Initializes the required <see cref="OutputDirectory"/>.</param>
-        public ProjbookEngine(IFileSystem fileSystem, string csprojFile, Configuration configuration, string outputDirectoryPath)
+        public ProjbookEngine(IFileSystem fileSystem, string csprojFile, string extensionPath, Configuration configuration, string outputDirectoryPath)
         {
             // Data validation
             Ensure.That(() => fileSystem).IsNotNull();
@@ -83,7 +84,7 @@ namespace Projbook.Core
             this.CsprojFile = this.fileSystem.FileInfo.FromFileName(csprojFile);
             this.Configuration = configuration;
             this.OutputDirectory = this.fileSystem.DirectoryInfo.FromDirectoryName(outputDirectoryPath);
-            this.snippetExtractorFactory = new SnippetExtractorFactory();
+            this.snippetExtractorFactory = new SnippetExtractorFactory(this.fileSystem.DirectoryInfo.FromDirectoryName(this.fileSystem.Path.GetFullPath(extensionPath)));
         }
 
         /// <summary>
