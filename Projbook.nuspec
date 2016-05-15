@@ -41,6 +41,7 @@
     <file src="src/Projbook.Target/bin/Release/Projbook.Target.dll" target="tools" exclude="" />
     <file src="src/Projbook.Example/projbook.json" target="content" exclude="" />
     <file src="src/Projbook.Example/template.html" target="content" exclude="" />
+    <file src="src/Projbook.Example/index-template.html" target="content" exclude="" />
     <file src="src/Projbook.Example/template-pdf.html" target="content" exclude="" />
     <file src="src/Projbook.Example/Content/prism.css" target="content/Content" exclude="" />
     <file src="src/Projbook.Example/Content/projbook.css" target="content/Content" exclude="" />

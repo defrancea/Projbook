@@ -1,0 +1,5 @@
+﻿@foreach (var configuration in Model.Configurations)
+{
+<Title>@configuration.Title</Title>
+<OutputHtml>@configuration.OutputHtml</OutputHtml>
+}

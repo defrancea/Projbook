@@ -149,7 +149,7 @@ namespace Projbook.Extension.XmlExtractor
             string output = stringBuilder.ToString();
             output = Regex.Replace(output, @" ?xmlns\s*(:[^=]+)?\s*=\s*""[^""]*""", string.Empty);
 
-            // Create the snippet from the exctracted code
+            // Create the snippet from the extracted code
             return new Extension.Model.Snippet(output);
         }
     }

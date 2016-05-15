@@ -139,5 +139,18 @@ namespace Projbook.Tests.Resources {
                 return ResourceManager.GetString("Simple_pdf", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @foreach (var configuration in Model.Configurations)
+        ///{
+        ///    &lt;Title&gt;@configuration.Title&lt;/Title&gt;
+        ///	&lt;OutputHtml&gt;@configuration.OutputHtml&lt;/OutputHtml&gt;
+        ///}.
+        /// </summary>
+        internal static string SimpleIndex {
+            get {
+                return ResourceManager.GetString("SimpleIndex", resourceCulture);
+            }
+        }
     }
 }
