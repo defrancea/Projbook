@@ -124,6 +124,9 @@
   <data name="Simple" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Template\Simple.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="SimpleIndex" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>template\simpleindex.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="Simple_pdf" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Template\Simple-pdf.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

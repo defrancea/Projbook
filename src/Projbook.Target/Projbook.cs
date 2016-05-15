@@ -59,7 +59,7 @@ namespace Projbook.Target
                 return false;
             }
 
-            // Instantiate a ProjBook engine
+            // Instantiate a Projbook engine
             ProjbookEngine projbookEngine = new ProjbookEngine(fileSystem, this.ProjectPath, configurations, this.OutputDirectory);
 
             // Run generation

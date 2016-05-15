@@ -32,6 +32,7 @@ namespace Projbook.Tests.Core
             this.FileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
                 { "Project.csproj", new MockFileData("<Root></Root>") },
+                { "index-template.html", new MockFileData(TemplateFiles.SimpleIndex) },
                 { "Config/AllValues.json", new MockFileData(ConfigFiles.AllValues) },
                 { "Config/NoPdf.json", new MockFileData(ConfigFiles.NoPdf) },
                 { "Config/NoHtml.json", new MockFileData(ConfigFiles.NoHtml) },
@@ -47,6 +48,7 @@ namespace Projbook.Tests.Core
                 { "Page/MissingMembers.md", new MockFileData(PageFiles.MissingMembers) },
                 { "Source/Foo.cs", new MockFileData(SourceCSharpFiles.Foo) },
                 { "Expected/Simple.txt", new MockFileData(ExpectedFullGenerationFiles.Simple) },
+                { "Expected/SimpleIndex.txt", new MockFileData(ExpectedFullGenerationFiles.SimpleIndex) },
                 { "Expected/Simple-pdf.txt", new MockFileData(ExpectedFullGenerationFiles.Simple_pdf) }
             });
         }
@@ -56,16 +58,18 @@ namespace Projbook.Tests.Core
         /// </summary>
         /// <param name="configFileName">The config file name.</param>
         /// <param name="expectedHtmlFileName">The file name containing the expected content for HTML generation.</param>
+        /// <param name="expectedHtmlIndexFileName">The file name containing the expected content for index HTML generation.</param>
         /// <param name="expectedPdfFileName">The file name containing the expected content for PDF generation.</param>
         /// <param name="generatedHtmlFileName">The file name containing the generated content for HTML.</param>
+        /// <param name="generateddHtmlIndexFileName">The file name containing the expected content for index HTML generation.</param>
         /// <param name="generatedPdfFileName">The file name containing the generated content for PDF.</param>
         /// <param name="readOnly">Make files read only.</param>
         [Test]
-        [TestCase("Config/AllValues.json", "Expected/Simple.txt", "Expected/Simple-pdf.txt", "doc.html", "doc-pdf-input.html", false)]
-        [TestCase("Config/AllValues.json", "Expected/Simple.txt", "Expected/Simple-pdf.txt", "doc.html", "doc-pdf-input.html", true)]
-        [TestCase("Config/NoPdf.json", "Expected/Simple.txt", "", "Template-generated.txt", "Template-pdf-generation.txt", false)]
-        [TestCase("Config/NoHtml.json", "", "Expected/Simple-pdf.txt", "Template-generated.txt", "Template-pdf-generated.txt", false)]
-        public void FullGeneration(string configFileName, string expectedHtmlFileName, string expectedPdfFileName, string generatedHtmlFileName, string generatedPdfFileName, bool readOnly)
+        [TestCase("Config/AllValues.json", "Expected/Simple.txt", "Expected/SimpleIndex.txt", "Expected/Simple-pdf.txt", "doc.html", "index.html", "doc-pdf-input.html", false)]
+        [TestCase("Config/AllValues.json", "Expected/Simple.txt", "Expected/SimpleIndex.txt", "Expected/Simple-pdf.txt", "doc.html", "index.html", "doc-pdf-input.html", true)]
+        [TestCase("Config/NoPdf.json", "Expected/Simple.txt", "", "Template-generated.txt", "", "Template-pdf-generation.txt", false)]
+        [TestCase("Config/NoHtml.json", "", "Expected/Simple-pdf.txt", "", "Template-generated.txt", "", "Template-pdf-generated.txt", false)]
+        public void FullGeneration(string configFileName, string expectedHtmlFileName, string expectedHtmlIndexFileName, string expectedPdfFileName, string generatedHtmlFileName, string generatedHtmlIndexFileName, string generatedPdfFileName, bool readOnly)
         {
             // Prepare configuration
             Configuration[] configurations = new ConfigurationLoader(this.FileSystem).Load(".", configFileName);
@@ -118,28 +122,37 @@ namespace Projbook.Tests.Core
                 // Execute generation
                 GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", configurations, ".").GenerateAll();
 
-                // Read expected ouput
+                // Read expected output
                 string expectedContent = string.IsNullOrWhiteSpace(expectedHtmlFileName) ? string.Empty : this.FileSystem.File.ReadAllText(expectedHtmlFileName);
 
-                // Read expected ouput
+                // Read expected output for index
+                string expectedIndexContent = string.IsNullOrWhiteSpace(expectedHtmlIndexFileName) ? string.Empty : this.FileSystem.File.ReadAllText(expectedHtmlIndexFileName);
+
+                // Read expected output
                 string expectedPdfContent = string.IsNullOrWhiteSpace(expectedPdfFileName) ? string.Empty : this.FileSystem.File.ReadAllText(expectedPdfFileName);
 
-                // Read generated ouput
+                // Read generated output
                 string generatedContent = !this.FileSystem.File.Exists(generatedHtmlFileName) ? string.Empty : this.FileSystem.File.ReadAllText(generatedHtmlFileName);
+
+                // Read generated output for index
+                string generatedIndexContent = !this.FileSystem.File.Exists(generatedHtmlIndexFileName) ? string.Empty : this.FileSystem.File.ReadAllText(generatedHtmlIndexFileName);
 
                 // Read generated pdf ouput
                 string generatedPdfContent = !this.FileSystem.File.Exists(generatedPdfFileName) ? string.Empty : this.FileSystem.File.ReadAllText(generatedPdfFileName);
 
                 // Remove line return for cross platform platform testing
                 expectedContent = expectedContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+                expectedIndexContent = expectedIndexContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 expectedPdfContent = expectedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 generatedContent = generatedContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
+                generatedIndexContent = generatedIndexContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 generatedPdfContent = generatedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 
                 // Assert result
                 Assert.IsNotNull(errors);
                 Assert.AreEqual(0, errors.Length);
                 Assert.AreEqual(expectedContent, generatedContent);
+                Assert.AreEqual(expectedIndexContent, generatedIndexContent);
                 Assert.AreEqual(expectedPdfContent, generatedPdfContent);
 
 #if !NOPDF
