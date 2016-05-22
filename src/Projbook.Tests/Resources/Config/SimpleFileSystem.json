@@ -1,0 +1,10 @@
+﻿{
+  "title": "Test file system title",
+  "template-html": "Template/Template-filesystem.txt",
+  "pages": [
+    {
+      "path": "Page/Snippet-filesystem.md",
+      "title": "File system page title"
+    }
+  ]
+}

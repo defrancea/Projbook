@@ -183,6 +183,16 @@ namespace Projbook.Tests.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] SimpleFileSystem {
+            get {
+                object obj = ResourceManager.GetObject("SimpleFileSystem", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] TwoGenerations {
             get {
                 object obj = ResourceManager.GetObject("TwoGenerations", resourceCulture);

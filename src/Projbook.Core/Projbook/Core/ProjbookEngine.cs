@@ -125,7 +125,7 @@ namespace Projbook.Core
                     // Filter fenced code
                     if (node.Block != null && node.Block.Tag == BlockTag.FencedCode)
                     {
-                        // Buil extraction rule
+                        // Build extraction rule
                         string fencedCode = node.Block.FencedCodeData.Info;
                         SnippetExtractionRule snippetExtractionRule = SnippetExtractionRule.Parse(fencedCode);
                         
@@ -209,10 +209,19 @@ namespace Projbook.Core
                                     ? snippetExtractor.Extract(null, snippetExtractionRule.TargetPath)
                                     : snippetExtractor.Extract(fileSystemInfo, snippetExtractionRule.Pattern);
 
-                                // Inject snippet
+                                // Get the content
                                 StringContent code = new StringContent();
                                 code.Append(snippet.Content, 0, snippet.Content.Length);
-                                node.Block.StringContent = code;
+
+                                // Inject snippet
+                                if (RenderType.Inject == snippet.RenderType)
+                                    node.Block.StringContent = code;
+                                // Override with snippet content
+                                else if (RenderType.Override == snippet.RenderType)
+                                {
+                                    node.Block.Tag = BlockTag.HtmlBlock;
+                                    node.Block.StringContent = code;
+                                }
                             }
                             catch (SnippetExtractionException snippetExtraction)
                             {
@@ -240,7 +249,7 @@ namespace Projbook.Core
                         }
                     }
                 }
-
+                
                 // Write to output
                 ProjbookHtmlFormatter projbookHtmlFormatter = null;
                 MemoryStream documentStream = new MemoryStream();

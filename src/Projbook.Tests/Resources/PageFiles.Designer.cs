@@ -93,6 +93,16 @@ namespace Projbook.Tests.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] Snippet_filesystem {
+            get {
+                object obj = ResourceManager.GetObject("Snippet_filesystem", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] Table {
             get {
                 object obj = ResourceManager.GetObject("Table", resourceCulture);

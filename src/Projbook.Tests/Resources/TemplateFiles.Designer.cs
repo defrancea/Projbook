@@ -105,11 +105,46 @@ namespace Projbook.Tests.Resources {
         ///        &lt;/Section&gt;
         ///    }
         ///	&lt;/Sections&gt;
-        ///}.
+        ///}
+        ///&lt;script&gt;
+        ///        $div.filetree.foreach
+        ///        (
+        ///            $(functio [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Simple {
             get {
                 return ResourceManager.GetString("Simple", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;Title&gt;@Model.Title&lt;/Title&gt;
+        ///@foreach (var page in Model.Pages)
+        ///{
+        ///    &lt;Id&gt;@page.Id&lt;/Id&gt;
+        ///    &lt;Title&gt;@page.Title&lt;/Title&gt;
+        ///	&lt;PreSectionContent&gt;&lt;![CDATA[@(page.PreSectionContent)]]&gt;&lt;/PreSectionContent&gt;
+        ///	&lt;Sections&gt;
+        ///    @foreach (var section in page.Sections)
+        ///    {
+        ///        &lt;Section&gt;
+        ///			&lt;Id&gt;@(section.Id)&lt;/Id&gt;
+        ///			&lt;Title&gt;@(section.Title)&lt;/Title&gt;
+        ///			&lt;Content&gt;
+        ///				@(section.Content)
+        ///			&lt;/Content&gt;
+        ///        &lt;/Section&gt;
+        ///    }
+        ///	&lt;/Sections&gt;
+        ///}
+        ///&lt;script&gt;
+        ///	$(function () { 
+        ///		$(&apos;.filetree&apos;).each(function(tree) {
+        ///				$(this).jstr [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Simple_filesystem {
+            get {
+                return ResourceManager.GetString("Simple_filesystem", resourceCulture);
             }
         }
         

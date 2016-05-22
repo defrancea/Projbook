@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projbook.Extension.CSharpEx
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projbook.Extension.XmlExtractor", "Projbook.Extension.XmlExtractor\Projbook.Extension.XmlExtractor.csproj", "{BC3E43EB-2263-49B4-883A-B720EDDF9298}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projbook.Extension.FileSystemExtractor", "Projbook.Extension.FileSystemExtractor\Projbook.Extension.FileSystemExtractor.csproj", "{266CFDEE-304D-4067-8F82-118E8D284F37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -98,6 +100,12 @@ Global
 		{BC3E43EB-2263-49B4-883A-B720EDDF9298}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC3E43EB-2263-49B4-883A-B720EDDF9298}.ReleaseNoPdf|Any CPU.ActiveCfg = Release|Any CPU
 		{BC3E43EB-2263-49B4-883A-B720EDDF9298}.ReleaseNoPdf|Any CPU.Build.0 = Release|Any CPU
+		{266CFDEE-304D-4067-8F82-118E8D284F37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{266CFDEE-304D-4067-8F82-118E8D284F37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{266CFDEE-304D-4067-8F82-118E8D284F37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{266CFDEE-304D-4067-8F82-118E8D284F37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{266CFDEE-304D-4067-8F82-118E8D284F37}.ReleaseNoPdf|Any CPU.ActiveCfg = Release|Any CPU
+		{266CFDEE-304D-4067-8F82-118E8D284F37}.ReleaseNoPdf|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

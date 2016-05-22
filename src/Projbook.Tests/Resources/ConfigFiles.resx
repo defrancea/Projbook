@@ -154,6 +154,9 @@
   <data name="Simple" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Config\Simple.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="SimpleFileSystem" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Config\SimpleFileSystem.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="TwoGenerations" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Config\TwoGenerations.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

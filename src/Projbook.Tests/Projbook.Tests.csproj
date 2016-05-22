@@ -82,6 +82,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Projbook\Tests\Core\Snippet\FileSystemSnippetExtractorTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\XmlSnippetExtractorTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\DefaultSnippetExtractorTests.cs" />
     <Compile Include="Projbook\Tests\TestsUtilities.cs" />
@@ -105,6 +106,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ExpectedXmlFiles.resx</DependentUpon>
     </Compile>
+    <Content Include="Resources\Expected\FullGeneration\Simple-filesystem.txt" />
     <Compile Include="Resources\PageFiles.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -313,6 +315,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Template\Malformated.txt" />
+    <Content Include="Resources\Template\Simple-filesystem.txt" />
     <Content Include="Resources\Template\Simple-pdf.txt" />
     <Content Include="Resources\Template\Simple.txt" />
     <Compile Include="Resources\Source\CSharp\Foo.cs" />
@@ -320,6 +323,8 @@
     <Compile Include="Projbook\Tests\Core\Markdown\ProjbookHtmlFormatterTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\SnippetExtractorFactoryTests.cs" />
     <Compile Include="Projbook\Tests\Core\Snippet\CSharpSnippetExtractorTests.cs" />
+    <None Include="Resources\Config\SimpleFileSystem.json" />
+    <None Include="Resources\Page\Snippet-filesystem.md" />
     <None Include="Resources\Source\Xml\Projbook.Core.csproj" />
     <Content Include="Resources\Source\Xml\SimpleNoNamespace.xml">
       <SubType>Designer</SubType>
@@ -371,6 +376,10 @@
     <ProjectReference Include="..\Projbook.Extension.CSharpExtractor\Projbook.Extension.CSharpExtractor.csproj">
       <Project>{f5431901-29ac-46d4-a717-de2a9114e82d}</Project>
       <Name>Projbook.Extension.CSharpExtractor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Projbook.Extension.FileSystemExtractor\Projbook.Extension.FileSystemExtractor.csproj">
+      <Project>{266cfdee-304d-4067-8f82-118e8d284f37}</Project>
+      <Name>Projbook.Extension.FileSystemExtractor</Name>
     </ProjectReference>
     <ProjectReference Include="..\Projbook.Extension.XmlExtractor\Projbook.Extension.XmlExtractor.csproj">
       <Project>{bc3e43eb-2263-49b4-883a-b720eddf9298}</Project>

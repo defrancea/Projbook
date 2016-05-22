@@ -45,16 +45,20 @@ namespace Projbook.Tests.Core
                 { "Config/ErrorInHtml.json", new MockFileData(ConfigFiles.ErrorInHtml) },
                 { "Config/ErrorInHtmlNoPdf.json", new MockFileData(ConfigFiles.ErrorInHtmlNoPdf) },
                 { "Config/MissingMembersInPage.json", new MockFileData(ConfigFiles.MissingMembersInPage) },
+                { "Config/SimpleFileSystem.json", new MockFileData(ConfigFiles.SimpleFileSystem) },
                 { "Template/Template.txt", new MockFileData(TemplateFiles.Simple) },
                 { "Template/Template-pdf.txt", new MockFileData(TemplateFiles.Simple_pdf) },
                 { "Template/Malformated.txt", new MockFileData(TemplateFiles.Malformated) },
+                { "Template/Template-filesystem.txt", new MockFileData(TemplateFiles.Simple_filesystem) },
                 { "Page/Content.md", new MockFileData(PageFiles.Content) },
                 { "Page/Snippet.md", new MockFileData(PageFiles.Snippet) },
+                { "Page/Snippet-filesystem.md", new MockFileData(PageFiles.Snippet_filesystem) },
                 { "Page/Table.md", new MockFileData(PageFiles.Table) },
                 { "Page/MissingMembers.md", new MockFileData(PageFiles.MissingMembers) },
                 { "Source/Foo.cs", new MockFileData(SourceCSharpFiles.Foo) },
                 { "Expected/Simple.txt", new MockFileData(ExpectedFullGenerationFiles.Simple) },
-                { "Expected/Simple-pdf.txt", new MockFileData(ExpectedFullGenerationFiles.Simple_pdf) }
+                { "Expected/Simple-pdf.txt", new MockFileData(ExpectedFullGenerationFiles.Simple_pdf) },
+                { "Expected/Simple-filesystem.txt", new MockFileData(ExpectedFullGenerationFiles.Simple_filesystem) }
             });
             this.FileSystem.Directory.CreateDirectory(this.ExtensionDirectory.FullName);
         }
@@ -73,6 +77,7 @@ namespace Projbook.Tests.Core
         [TestCase("Config/AllValues.json", "Expected/Simple.txt", "Expected/Simple-pdf.txt", "doc.html", "doc-pdf-input.html", true)]
         [TestCase("Config/NoPdf.json", "Expected/Simple.txt", "", "Template-generated.txt", "Template-pdf-generation.txt", false)]
         [TestCase("Config/NoHtml.json", "", "Expected/Simple-pdf.txt", "Template-generated.txt", "Template-pdf-generated.txt", false)]
+        [TestCase("Config/SimpleFileSystem.json", "Expected/Simple-filesystem.txt", "", "Template-filesystem-generated.txt", "", false)]
         public void FullGeneration(string configFileName, string expectedHtmlFileName, string expectedPdfFileName, string generatedHtmlFileName, string generatedPdfFileName, bool readOnly)
         {
             // Prepare configuration
