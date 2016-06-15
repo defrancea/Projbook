@@ -5,6 +5,7 @@ using Projbook.Core.Markdown;
 using System;
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Projbook.Tests.Core
 {
@@ -40,7 +41,7 @@ namespace Projbook.Tests.Core
             this.StreamWriter = new StreamWriter(this.MemoryStream);
             
             // Initialize formatter
-            this.Formatter = new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default, 0);
+            this.Formatter = new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default, 0, new Dictionary<Block, List<int>>());
         }
 
         /// <summary>
@@ -53,7 +54,7 @@ namespace Projbook.Tests.Core
         [ExpectedException(typeof(ArgumentException))]
         public void WrongInit(string contextName)
         {
-            new ProjbookHtmlFormatter(contextName, this.StreamWriter, CommonMarkSettings.Default, 0);
+            new ProjbookHtmlFormatter(contextName, this.StreamWriter, CommonMarkSettings.Default, 0, new Dictionary<Block, List<int>>());
         }
 
         /// <summary>
@@ -118,7 +119,7 @@ namespace Projbook.Tests.Core
         public void WriteSimpleHeaderDifferentBase()
         {
             // Reinit formatter
-            this.Formatter = new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default, 42);
+            this.Formatter = new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default, 42, new Dictionary<Block, List<int>>());
 
             // Process
             Block block = new Block(BlockTag.AtxHeader, 0);

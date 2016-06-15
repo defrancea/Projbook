@@ -1,4 +1,4 @@
 ﻿# Bar
 
-```csharp [Source/Foo.cs] Foo
+```csharp [Source/Foo.cs] (3,5) Foo
 ```
