@@ -6,25 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-
     <!-- Title -->
     <title>@Model.Title</title>
-
     <!-- Bootstrap -->
     <link href="Content/bootstrap.min.css" rel="stylesheet">
     <link href="Content/bootstrap-theme.min.css" rel="stylesheet">
-
     <!-- Prism -->
     <script src="Scripts/prism.js"></script>
     <link href="Content/prism.css" rel="stylesheet" />
-
+    <!-- Inline Disqussions -->
+    <link href="Content/inlineDisqussions.css" rel="stylesheet" type="text/css" />
     <!-- Projbook -->
     <link href="Content/projbook.css" rel="stylesheet">
 </head>
 <body role="document">
     <div class="container">
         <div class="row">
-
             <!--Nav Bar -->
             <nav class="col-md-3 bs-docs-sidebar">
                 <div class="fixed hidden-xs hidden-sm">
@@ -45,7 +42,6 @@
                     </ul>
                 </div>
             </nav>
-
             <!--Main Content -->
             <div class="col-md-9">
                 @foreach (var page in Model.Pages)
@@ -57,10 +53,12 @@
                     @(page.PreSectionContent)
                     @foreach (var section in page.Sections)
                     {
-                    <div id="@(section.Id)">
+                    <div id="@(section.Id)" data-disqus-identifier="@Model.Title-@(page.Id)-@(section.Id)">
                         @(section.Content)
                     </div>
+
                     }
+                    <div id="disqus_thread"></div>
                 </section>
                 }
             </div>
@@ -69,5 +67,12 @@
     <script src="Scripts/jquery-1.9.0.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
     <script src="Scripts/projbook.js"></script>
+    <script src="Scripts/inlineDisqussions.js"></script>
+    <script>
+        disqus_shortname = 'projbookcomments';
+        jQuery("[data-disqus-identifier]").ready(function () {
+            jQuery("[data-disqus-identifier]").inlineDisqussions({ maxWidth: 1000 });
+        });
+    </script>
 </body>
 </html>
