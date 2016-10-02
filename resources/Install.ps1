@@ -20,5 +20,6 @@ $fontsFolder.ProjectItems.Item("glyphicons-halflings-regular.woff").Properties.I
 # Copy files in Scripts folder
 $scriptsFolder.ProjectItems.Item("prism.js").Properties.Item("CopyToOutputDirectory").Value = 2
 $scriptsFolder.ProjectItems.Item("projbook.js").Properties.Item("CopyToOutputDirectory").Value = 2
+$scriptsFolder.ProjectItems.Item("projbook-disqus.js").Properties.Item("CopyToOutputDirectory").Value = 2
 $scriptsFolder.ProjectItems.Item("bootstrap.min.js").Properties.Item("CopyToOutputDirectory").Value = 2
 $scriptsFolder.ProjectItems.Item("jquery-1.9.0.min.js").Properties.Item("CopyToOutputDirectory").Value = 2
