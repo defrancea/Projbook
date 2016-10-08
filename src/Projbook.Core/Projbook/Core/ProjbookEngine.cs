@@ -342,6 +342,7 @@ namespace Projbook.Core
                     // Create a new section and add to the known list
                     sections.Add(new Model.Section(
                         id: pageBreak.Id,
+                        level: pageBreak.Level,
                         title: pageBreak.Title,
                         content: content));
                 }

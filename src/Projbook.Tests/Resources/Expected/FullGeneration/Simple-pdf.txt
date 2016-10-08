@@ -6,6 +6,7 @@
 	<Sections>
         <Section>
 			<Id>PageContentmd-foo</Id>
+			<Level>1</Level>
 			<Title>Foo</Title>
 			<Content>
 				<![CDATA[
@@ -15,6 +16,7 @@
         </Section>
         <Section>
 			<Id>PageContentmd-sub-foo</Id>
+			<Level>2</Level>
 			<Title>Sub-foo</Title>
 			<Content>
 				<![CDATA[
@@ -29,6 +31,7 @@
 	<Sections>
         <Section>
 			<Id>PageSnippetmd-bar</Id>
+			<Level>1</Level>
 			<Title>Bar</Title>
 			<Content>
 				<![CDATA[
