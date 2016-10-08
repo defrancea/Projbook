@@ -9,6 +9,7 @@
     {
         <Section>
 			<Id>@(section.Id)</Id>
+			<Level>@(section.Level)</Level>
 			<Title>@(section.Title)</Title>
 			<Content>
 				<![CDATA[@(section.Content)]]>

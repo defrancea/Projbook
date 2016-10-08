@@ -181,7 +181,7 @@ namespace Projbook.Core.Markdown
                 this.writer.Flush();
 
                 // Add a new page break
-                this.pageBreak.Add(new PageBreakInfo(sectionId, headerContent, this.writer.BaseStream.Position));
+                this.pageBreak.Add(new PageBreakInfo(sectionId, Math.Max(0, block.HeaderLevel), headerContent, this.writer.BaseStream.Position));
 
                 // Initialize section conflict
                 sectionConflict[sectionId] = 1;
