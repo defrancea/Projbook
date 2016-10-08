@@ -126,6 +126,7 @@ namespace Projbook.Core.Markdown
                     if (null != plainTextSnippet)
                     {
                         block.StringContent.Replace(plainTextSnippet.Text, 0, plainTextSnippet.Text.Length);
+                        // Todo: Need to render data-line in <pre> tag from plainTextSnippet.LinePointers
                     }
 
                     // Render and write node snippet

@@ -25,12 +25,12 @@ namespace NS
 
         protected bool Foo(string foo)
         {
-            return true;
+            return true; // Projbook highlight
         }
 
-        protected bool Foo(string foo, int bar)
+        protected bool Foo(string foo, int bar) // Projbook start highlight
         {
-            return false;
+            return false; // Projbook end highlight
         }
     }
     namespace NS2.NS3

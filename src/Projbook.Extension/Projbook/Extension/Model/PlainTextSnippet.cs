@@ -13,10 +13,16 @@ namespace Projbook.Extension.Model
         public readonly string Text;
 
         /// <summary>
+        /// Line pointers.
+        /// </summary>
+        public LinePointers LinePointers { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of <see cref="PlainTextSnippet"/>.
         /// </summary>
         /// <param name="text">Initializes the required <see cref="Text"/>.</param>
-        public PlainTextSnippet(string text)
+        /// <param name="linePointers">Initializes the required <see cref="LinePointers"/>.</param>
+        public PlainTextSnippet(string text, LinePointers linePointers = null)
         {
             // Data validation
             if (null == text)
@@ -24,6 +30,7 @@ namespace Projbook.Extension.Model
 
             // Initialize
             this.Text = text;
+            this.LinePointers = linePointers;
         }
     }
 }

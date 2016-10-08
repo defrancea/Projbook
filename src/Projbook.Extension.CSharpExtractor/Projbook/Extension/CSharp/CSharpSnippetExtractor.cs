@@ -25,6 +25,21 @@ namespace Projbook.Extension.CSharpExtractor
         private CSharpSyntaxMatchingNode syntaxTrie;
 
         /// <summary>
+        /// Declare start line pointer.
+        /// </summary>
+        private const string START_LINE_POINTER = "// Projbook start highlight";
+
+        /// <summary>
+        /// Declare end line pointer.
+        /// </summary>
+        private const string END_LINE_POINTER = "// Projbook end highlight";
+
+        /// <summary>
+        /// Declare line pointer.
+        /// </summary>
+        private const string LINE_POINTER = "// Projbook highlight";
+
+        /// <summary>
         /// Extracts a snippet from a given rule pattern.
         /// </summary>
         /// <param name="fileSystemInfo">The file system info.</param>
@@ -84,6 +99,8 @@ namespace Projbook.Extension.CSharpExtractor
 
             // Extract code from each snippets
             StringBuilder stringBuilder = new StringBuilder();
+            Model.LinePointers linePointers = new Model.LinePointers();
+            int currentWritingLine = 1;
             bool firstSnippet = true;
             foreach (SyntaxNode node in nodes)
             {
@@ -92,19 +109,20 @@ namespace Projbook.Extension.CSharpExtractor
                 {
                     stringBuilder.AppendLine();
                     stringBuilder.AppendLine();
+                    currentWritingLine += 2;
                 }
                 
                 // Write each snippet line
                 string[] lines = node.GetText().Lines.Select(x => x.ToString()).ToArray();
                 int contentPosition = this.DetermineContentPosition(node);
-                this.WriteAndCleanupSnippet(stringBuilder, lines, extractionMode, contentPosition);
+                this.WriteAndCleanupSnippet(stringBuilder, lines, extractionMode, contentPosition, ref currentWritingLine, linePointers);
 
                 // Flag the first snippet as false
                 firstSnippet = false;
             }
             
             // Create the snippet from the exctracted code
-            return new Model.PlainTextSnippet(stringBuilder.ToString());
+            return new Model.PlainTextSnippet(stringBuilder.ToString(), linePointers);
         }
 
         /// <summary>
@@ -186,11 +204,16 @@ namespace Projbook.Extension.CSharpExtractor
         /// <param name="lines">The lines to process.</param>
         /// <param name="extractionMode">The extraction mode.</param>
         /// <param name="contentPosition">The content position.</param>
-        private void WriteAndCleanupSnippet(StringBuilder stringBuilder, string[] lines, CSharpExtractionMode extractionMode, int contentPosition)
+        /// <param name="currentWritingLine">The current writing line.</param>
+        /// <param name="linePointers">The line pointers.</param>
+        private void WriteAndCleanupSnippet(StringBuilder stringBuilder, string[] lines, CSharpExtractionMode extractionMode, int contentPosition, ref int currentWritingLine, Model.LinePointers linePointers)
         {
             // Data validation
             Ensure.That(() => stringBuilder).IsNotNull();
             Ensure.That(() => lines).IsNotNull();
+
+            // Declare start line pointer
+            int startLinePointer = 0;
 
             // Do not process if lines are empty
             if (0 >= lines.Length)
@@ -315,6 +338,7 @@ namespace Projbook.Extension.CSharpExtractor
                 if (!firstLine)
                 {
                     stringBuilder.AppendLine();
+                    ++currentWritingLine;
                 }
 
                 // Remove a part of the indentation padding
@@ -353,6 +377,28 @@ namespace Projbook.Extension.CSharpExtractor
                                 endPos = i;
                             }
                             break;
+                    }
+
+                    // Detect and generate start line pointer
+                    if (line.EndsWith(START_LINE_POINTER))
+                    {
+                        startLinePointer = currentWritingLine;
+                        line = line.Substring(0, line.Length - START_LINE_POINTER.Length).TrimEnd();
+                    }
+                    
+                    // Detect and generate end line pointer
+                    if (startLinePointer > 0 && line.EndsWith(END_LINE_POINTER))
+                    {
+                        linePointers.AddPointer(startLinePointer, currentWritingLine);
+                        startLinePointer = 0;
+                        line = line.Substring(0, line.Length - END_LINE_POINTER.Length).TrimEnd();
+                    }
+
+                    // Detect and generate line pointer
+                    if (line.EndsWith(LINE_POINTER))
+                    {
+                        linePointers.AddPointer(currentWritingLine);
+                        line = line.Substring(0, line.Length - LINE_POINTER.Length).TrimEnd();
                     }
 
                     // Append the line

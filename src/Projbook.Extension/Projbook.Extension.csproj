@@ -47,6 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Projbook\Extension\DefaultSnippetExtractor.cs" />
+    <Compile Include="Projbook\Extension\Model\LinePointers.cs" />
+    <Compile Include="Projbook\Extension\Model\LineRangeReference.cs" />
+    <Compile Include="Projbook\Extension\Model\LineReference.cs" />
     <Compile Include="Projbook\Extension\Model\Node.cs" />
     <Compile Include="Projbook\Extension\Model\NodeSnippet.cs" />
     <Compile Include="Projbook\Extension\Model\Snippet.cs" />

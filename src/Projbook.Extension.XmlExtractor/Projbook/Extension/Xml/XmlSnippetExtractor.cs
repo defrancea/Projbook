@@ -150,7 +150,7 @@ namespace Projbook.Extension.XmlExtractor
             output = Regex.Replace(output, @" ?xmlns\s*(:[^=]+)?\s*=\s*""[^""]*""", string.Empty);
 
             // Create the snippet from the extracted code
-            return new Model.PlainTextSnippet(output);
+            return new Model.PlainTextSnippet(output); // Todo: Need to collect line pointers
         }
     }
 }
