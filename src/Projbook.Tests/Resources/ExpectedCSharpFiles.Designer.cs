@@ -94,6 +94,15 @@ namespace Projbook.Tests.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to int[] fieldArray;.
+        /// </summary>
+        internal static string ArrayField {
+            get {
+                return ResourceManager.GetString("ArrayField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to public class Options
         ///{
         ///    // ...
@@ -387,6 +396,15 @@ namespace Projbook.Tests.Resources {
         internal static string Eventremove {
             get {
                 return ResourceManager.GetString("Eventremove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to bool aFieldSomewhere, anotherFieldSomewhere;.
+        /// </summary>
+        internal static string FieldSomewhere {
+            get {
+                return ResourceManager.GetString("FieldSomewhere", resourceCulture);
             }
         }
         

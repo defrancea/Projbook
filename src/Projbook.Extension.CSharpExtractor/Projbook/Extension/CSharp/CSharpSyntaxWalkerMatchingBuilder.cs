@@ -116,6 +116,24 @@ namespace Projbook.Extension.CSharpExtractor
         }
 
         /// <summary>
+        /// Visits a field declaration.
+        /// </summary>
+        /// <param name="node">The field declaration to visit.</param>
+        public override void VisitFieldDeclaration(FieldDeclarationSyntax node)
+        {
+            // Visit each variable declaration
+            foreach(VariableDeclaratorSyntax variableDeclarationSyntax in node.Declaration.Variables)
+            {
+                this.Visit<FieldDeclarationSyntax>(
+                    node: node,
+                    typeParameterList: null,
+                    exctractName: n => variableDeclarationSyntax.Identifier.ValueText,
+                    targetNode: n => n,
+                    visit: base.VisitFieldDeclaration);
+            }
+        }
+
+        /// <summary>
         /// Visits an indexter declaration.
         /// </summary>
         /// <param name="node">The indexter declaration to visit.</param>

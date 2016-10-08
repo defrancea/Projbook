@@ -100,5 +100,12 @@ namespace NS2
         {
             void InterfaceMethod(bool v1, string v2, int v3);
         }
+
+        class WithField
+        {
+            bool aFieldSomewhere, anotherFieldSomewhere;
+
+            int[] fieldArray;
+        }
     }
 }

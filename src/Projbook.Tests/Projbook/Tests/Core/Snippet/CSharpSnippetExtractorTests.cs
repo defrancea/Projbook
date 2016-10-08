@@ -44,6 +44,8 @@ namespace Projbook.Tests.Core.Snippet
                 { "Expected/OneClassSomewhere.txt", new MockFileData(ExpectedCSharpFiles.OneClassSomewhere) },
                 { "Expected/I.txt", new MockFileData(ExpectedCSharpFiles.I) },
                 { "Expected/SubClass.txt", new MockFileData(ExpectedCSharpFiles.SubClass) },
+                { "Expected/FieldSomewhere.txt", new MockFileData(ExpectedCSharpFiles.FieldSomewhere) },
+                { "Expected/ArrayField.txt", new MockFileData(ExpectedCSharpFiles.ArrayField) },
                 { "Expected/WhateverProperty.txt", new MockFileData(ExpectedCSharpFiles.WhateverProperty) },
                 { "Expected/WhateverPropertyget.txt", new MockFileData(ExpectedCSharpFiles.WhateverPropertyget) },
                 { "Expected/WhateverPropertyset.txt", new MockFileData(ExpectedCSharpFiles.WhateverPropertyset) },
@@ -122,6 +124,17 @@ namespace Projbook.Tests.Core.Snippet
         [TestCase("Source/Sample.cs", "NS.OneClassSomewhere.SubClass", "Expected/SubClass.txt")]
         [TestCase("Source/Sample.cs", "OneClassSomewhere.SubClass", "Expected/SubClass.txt")]
         [TestCase("Source/Sample.cs", "SubClass", "Expected/SubClass.txt")]
+
+        // Match field
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.WithField.aFieldSomewhere", "Expected/FieldSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "WithField.aFieldSomewhere", "Expected/FieldSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "aFieldSomewhere", "Expected/FieldSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.WithField.anotherFieldSomewhere", "Expected/FieldSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "WithField.anotherFieldSomewhere", "Expected/FieldSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "anotherFieldSomewhere", "Expected/FieldSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.WithField.fieldArray", "Expected/ArrayField.txt")]
+        [TestCase("Source/Sample.cs", "WithField.fieldArray", "Expected/ArrayField.txt")]
+        [TestCase("Source/Sample.cs", "fieldArray", "Expected/ArrayField.txt")]
 
         // Match property
         [TestCase("Source/Sample.cs", "NS.OneClassSomewhere.SubClass.WhateverProperty", "Expected/WhateverProperty.txt")]
