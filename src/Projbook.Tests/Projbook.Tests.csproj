@@ -132,6 +132,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TemplateFiles.resx</DependentUpon>
     </Compile>
+    <Content Include="Resources\Expected\CSharp\ArrayField.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Expected\CSharp\BlockOnlyEscapedClass2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -193,6 +196,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Expected\CSharp\I.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Expected\CSharp\FieldSomewhere.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Expected\FullGeneration\SimpleIndex.txt" />
@@ -398,6 +404,7 @@
     <EmbeddedResource Include="Resources\ExpectedCSharpFiles.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ExpectedCSharpFiles.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\ExpectedFullGenerationFiles.resx">
       <Generator>ResXFileCodeGenerator</Generator>
