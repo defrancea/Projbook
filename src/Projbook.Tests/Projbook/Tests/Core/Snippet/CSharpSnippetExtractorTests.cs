@@ -298,8 +298,9 @@ namespace Projbook.Tests.Core.Snippet
                 this.extractorCache[fileName] = snippetExtractor;
             }
             Extension.Model.PlainTextSnippet snippet = snippetExtractor.Extract(this.FileSystem.FileInfo.FromFileName(fileName), pattern) as Extension.Model.PlainTextSnippet;
-            
+
             // Assert
+            expectedFile = expectedFile.Replace('/', this.FileSystem.Path.DirectorySeparatorChar);
             Assert.AreEqual(this.FileSystem.File.ReadAllText(expectedFile), snippet.Text.Replace("\r\n", "\n"));
         }
 

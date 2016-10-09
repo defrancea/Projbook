@@ -84,6 +84,12 @@ namespace Projbook.Tests.Core
         [TestCase("Config/NoHtml.json", "", "", "Expected/Simple-pdf.txt", "Template-generated.txt", "", "Template-pdf-generated.txt", false)]
         public void FullGeneration(string configFileName, string expectedHtmlFileName, string expectedHtmlIndexFileName, string expectedPdfFileName, string generatedHtmlFileName, string generatedHtmlIndexFileName, string generatedPdfFileName, bool readOnly)
         {
+            // Process path separator
+            configFileName = configFileName.Replace('/', this.FileSystem.Path.DirectorySeparatorChar);
+            expectedHtmlFileName = expectedHtmlFileName.Replace('/', this.FileSystem.Path.DirectorySeparatorChar);
+            expectedPdfFileName = expectedPdfFileName.Replace('/', this.FileSystem.Path.DirectorySeparatorChar);
+            expectedHtmlIndexFileName = expectedHtmlIndexFileName.Replace('/', this.FileSystem.Path.DirectorySeparatorChar);
+
             // Prepare configuration
             IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", configFileName);
             Configuration[] configurations = indexConfiguration.Configurations;
@@ -137,7 +143,7 @@ namespace Projbook.Tests.Core
                 Environment.CurrentDirectory = Path.GetDirectoryName(typeof(FullGenerationTests).Assembly.Location);
 
                 // Execute generation
-                GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
+                GenerationError[] errors = new ProjbookEngine(this.FileSystem, this.FileSystem.Path.Combine(".", "Project.csproj"), this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
 
                 // Read expected output
                 string expectedContent = string.IsNullOrWhiteSpace(expectedHtmlFileName) ? string.Empty : this.FileSystem.File.ReadAllText(expectedHtmlFileName);
@@ -203,15 +209,15 @@ namespace Projbook.Tests.Core
         public void FullGenerationErrorTemplate()
         {
             // Perform generation
-            IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", "Config/ErrorInHtml.json");
+            IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", this.FileSystem.Path.Combine("Config", "ErrorInHtml.json"));
             Configuration[] configurations = indexConfiguration.Configurations;
             GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
 
             // Assert result
             Assert.IsNotNull(errors);
             Assert.AreEqual(2, errors.Length);
-            Assert.IsTrue(errors[0].SourceFile.EndsWith("Template/Malformated.txt"));
-            Assert.IsTrue(errors[1].SourceFile.EndsWith("Template/Malformated.txt"));
+            Assert.IsTrue(errors[0].SourceFile.EndsWith("Template/Malformated.txt".Replace('/', this.FileSystem.Path.DirectorySeparatorChar)));
+            Assert.IsTrue(errors[1].SourceFile.EndsWith("Template/Malformated.txt".Replace('/', this.FileSystem.Path.DirectorySeparatorChar)));
             Assert.AreEqual(@"Error during HTML generation: (16:1) - Encountered end tag ""Sections"" with no matching start tag.  Are your start/end tags properly balanced?", errors[0].Message);
             Assert.AreEqual(16, errors[0].Line);
             Assert.AreEqual(1, errors[0].Column);
@@ -227,14 +233,14 @@ namespace Projbook.Tests.Core
         public void FullGenerationErrorIndexTemplate()
         {
             // Perform generation
-            IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", "Config/ErrorInIndexHtml.json");
+            IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", this.FileSystem.Path.Combine("Config", "ErrorInIndexHtml.json"));
             Configuration[] configurations = indexConfiguration.Configurations;
             GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
 
             // Assert result
             Assert.IsNotNull(errors);
             Assert.AreEqual(1, errors.Length);
-            Assert.IsTrue(errors[0].SourceFile.EndsWith("Template/Malformated.txt"));
+            Assert.IsTrue(errors[0].SourceFile.EndsWith("Template/Malformated.txt".Replace('/', this.FileSystem.Path.DirectorySeparatorChar)));
             Assert.AreEqual(@"Error during HTML generation: (16:1) - Encountered end tag ""Sections"" with no matching start tag.  Are your start/end tags properly balanced?", errors[0].Message);
             Assert.AreEqual(16, errors[0].Line);
             Assert.AreEqual(1, errors[0].Column);
@@ -248,9 +254,9 @@ namespace Projbook.Tests.Core
         public void FullGenerationUnexistingMembers()
         {
             // Perform generation
-            IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", "Config/MissingMembersInPage.json");
+            IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", this.FileSystem.Path.Combine("Config", "MissingMembersInPage.json"));
             Configuration[] configurations = indexConfiguration.Configurations;
-            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
+            GenerationError[] errors = new ProjbookEngine(this.FileSystem, this.FileSystem.Path.Combine(".", "Project.csproj"), this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
 
             // Assert result
             Assert.IsNotNull(errors);

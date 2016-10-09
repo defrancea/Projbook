@@ -140,7 +140,7 @@ namespace Projbook.Core
             foreach (Page page in configuration.Pages)
             {
                 // Compute the page id used as a tab id and page prefix for bookmarking
-                string pageId = page.Path.Replace(".", string.Empty).Replace("/", string.Empty);
+                string pageId = page.Path.Replace(".", string.Empty).Replace("/", string.Empty).Replace("\\", string.Empty);
 
                 // Load the document
                 Block document;
@@ -566,7 +566,7 @@ namespace Projbook.Core
 
             // Load the page until the block source position
             char[] buffer = new char[block.SourcePosition];
-            string pagePath = this.fileSystem.FileInfo.FromFileName(page.Path).FullName;
+            string pagePath = this.fileSystem.FileInfo.FromFileName(page.FileSystemPath).FullName;
             using (StreamReader reader = new StreamReader(this.fileSystem.File.Open(pagePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
             {
                 reader.Read(buffer, 0, buffer.Length);

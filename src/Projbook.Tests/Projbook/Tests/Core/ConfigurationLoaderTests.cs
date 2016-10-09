@@ -102,7 +102,7 @@ namespace Projbook.Tests.Core
         public void ValidConfiguration(bool readOnly)
         {
             // Declare configuration name
-            string fileName = "Config/Simple.json";
+            string fileName = this.FileSystem.Path.Combine("Config", "Simple.json");
 
             // Handle file attribute
             FileAttributes configurationFileAttributes = this.FileSystem.File.GetAttributes(fileName);
@@ -121,8 +121,8 @@ namespace Projbook.Tests.Core
             Assert.AreEqual("Test title", configurations[0].Title);
             Assert.AreEqual(true, configurations[0].GenerateHtml);
             Assert.AreEqual(true, configurations[0].GeneratePdf);
-            Assert.IsTrue(configurations[0].TemplateHtml.EndsWith("Template/Template.txt"));
-            Assert.IsTrue(configurations[0].TemplatePdf.EndsWith("Template/Template-pdf.txt"));
+            Assert.IsTrue(configurations[0].TemplateHtml.EndsWith("Template/Template.txt".Replace('/', this.FileSystem.Path.DirectorySeparatorChar)));
+            Assert.IsTrue(configurations[0].TemplatePdf.EndsWith("Template/Template-pdf.txt".Replace('/', this.FileSystem.Path.DirectorySeparatorChar)));
             Assert.AreEqual("Template-generated.txt", configurations[0].OutputHtml);
             Assert.AreEqual("Template-pdf-generated.txt", configurations[0].OutputPdf);
             Assert.AreEqual(0, configurations[0].Pages.Length);
@@ -135,7 +135,7 @@ namespace Projbook.Tests.Core
         public void ValidConfigurationAllValues()
         {
             // Declare configuration name
-            string fileName = "Config/AllValues.json";
+            string fileName = this.FileSystem.Path.Combine("Config", "AllValues.json");
 
             // Load configuration
             IndexConfiguration indexConfiguration = this.ConfigurationLoader.Load(".", fileName);
@@ -167,7 +167,7 @@ namespace Projbook.Tests.Core
         public void ValidConfigurationTwoGenerationsWithHtmlOnlyAndPdfOnly()
         {
             // Declare configuration name
-            string fileName = "Config/TwoGenerations.json";
+            string fileName = this.FileSystem.Path.Combine("Config", "TwoGenerations.json");
 
             // Load configuration
             IndexConfiguration indexConfiguration = this.ConfigurationLoader.Load(".", fileName);
@@ -199,7 +199,7 @@ namespace Projbook.Tests.Core
         public void ValidConfigurationWithIndex()
         {
             // Declare configuration name
-            string fileName = "Config/WithIndex.json";
+            string fileName = this.FileSystem.Path.Combine("Config", "WithIndex.json");
 
             // Load configuration
             IndexConfiguration indexConfiguration = this.ConfigurationLoader.Load(".", fileName);
@@ -221,7 +221,7 @@ namespace Projbook.Tests.Core
         public void ValidDefaultIndexOutputName()
         {
             // Declare configuration name
-            string fileName = "Config/ErrorInIndexHtml.json";
+            string fileName = this.FileSystem.Path.Combine("Config", "ErrorInIndexHtml.json");
 
             // Load configuration
             IndexConfiguration indexConfiguration = this.ConfigurationLoader.Load(".", fileName);
@@ -248,6 +248,7 @@ namespace Projbook.Tests.Core
             // Try to generate configuration with error
             try
             {
+                configFile = configFile.Replace('/', this.FileSystem.Path.DirectorySeparatorChar);
                 this.ConfigurationLoader.Load(".", configFile);
                 Assert.Fail("Expected to fail");
             }
@@ -291,7 +292,7 @@ namespace Projbook.Tests.Core
             try
             {
                 // Declare configuration name
-                string fileName = "Config/ManyErrors.json";
+                string fileName = this.FileSystem.Path.Combine("Config", "ManyErrors.json");
 
                 // Load configuration
                 IndexConfiguration indexConfiguration = this.ConfigurationLoader.Load(".", fileName);

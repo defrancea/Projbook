@@ -71,6 +71,7 @@ namespace Projbook.Tests.Core.Snippet
             Extension.Model.PlainTextSnippet snippet = new XmlSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName(fileName), pattern) as Extension.Model.PlainTextSnippet;
 
             // Assert
+            expectedFile = expectedFile.Replace('/', this.FileSystem.Path.DirectorySeparatorChar);
             Assert.AreEqual(this.FileSystem.File.ReadAllText(expectedFile), snippet.Text.Replace("\r\n", "\n"));
         }
 
