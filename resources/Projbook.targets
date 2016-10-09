@@ -5,7 +5,7 @@
   <Target Name="AfterBuild">
     <Projbook
       ProjectPath="$(ProjbookBoundProject)"
-      ExtensionPath="$(MSBuildThisFileDirectory)../plugins"
+      ExtensionPath="$(MSBuildThisFileDirectory)../lib/plugins"
       ConfigurationFile="projbook.json"
       OutputDirectory="$(TargetDir)" />
   </Target>

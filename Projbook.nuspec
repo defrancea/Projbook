@@ -23,23 +23,29 @@
     <file src="resources/Projbook.props" target="build" exclude="" />
     <file src="resources/Install.ps1" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/Common.Logging.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/Common.Logging.Core.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/CommonMark.dll" target="tools" exclude="" />
-    <file src="src/Projbook.Core/bin/Release/EnsureThat.vDinasour.dll" target="tools" exclude="" />
-    <file src="src/Projbook.Core/bin/Release/Microsoft.CodeAnalysis.CSharp.dll" target="tools" exclude="" />
-    <file src="src/Projbook.Core/bin/Release/Microsoft.CodeAnalysis.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/Ensure.That.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/Newtonsoft.Json.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/Newtonsoft.Json.Schema.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/Projbook.Core.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/RazorEngine.dll" target="tools" exclude="" />
-    <file src="src/Projbook.Core/bin/Release/System.Collections.Immutable.dll" target="tools" exclude="" />
-    <file src="src/Projbook.Core/bin/Release/System.Reflection.Metadata.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/System.Web.Razor.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/System.IO.Abstractions.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/WkHtmlToXSharp.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/WkHtmlToXSharp.Linux32.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/WkHtmlToXSharp.Linux64.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/WkHtmlToXSharp.Win32.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/WkHtmlToXSharp.Win64.dll" target="tools" exclude="" />
     <file src="src/Projbook.Target/bin/Release/Projbook.Target.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Extension/bin/Release/Projbook.Extension.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Extension.FileSystemExtractor/bin/Release/Projbook.Extension.FileSystemExtractor.dll" target="lib/plugins" exclude="" />
+    <file src="src/Projbook.Extension.XmlExtractor/bin/Release/Projbook.Extension.XmlExtractor.dll" target="lib/plugins" exclude="" />
+    <file src="src/Projbook.Extension.CSharpExtractor/bin/Release/Projbook.Extension.CSharpExtractor.dll" target="lib/plugins" exclude="" />
+    <file src="src/Projbook.Extension.CSharpExtractor/bin/Release/Microsoft.CodeAnalysis.CSharp.dll" target="lib/plugins" exclude="" />
+    <file src="src/Projbook.Extension.CSharpExtractor/bin/Release/Microsoft.CodeAnalysis.dll" target="lib/plugins" exclude="" />
+    <file src="src/Projbook.Extension.CSharpExtractor/bin/Release/System.Collections.Immutable.dll" target="lib/plugins" exclude="" />
+    <file src="src/Projbook.Extension.CSharpExtractor/bin/Release/System.Reflection.Metadata.dll" target="lib/plugins" exclude="" />
     <file src="src/Projbook.Example/projbook.json" target="content" exclude="" />
     <file src="src/Projbook.Example/template.html" target="content" exclude="" />
     <file src="src/Projbook.Example/index-template.html" target="content" exclude="" />
