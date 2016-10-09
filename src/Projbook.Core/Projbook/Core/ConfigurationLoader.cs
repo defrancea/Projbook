@@ -93,7 +93,7 @@ namespace Projbook.Core
                             }
 
                             // Report original index-based generation error
-                            catch (System.Exception exception)
+                            catch (System.Exception)
                             {
                                 capturedException.Throw();
                             }

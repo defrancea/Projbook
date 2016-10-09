@@ -51,10 +51,11 @@ namespace Projbook.Tests.Core
         [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
-        [ExpectedException(typeof(ArgumentException))]
         public void WrongInit(string contextName)
         {
-            new ProjbookHtmlFormatter(contextName, this.StreamWriter, CommonMarkSettings.Default, 0, null, null);
+            Assert.Throws(
+                Is.TypeOf<ArgumentException>(),
+                () => new ProjbookHtmlFormatter(contextName, this.StreamWriter, CommonMarkSettings.Default, 0, null, null));
         }
 
         /// <summary>

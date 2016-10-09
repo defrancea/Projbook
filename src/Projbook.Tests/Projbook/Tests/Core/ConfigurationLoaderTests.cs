@@ -63,30 +63,33 @@ namespace Projbook.Tests.Core
         /// Tests with invalid input.
         /// </summary>
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void WrongInitNull()
         {
-            this.ConfigurationLoader.Load(".", null);
+            Assert.Throws(
+                Is.TypeOf<ArgumentNullException>(), 
+                () => this.ConfigurationLoader.Load(".", null));
         }
 
         /// <summary>
         /// Tests with invalid input.
         /// </summary>
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void WrongInitEmpty()
         {
-            this.ConfigurationLoader.Load(".", "");
+            Assert.Throws(
+                Is.TypeOf<ArgumentException>(),
+                () => this.ConfigurationLoader.Load(".", ""));
         }
 
         /// <summary>
         /// Tests with invalid input.
         /// </summary>
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void WrongInitNotFound()
         {
-            this.ConfigurationLoader.Load(".", "does not exist");
+            Assert.Throws(
+                Is.TypeOf<ArgumentException>(),
+                () => this.ConfigurationLoader.Load(".", "does not exist"));
         }
 
         /// <summary>

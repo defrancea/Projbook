@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable 0169
+#pragma warning disable 0219
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -109,3 +111,5 @@ namespace NS2
         }
     }
 }
+#pragma warning restore 0169
+#pragma warning restore 0219

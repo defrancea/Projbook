@@ -4,6 +4,7 @@ using Projbook.Core.Model;
 using Projbook.Core.Model.Configuration;
 using Projbook.Tests.Resources;
 using Projbook.Tests.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
@@ -132,6 +133,9 @@ namespace Projbook.Tests.Core
             // Execute test
             try
             {
+                // Ensure right working directory
+                Environment.CurrentDirectory = Path.GetDirectoryName(typeof(FullGenerationTests).Assembly.Location);
+
                 // Execute generation
                 GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
 
@@ -160,7 +164,7 @@ namespace Projbook.Tests.Core
                 generatedContent = generatedContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 generatedIndexContent = generatedIndexContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
                 generatedPdfContent = generatedPdfContent.Replace("\r", string.Empty).Replace("\n", string.Empty);
-                
+
                 // Assert result
                 Assert.IsNotNull(errors);
                 Assert.AreEqual(0, errors.Length);
