@@ -15,6 +15,7 @@
     <iconUrl>https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png</iconUrl>
     <dependencies>
       <dependency id="bootstrap" version="3.3.7" />
+      <dependency id="jquery.jstree" version="3.3.1.1" />
     </dependencies>
   </metadata>
   <files>
