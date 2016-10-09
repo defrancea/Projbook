@@ -19,7 +19,8 @@ namespace Projbook.Tests.Utilities
             IFileSystem fileSystem = new MockFileSystem();
 
             // Compute directory path
-            string directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "Plugins");
+            string workingDirectory = Path.GetDirectoryName(typeof(TestsUtilities).Assembly.Location);
+            string directoryPath = Path.Combine(workingDirectory, "Resources", "Plugins");
 
             // Create extension directory if missing in both virtual and real file system
             DirectoryInfoBase extensionDirectory = fileSystem.Directory.CreateDirectory(directoryPath); ;
@@ -29,9 +30,9 @@ namespace Projbook.Tests.Utilities
             }
             
             // Ensure extension copied
-            EnsureFileCopied(Directory.GetCurrentDirectory(), directoryPath, "Projbook.Extension.CSharpExtractor.dll");
-            EnsureFileCopied(Directory.GetCurrentDirectory(), directoryPath, "Projbook.Extension.XmlExtractor.dll");
-            EnsureFileCopied(Directory.GetCurrentDirectory(), directoryPath, "Projbook.Extension.FileSystemExtractor.dll");
+            EnsureFileCopied(workingDirectory, directoryPath, "Projbook.Extension.CSharpExtractor.dll");
+            EnsureFileCopied(workingDirectory, directoryPath, "Projbook.Extension.XmlExtractor.dll");
+            EnsureFileCopied(workingDirectory, directoryPath, "Projbook.Extension.FileSystemExtractor.dll");
 
             // Return extension directory
             return extensionDirectory;

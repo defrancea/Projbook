@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using Projbook.Extension.Model;
 using Projbook.Extension.Spi;
 using System.Linq;
 using System.IO;
 using Projbook.Extension.Exception;
+using EnsureThat;
 
 namespace Projbook.Extension.FileSystemExtractor
 {
@@ -60,13 +60,11 @@ namespace Projbook.Extension.FileSystemExtractor
         protected DirectoryInfoBase ConvertToDirectory(FileSystemInfoBase fileSystemInfo)
         {
             // Data validation
-            if (null == fileSystemInfo)
-                throw new ArgumentNullException("fileSystemInfo");
+            Ensure.That(() => fileSystemInfo).IsNotNull();
 
             // Cast to DirectoryInfo
             DirectoryInfoBase directoryInfo = fileSystemInfo as DirectoryInfoBase;
-            if (null == directoryInfo)
-                throw new ArgumentException("directoryInfo");
+            Ensure.That(() => directoryInfo).IsNotNull();
 
             // Return as directory
             return directoryInfo;

@@ -36,10 +36,14 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ensure.That, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ensure.That.5.0.0\lib\net45\Ensure.That.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.IO.Abstractions, Version=2.0.0.124, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.Abstractions.2.0.0.124\lib\net40\System.IO.Abstractions.dll</HintPath>
+    <Reference Include="System.IO.Abstractions, Version=2.0.0.136, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Abstractions.2.0.0.136\lib\net40\System.IO.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
@@ -54,33 +58,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\themes\default-dark\Thumbs.db" />
-    <None Include="Content\themes\default\Thumbs.db" />
     <None Include="packages.config" />
-    <None Include="Scripts\jquery-1.9.1.min.map" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Projbook.Extension\Projbook.Extension.csproj">
       <Project>{8338b756-0519-4d20-ba04-3a8f4839237a}</Project>
       <Name>Projbook.Extension</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Content\themes\default-dark\32px.png" />
-    <Content Include="Content\themes\default-dark\40px.png" />
-    <Content Include="Content\themes\default-dark\style.css" />
-    <Content Include="Content\themes\default-dark\style.min.css" />
-    <Content Include="Content\themes\default-dark\throbber.gif" />
-    <Content Include="Content\themes\default\32px.png" />
-    <Content Include="Content\themes\default\40px.png" />
-    <Content Include="Content\themes\default\style.css" />
-    <Content Include="Content\themes\default\style.min.css" />
-    <Content Include="Content\themes\default\throbber.gif" />
-    <Content Include="Scripts\jquery-1.9.1.intellisense.js" />
-    <Content Include="Scripts\jquery-1.9.1.js" />
-    <Content Include="Scripts\jquery-1.9.1.min.js" />
-    <Content Include="Scripts\jstree.js" />
-    <Content Include="Scripts\jstree.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

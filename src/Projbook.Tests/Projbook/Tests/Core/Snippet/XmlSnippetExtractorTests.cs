@@ -71,6 +71,7 @@ namespace Projbook.Tests.Core.Snippet
             Extension.Model.PlainTextSnippet snippet = new XmlSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName(fileName), pattern) as Extension.Model.PlainTextSnippet;
 
             // Assert
+            expectedFile = expectedFile.Replace('/', this.FileSystem.Path.DirectorySeparatorChar);
             Assert.AreEqual(this.FileSystem.File.ReadAllText(expectedFile), snippet.Text.Replace("\r\n", "\n"));
         }
 
@@ -78,22 +79,24 @@ namespace Projbook.Tests.Core.Snippet
         /// Tests extract snippet with invalid rule.
         /// </summary>
         [Test]
-        [ExpectedException(ExpectedException = typeof(SnippetExtractionException), ExpectedMessage = "Invalid extraction rule")]
         public void ExtractSnippetInvalidRule()
         {
             // Run the extraction
-            new XmlSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName("Source/Simple.xml"), "abc abc(abc");
+            Assert.Throws(
+                Is.TypeOf<SnippetExtractionException>().And.Message.EqualTo("Invalid extraction rule"),
+                () => new XmlSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName("Source/Simple.xml"), "abc abc(abc"));
         }
 
         /// <summary>
         /// Tests extract snippet with non matching member.
         /// </summary>
         [Test]
-        [ExpectedException(ExpectedException = typeof(SnippetExtractionException), ExpectedMessage = "Cannot find member")]
         public void ExtractSnippetNotFound()
         {
             // Run the extraction
-            new XmlSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName("Source/Simple.xml"), "//DoesntExist");
+            Assert.Throws(
+                Is.TypeOf<SnippetExtractionException>().And.Message.EqualTo("Cannot find member"),
+                () => new XmlSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName("Source/Simple.xml"), "//DoesntExist"));
         }
     }
 }

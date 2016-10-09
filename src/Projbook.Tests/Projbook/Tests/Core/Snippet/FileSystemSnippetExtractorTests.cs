@@ -171,13 +171,16 @@ namespace Projbook.Tests.Core.Snippet
         /// Tests extract snippet with a wrong root.
         /// </summary>
         [Test]
-        [ExpectedException(ExpectedException = typeof(SnippetExtractionException), ExpectedMessage = "Cannot find directory")]
         public void ExtractSnippetWrongRoot()
         {
-            // Run the extraction
+            // Prepare the extraction
             FileSystemSnippetExtractor extractor = new FileSystemSnippetExtractor();
             DirectoryInfoBase directoryInfoBase = fileSystem.DirectoryInfo.FromDirectoryName("FooBar");
-            NodeSnippet snippet = extractor.Extract(directoryInfoBase, null) as NodeSnippet;
+
+            // Run the extraction
+            Assert.Throws(
+                Is.TypeOf<SnippetExtractionException>().And.Message.EqualTo("Cannot find directory"),
+                () => extractor.Extract(directoryInfoBase, null));
         }
     }
 }

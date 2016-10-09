@@ -93,7 +93,7 @@ namespace Projbook.Core
                             }
 
                             // Report original index-based generation error
-                            catch (System.Exception exception)
+                            catch (System.Exception)
                             {
                                 capturedException.Throw();
                             }
@@ -133,6 +133,7 @@ namespace Projbook.Core
             string originalIndexTemplateValue = indexConfiguration.Template;
             if (!string.IsNullOrWhiteSpace(indexConfiguration.Template))
             {
+                indexConfiguration.Template = indexConfiguration.Template.Replace('/', this.fileSystem.Path.DirectorySeparatorChar);
                 indexConfiguration.Template = this.fileSystem.Path.Combine(projectLocation, indexConfiguration.Template);
             }
 
@@ -153,6 +154,7 @@ namespace Projbook.Core
                 string originalHtmlTemplateValue = configuration.TemplateHtml;
                 if (!string.IsNullOrWhiteSpace(configuration.TemplateHtml))
                 {
+                    configuration.TemplateHtml = configuration.TemplateHtml.Replace('/', this.fileSystem.Path.DirectorySeparatorChar);
                     configuration.TemplateHtml = this.fileSystem.Path.Combine(projectLocation, configuration.TemplateHtml);
                 }
 
@@ -160,6 +162,7 @@ namespace Projbook.Core
                 string originalPdfTemplateValue = configuration.TemplatePdf;
                 if (!string.IsNullOrWhiteSpace(configuration.TemplatePdf))
                 {
+                    configuration.TemplatePdf = configuration.TemplatePdf.Replace('/', this.fileSystem.Path.DirectorySeparatorChar);
                     configuration.TemplatePdf = this.fileSystem.Path.Combine(projectLocation, configuration.TemplatePdf);
                 }
 
@@ -201,9 +204,9 @@ namespace Projbook.Core
                     foreach (Page page in configuration.Pages)
                     {
                         string pagePath = this.fileSystem.Path.Combine(projectLocation, page.Path);
-                        if (this.fileSystem.File.Exists(page.Path))
+                        if (this.fileSystem.File.Exists(pagePath))
                         {
-                            page.FileSystemPath = pagePath;
+                            page.FileSystemPath = pagePath.Replace('/', this.fileSystem.Path.DirectorySeparatorChar);
                         }
                         else
                         {
@@ -314,7 +317,7 @@ namespace Projbook.Core
             foreach (string reference in references)
             {
                 // Match and process each matching
-                Regex regex = new Regex(string.Format(regexTemplate, reference));
+                Regex regex = new Regex(string.Format(regexTemplate, reference.Replace("\\", "\\\\")));
                 foreach (Match match in regex.Matches(content))
                 {
                     // Initialize the line and lastLine index to 1 as default value
