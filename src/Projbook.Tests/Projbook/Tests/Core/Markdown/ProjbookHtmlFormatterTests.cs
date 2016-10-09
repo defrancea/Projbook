@@ -45,10 +45,20 @@ namespace Projbook.Tests.Core
         }
 
         /// <summary>
+        /// Tests with invalid null input.
+        /// </summary>
+        [Test]
+        public void NullInit()
+        {
+            Assert.Throws(
+                Is.TypeOf<ArgumentNullException>(),
+                () => new ProjbookHtmlFormatter(null, this.StreamWriter, CommonMarkSettings.Default, 0, null, null));
+        }
+
+        /// <summary>
         /// Tests with invalid input.
         /// </summary>
         [Test]
-        [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
         public void WrongInit(string contextName)
