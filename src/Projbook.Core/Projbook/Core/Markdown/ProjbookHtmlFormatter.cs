@@ -142,10 +142,10 @@ namespace Projbook.Core.Markdown
             }
 
             // Filter opening header
-            if (isOpening && null != block && block.Tag == BlockTag.AtxHeader)
+            if (isOpening && null != block && block.Tag == BlockTag.AtxHeading)
             {
                 // Apply section title base
-                block.HeaderLevel += this.sectionTitleBase;
+                block.Heading = new HeadingData(block.Heading.Level + this.sectionTitleBase);
 
                 // Retrieve header content
                 string headerContent;
@@ -181,7 +181,7 @@ namespace Projbook.Core.Markdown
                 this.writer.Flush();
 
                 // Add a new page break
-                this.pageBreak.Add(new PageBreakInfo(sectionId, Math.Max(0, block.HeaderLevel), headerContent, this.writer.BaseStream.Position));
+                this.pageBreak.Add(new PageBreakInfo(sectionId, Math.Max(0, (int)block.Heading.Level), headerContent, this.writer.BaseStream.Position));
 
                 // Initialize section conflict
                 sectionConflict[sectionId] = 1;

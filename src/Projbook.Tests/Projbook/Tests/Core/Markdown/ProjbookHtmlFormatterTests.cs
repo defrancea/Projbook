@@ -91,7 +91,7 @@ namespace Projbook.Tests.Core
         public void WriteEmptyHeader()
         {
             // Process
-            Block block = new Block(BlockTag.AtxHeader, 0);
+            Block block = new Block(BlockTag.AtxHeading, 0);
             string output = this.Process(block);
 
             // Assert
@@ -110,7 +110,7 @@ namespace Projbook.Tests.Core
         public void WriteSimpleHeader()
         {
             // Process
-            Block block = new Block(BlockTag.AtxHeader, 0);
+            Block block = new Block(BlockTag.AtxHeading, 0);
             block.InlineContent = new Inline("title");
             string output = this.Process(block);
 
@@ -133,7 +133,7 @@ namespace Projbook.Tests.Core
             this.Formatter = new ProjbookHtmlFormatter("page", this.StreamWriter, CommonMarkSettings.Default, 42, new System.Collections.Generic.Dictionary<Guid, Extension.Model.Snippet>(), string.Empty);
 
             // Process
-            Block block = new Block(BlockTag.AtxHeader, 0);
+            Block block = new Block(BlockTag.AtxHeading, 0);
             block.InlineContent = new Inline("title");
             string output = this.Process(block);
 
@@ -155,7 +155,7 @@ namespace Projbook.Tests.Core
             // Process
             Block block = new Block(BlockTag.Document, 0);
             block.InlineContent = new Inline("pre content");
-            Block block1 = new Block(BlockTag.AtxHeader, 0);
+            Block block1 = new Block(BlockTag.AtxHeading, 0);
             block1.InlineContent = new Inline("title");
             block.FirstChild = block1;
             string output = this.Process(block);
@@ -176,8 +176,8 @@ namespace Projbook.Tests.Core
         public void WriteSimpleHeaderLevel()
         {
             // Process
-            Block block = new Block(BlockTag.AtxHeader, 0);
-            block.HeaderLevel = 42;
+            Block block = new Block(BlockTag.AtxHeading, 0);
+            block.Heading = new HeadingData(42);
             string output = this.Process(block);
 
             // Assert
@@ -196,7 +196,7 @@ namespace Projbook.Tests.Core
         public void WriteHeaderToLower()
         {
             // Process
-            Block block = new Block(BlockTag.AtxHeader, 0);
+            Block block = new Block(BlockTag.AtxHeading, 0);
             block.InlineContent = new Inline("Title");
             string output = this.Process(block);
 
@@ -216,7 +216,7 @@ namespace Projbook.Tests.Core
         public void WriteHeaderEncode()
         {
             // Process
-            Block block = new Block(BlockTag.AtxHeader, 0);
+            Block block = new Block(BlockTag.AtxHeading, 0);
             block.InlineContent = new Inline("This is a & super content en Français ?");
             string output = this.Process(block);
 
@@ -236,9 +236,9 @@ namespace Projbook.Tests.Core
         public void WriteHeaderConflict()
         {
             // Process
-            Block block1 = new Block(BlockTag.AtxHeader, 0);
+            Block block1 = new Block(BlockTag.AtxHeading, 0);
             block1.InlineContent = new Inline("Title");
-            Block block2 = new Block(BlockTag.AtxHeader, 0);
+            Block block2 = new Block(BlockTag.AtxHeading, 0);
             block2.InlineContent = new Inline("Title");
             Block block = new Block(BlockTag.Document, 0);
             block.FirstChild = block1;
@@ -264,9 +264,9 @@ namespace Projbook.Tests.Core
         public void WriteHeaderConflictSpecialChar()
         {
             // Process
-            Block block1 = new Block(BlockTag.AtxHeader, 0);
+            Block block1 = new Block(BlockTag.AtxHeading, 0);
             block1.InlineContent = new Inline("Title ?");
-            Block block2 = new Block(BlockTag.AtxHeader, 0);
+            Block block2 = new Block(BlockTag.AtxHeading, 0);
             block2.InlineContent = new Inline("Title !");
             Block block = new Block(BlockTag.Document, 0);
             block.FirstChild = block1;
@@ -292,9 +292,9 @@ namespace Projbook.Tests.Core
         public void WriteHeaderConflictWithEncodedChar()
         {
             // Process
-            Block block1 = new Block(BlockTag.AtxHeader, 0);
+            Block block1 = new Block(BlockTag.AtxHeading, 0);
             block1.InlineContent = new Inline("One/Title");
-            Block block2 = new Block(BlockTag.AtxHeader, 0);
+            Block block2 = new Block(BlockTag.AtxHeading, 0);
             block2.InlineContent = new Inline("One/Title");
             Block block = new Block(BlockTag.Document, 0);
             block.FirstChild = block1;
@@ -320,7 +320,7 @@ namespace Projbook.Tests.Core
         public void WriteChainedInlineHeader()
         {
             // Process
-            Block block = new Block(BlockTag.AtxHeader, 0);
+            Block block = new Block(BlockTag.AtxHeading, 0);
             block.InlineContent = new Inline("Title");
             block.InlineContent.NextSibling = new Inline(" in many");
             block.InlineContent.NextSibling.NextSibling = new Inline(" siblings");
