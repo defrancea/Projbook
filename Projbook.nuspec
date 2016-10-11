@@ -23,7 +23,6 @@
     <file src="resources/Projbook.props" target="build" exclude="" />
     <file src="resources/Install.ps1" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/Common.Logging.dll" target="tools" exclude="" />
-    <file src="src/Projbook.Core/bin/Release/Common.Logging.Core.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/CommonMark.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/Ensure.That.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/Newtonsoft.Json.dll" target="tools" exclude="" />
