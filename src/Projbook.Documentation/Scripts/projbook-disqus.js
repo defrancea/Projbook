@@ -1,5 +1,4 @@
-﻿function loadDisqus(rootPath, id)
-{
+﻿function loadDisqus(rootPath, id) {
     // Unload disqus
     unloadDisqus();
 
@@ -28,8 +27,7 @@
     });
 }
 
-function unloadDisqus(id)
-{
+function unloadDisqus(id) {
     // Remove disqus thread content
     $('#disqus_thread').remove();
 

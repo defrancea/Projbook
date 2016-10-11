@@ -9,12 +9,14 @@ git config user.email "defrancea@gmail.com"
 # files present with the commit message "Deploy to GitHub Pages".
 git checkout --orphan gh-pages
 git rm -rf .
-cp ./src/Projbook.Documentation/bin/Release/projbook.html index.html
+cp ./src/Projbook.Documentation/bin/Release/index.html index.html
+cp ./src/Projbook.Documentation/bin/Release/projbook.html projbook.html
 cp ./src/Projbook.Documentation/bin/Release/projbook-pdf.pdf projbook.pdf
 cp -R ./src/Projbook.Documentation/bin/Release/Content Content
 cp -R ./src/Projbook.Documentation/bin/Release/Scripts Scripts
 cp -R ./src/Projbook.Documentation/bin/Release/fonts fonts
 git add ./index.html
+git add ./projbook.html
 git add ./projbook.pdf
 git add ./Content
 git add ./fonts

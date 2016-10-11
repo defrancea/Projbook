@@ -18,13 +18,16 @@
     <script src="Scripts/prism.js"></script>
     <link href="Content/prism.css" rel="stylesheet" />
 
+    <!-- jsTree -->
+    <link href="Content/themes/default/style.min.css" rel="stylesheet" />
+
     <!-- Projbook -->
-    <link href="Content/projbook.css" rel="stylesheet">
+    <link href="Content/projbook.css" rel="stylesheet" />
 
     <!-- Disqus variables -->
     @{
-        string disqusRootPath = "http://defrancea.github.io/Projbook/";
-        string disqusIdentifier = "projbook";
+    string disqusRootPath = "http://defrancea.github.io/Projbook/";
+    string disqusIdentifier = "projbook";
     }
 </head>
 <body role="document">
@@ -66,7 +69,7 @@
                     <div id="@(section.Id)">
                         @(section.Content)
                     </div>
-
+                    
                     <!-- Disqus markup -->
                     <div>
                         <div class="text-right">
@@ -87,13 +90,34 @@
             </div>
         </div>
     </div>
-    <script src="Scripts/jquery-1.9.0.min.js"></script>
+    <script src="Scripts/jquery-1.9.1.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
     <script src="Scripts/projbook.js"></script>
-
+    
     <!-- Disqus scripts -->
     <script src="http://@(disqusIdentifier).disqus.com/embed.js"></script>
     <script id="dsq-count-scr" src="http://@(disqusIdentifier).disqus.com/count.js" async></script>
     <script src="Scripts/projbook-disqus.js"></script>
+    
+    <!-- JsTree scripts -->
+    <script src="Scripts/jstree.min.js"></script>
+    <script>
+        $(function () {
+            $('.filetree').each(function () {
+                $(this).jstree({
+                    'types': {
+                        'file': {
+                            'icon': 'jstree-file'
+                        },
+                        'folder': {
+                            'icon': 'jstree-folder'
+                        },
+                    },
+                    "plugins": ["types"]
+                });
+                $(this).jstree("open_all");
+            })
+        });
+    </script>
 </body>
 </html>

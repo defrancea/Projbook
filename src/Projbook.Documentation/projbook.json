@@ -1,22 +1,33 @@
 ﻿{
   "title": "Projbook",
-  "template-html": "template.html",
-  "output-html": "projbook.html",
-  "template-pdf": "template-pdf.html",
-  "output-pdf": "projbook-pdf.html",
-  "section-title-base": 1,
-  "pages": [
+  "description": "A kick-ass documentation generator!",
+  "template": "index-template.html",
+  "output": "index.html",
+  "icon": "https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png",
+  "configurations": [
     {
-      "title": "Jump start",
-      "path": "Page/jumpstart.md"
-    },
-    {
-      "title": "Template",
-      "path": "Page/template.md"
-    },
-    {
-      "title": "Reference",
-      "path": "Page/reference.md"
+      "title": "Projbook",
+      "description": "Main documentation",
+      "icon": "https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png",
+      "template-html": "template.html",
+      "output-html": "projbook.html",
+      "template-pdf": "template-pdf.html",
+      "output-pdf": "projbook-pdf.html",
+      "section-title-base": 1,
+      "pages": [
+        {
+          "title": "Jump start",
+          "path": "Page/jumpstart.md"
+        },
+        {
+          "title": "Template",
+          "path": "Page/template.md"
+        },
+        {
+          "title": "Reference",
+          "path": "Page/reference.md"
+        }
+      ]
     }
   ]
 }
