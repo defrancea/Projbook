@@ -2,6 +2,7 @@
 using CommonMark.Formatters;
 using CommonMark.Syntax;
 using EnsureThat;
+using Projbook.Extension.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,8 +36,8 @@ namespace Projbook.Core.Markdown
 
         /// <summary>
         /// Internal dictionary to resolve section conflicts.
-        /// In case of no conflict the dictionary will remaings empty, however any conflict will create a slot with an integer representing the next available index.
-        /// Everytime we meet a conflict, the section generation will increment the index and use it as suffix.
+        /// In case of no conflict the dictionary will remain empty, however any conflict will create a slot with an integer representing the next available index.
+        /// Every time we meet a conflict, the section generation will increment the index and use it as suffix.
         /// </summary>
         private Dictionary<string, int> sectionConflict = new Dictionary<string, int>();
 
@@ -61,25 +62,41 @@ namespace Projbook.Core.Markdown
         private int sectionTitleBase;
 
         /// <summary>
+        /// The snippet dictionary containing all snippets associated with guids.
+        /// </summary>
+        private Dictionary<Guid, Extension.Model.Snippet> snippetDictionary;
+
+        /// <summary>
+        /// The snippet reference prefix.
+        /// </summary>
+        private string snippetReferencePrefix;
+
+        /// <summary>
         /// Initializes a new instance of <see cref="ProjbookHtmlFormatter"/>.
         /// </summary>
         /// <param name="contextName">Initializes the required <see cref="ContextName"/></param>
-        /// <param name="target">Initializes the required text writter used as output.</param>
+        /// <param name="target">Initializes the required text writer used as output.</param>
         /// <param name="settings">Initializes the required common mark settings used by the formatting.</param>
         /// <param name="sectionTitleBase">Initializes the section title base.</param>
-        public ProjbookHtmlFormatter(string contextName, TextWriter target, CommonMarkSettings settings, int sectionTitleBase)
+        /// <param name="snippetDictionary">Initializes the snippet directory.</param>
+        /// <param name="snippetReferencePrefix">Initializes the snippet reference prefix.</param>
+        public ProjbookHtmlFormatter(string contextName, TextWriter target, CommonMarkSettings settings, int sectionTitleBase, Dictionary<Guid, Extension.Model.Snippet> snippetDictionary, string snippetReferencePrefix)
             : base(target, settings)
         {
             // Data validation
             Ensure.That(() => contextName).IsNotNullOrWhiteSpace();
             Ensure.That(target is StreamWriter).IsTrue();
             Ensure.That(() => sectionTitleBase).IsGte(0);
+            Ensure.That(() => snippetDictionary).IsNotNull();
+            Ensure.That(() => snippetReferencePrefix).IsNotNull();
 
             // Initialize
             this.ContextName = contextName;
             this.pageBreak = new List<PageBreakInfo>();
             this.writer = target as StreamWriter;
             this.sectionTitleBase = sectionTitleBase;
+            this.snippetDictionary = snippetDictionary;
+            this.snippetReferencePrefix = snippetReferencePrefix;
         }
 
         /// <summary>
@@ -92,11 +109,43 @@ namespace Projbook.Core.Markdown
         /// <param name="ignoreChildNodes">return whether the processing ignored child nodes.</param>
         protected override void WriteBlock(Block block, bool isOpening, bool isClosing, out bool ignoreChildNodes)
         {
+            // Process block content
+            if (null != block.StringContent)
+            {
+                // Read current block content
+                string content = block.StringContent.TakeFromStart(block.StringContent.Length);
+
+                // Detect snippet reference
+                if (content.StartsWith(snippetReferencePrefix))
+                {
+                    // Fetch matching snippet
+                    Extension.Model.Snippet snippet = snippetDictionary[Guid.Parse(content.Substring(snippetReferencePrefix.Length))];
+
+                    // Render and write plain text snippet
+                    PlainTextSnippet plainTextSnippet = snippet as PlainTextSnippet;
+                    if (null != plainTextSnippet)
+                    {
+                        block.StringContent.Replace(plainTextSnippet.Text, 0, plainTextSnippet.Text.Length);
+                    }
+
+                    // Render and write node snippet
+                    NodeSnippet nodeSnippet = snippet as NodeSnippet;
+                    if (null != nodeSnippet)
+                    {
+                        // Render node as html
+                        string renderedNode = Render(nodeSnippet.Node);
+
+                        // Write rendering
+                        block.StringContent.Replace(renderedNode, 0, renderedNode.Length);
+                    }
+                }
+            }
+
             // Filter opening header
-            if (isOpening && null != block && block.Tag == BlockTag.AtxHeader)
+            if (isOpening && null != block && block.Tag == BlockTag.AtxHeading)
             {
                 // Apply section title base
-                block.HeaderLevel += this.sectionTitleBase;
+                block.Heading = new HeadingData(block.Heading.Level + this.sectionTitleBase);
 
                 // Retrieve header content
                 string headerContent;
@@ -132,7 +181,7 @@ namespace Projbook.Core.Markdown
                 this.writer.Flush();
 
                 // Add a new page break
-                this.pageBreak.Add(new PageBreakInfo(sectionId, headerContent, this.writer.BaseStream.Position));
+                this.pageBreak.Add(new PageBreakInfo(sectionId, Math.Max(0, (int)block.Heading.Level), headerContent, this.writer.BaseStream.Position));
 
                 // Initialize section conflict
                 sectionConflict[sectionId] = 1;
@@ -236,6 +285,56 @@ namespace Projbook.Core.Markdown
             
             // Trigger parent rendering for the default html rendering
             base.WriteBlock(block, isOpening, isClosing, out ignoreChildNodes);
+        }
+        
+        /// <summary>
+        /// Renders <see cref="Node"/>.
+        /// </summary>
+        /// <param name="node">The node to render.</param>
+        private string Render (Node node)
+        {
+            // Data validation
+            Ensure.That(() => node).IsNotNull();
+
+            // Initialize string builder for rendering
+            StringBuilder stringBuilder = new StringBuilder();
+
+            // Render tree
+            stringBuilder.Append(@"<div class=""filetree"">");
+            Render(node, stringBuilder);
+            stringBuilder.Append("</div>");
+
+            // Return built string
+            return stringBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Renders <see cref="Node"/>.
+        /// </summary>
+        /// <param name="node">The node to render.</param>
+        /// <param name="stringBuilder">The string builder used as rendering output.</param>
+        private void Render(Node node, StringBuilder stringBuilder)
+        {
+            // Data validation
+            Ensure.That(() => node).IsNotNull();
+            Ensure.That(() => stringBuilder).IsNotNull();
+
+            // Render node opening
+            stringBuilder.Append("<ul>");
+            stringBuilder.Append(@"<li data-jstree='{""type"":""");
+            stringBuilder.Append(node.IsLeaf ? "file" : "folder");
+            stringBuilder.Append(@"""}'>");
+            stringBuilder.Append(node.Name);
+
+            // Recurse for children
+            foreach (Node currentNode in node.Children.OrderBy(x => x.Key).Select(x => x.Value))
+            {
+                Render(currentNode, stringBuilder);
+            }
+
+            // Render node closing
+            stringBuilder.Append("</li>");
+            stringBuilder.Append("</ul>");
         }
     }
 }

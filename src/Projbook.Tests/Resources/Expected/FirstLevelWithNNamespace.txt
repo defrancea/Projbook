@@ -1,7 +1,0 @@
-﻿<n:FirstLevelWithNNamespace>
-  <m:SecondLevelWithMNamespace
-    FirstAttributeName="FirstAttributeValue"
-    SecondAttributeName="SecondAttributeValue" />
-  <FirstLevelNoNamespace
-    WithSome="Attribute" />
-</n:FirstLevelWithNNamespace>

@@ -1,10 +1,11 @@
 ﻿using NUnit.Framework;
-using Projbook.Core.Exception;
-using Projbook.Core.Snippet;
-using Projbook.Core.Snippet.CSharp;
-using System;
+using Projbook.Extension.CSharpExtractor;
+using Projbook.Extension.Exception;
+using Projbook.Extension.Spi;
+using Projbook.Tests.Resources;
 using System.Collections.Generic;
-using System.IO;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 
 namespace Projbook.Tests.Core.Snippet
 {
@@ -12,12 +13,88 @@ namespace Projbook.Tests.Core.Snippet
     /// Tests <see cref="CSharpSnippetExtractor"/>.
     /// </summary>
     [TestFixture]
-    public class CSharpSnippetExtractorTests : AbstractTests
+    public class CSharpSnippetExtractorTests
     {
+        /// <summary>
+        /// Represents a file system abstraction.
+        /// </summary>
+        public IFileSystem FileSystem { get; private set; }
+
         /// <summary>
         /// Use a cache for unit testing in order to speed up execution and simulate an actual usage.
         /// </summary>
         private Dictionary<string, ISnippetExtractor> extractorCache = new Dictionary<string, ISnippetExtractor>();
+
+        /// <summary>
+        /// Initializes the test.
+        /// </summary>
+        [SetUp]
+        public void Setup()
+        {
+            // Mock file system
+            this.FileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
+            {
+                { "Source/AnyClass.cs", new MockFileData(SourceCSharpFiles.AnyClass) },
+                { "Source/Sample.cs", new MockFileData(SourceCSharpFiles.Sample) },
+                { "Source/NeedCleanup.cs", new MockFileData(SourceCSharpFiles.NeedCleanup) },
+                { "Source/Empty.cs", new MockFileData(SourceCSharpFiles.Empty) },
+                { "Source/Options.cs", new MockFileData(SourceCSharpFiles.Options) },
+                { "Expected/AnyClass.txt", new MockFileData(ExpectedCSharpFiles.AnyClass) },
+                { "Expected/NS.txt", new MockFileData(ExpectedCSharpFiles.NS) },
+                { "Expected/OneClassSomewhere.txt", new MockFileData(ExpectedCSharpFiles.OneClassSomewhere) },
+                { "Expected/I.txt", new MockFileData(ExpectedCSharpFiles.I) },
+                { "Expected/SubClass.txt", new MockFileData(ExpectedCSharpFiles.SubClass) },
+                { "Expected/FieldSomewhere.txt", new MockFileData(ExpectedCSharpFiles.FieldSomewhere) },
+                { "Expected/ArrayField.txt", new MockFileData(ExpectedCSharpFiles.ArrayField) },
+                { "Expected/WhateverProperty.txt", new MockFileData(ExpectedCSharpFiles.WhateverProperty) },
+                { "Expected/WhateverPropertyget.txt", new MockFileData(ExpectedCSharpFiles.WhateverPropertyget) },
+                { "Expected/WhateverPropertyset.txt", new MockFileData(ExpectedCSharpFiles.WhateverPropertyset) },
+                { "Expected/Indexer.txt", new MockFileData(ExpectedCSharpFiles.Indexer) },
+                { "Expected/Indexerget.txt", new MockFileData(ExpectedCSharpFiles.Indexerget) },
+                { "Expected/Indexerset.txt", new MockFileData(ExpectedCSharpFiles.Indexerset) },
+                { "Expected/get.txt", new MockFileData(ExpectedCSharpFiles.get) },
+                { "Expected/set.txt", new MockFileData(ExpectedCSharpFiles.set) },
+                { "Expected/Event.txt", new MockFileData(ExpectedCSharpFiles.Event) },
+                { "Expected/Eventadd.txt", new MockFileData(ExpectedCSharpFiles.Eventadd) },
+                { "Expected/Eventremove.txt", new MockFileData(ExpectedCSharpFiles.Eventremove) },
+                { "Expected/Foo.txt", new MockFileData(ExpectedCSharpFiles.Foo) },
+                { "Expected/FooString.txt", new MockFileData(ExpectedCSharpFiles.FooString) },
+                { "Expected/FooStringInt.txt", new MockFileData(ExpectedCSharpFiles.FooStringInt) },
+                { "Expected/IMethod.txt", new MockFileData(ExpectedCSharpFiles.IMethod) },
+                { "Expected/NSNS2NS3.txt", new MockFileData(ExpectedCSharpFiles.NSNS2NS3) },
+                { "Expected/NSNS2NS3A.txt", new MockFileData(ExpectedCSharpFiles.NSNS2NS3A) },
+                { "Expected/NS2.txt", new MockFileData(ExpectedCSharpFiles.NS2) },
+                { "Expected/NS2NS2NS3.txt", new MockFileData(ExpectedCSharpFiles.NS2NS2NS3) },
+                { "Expected/NS2NS2NS3A.txt", new MockFileData(ExpectedCSharpFiles.NS2NS2NS3A) },
+                { "Expected/Constructor.txt", new MockFileData(ExpectedCSharpFiles.Constructor) },
+                { "Expected/Destructor.txt", new MockFileData(ExpectedCSharpFiles.Destructor) },
+                { "Expected/GenericClass.txt", new MockFileData(ExpectedCSharpFiles.GenericClass) },
+                { "Expected/GenericMethod.txt", new MockFileData(ExpectedCSharpFiles.GenericMethod) },
+                { "Expected/NS2NS3.txt", new MockFileData(ExpectedCSharpFiles.NS2NS3) },
+                { "Expected/A.txt", new MockFileData(ExpectedCSharpFiles.A) },
+                { "Expected/NeedCleanup.txt", new MockFileData(ExpectedCSharpFiles.NeedCleanup) },
+                { "Expected/NeedCleanupClass.txt", new MockFileData(ExpectedCSharpFiles.NeedCleanupClass) },
+                { "Expected/Empty.txt", new MockFileData(ExpectedCSharpFiles.Empty) },
+                { "Expected/BlockOnlyClass.txt", new MockFileData(ExpectedCSharpFiles.BlockOnlyClass) },
+                { "Expected/BlockOnlyMethod.txt", new MockFileData(ExpectedCSharpFiles.BlockOnlyMethod) },
+                { "Expected/BlockOnlyEmptyMethod.txt", new MockFileData(ExpectedCSharpFiles.BlockOnlyEmptyMethod) },
+                { "Expected/BlockOnlyProperty.txt", new MockFileData(ExpectedCSharpFiles.BlockOnlyProperty) },
+                { "Expected/BlockOnlyEvent.txt", new MockFileData(ExpectedCSharpFiles.BlockOnlyEvent) },
+                { "Expected/BlockOnlyEventadd.txt", new MockFileData(ExpectedCSharpFiles.BlockOnlyEventadd) },
+                { "Expected/BlockOnlyEscapedMethod.txt", new MockFileData(ExpectedCSharpFiles.BlockOnlyEscapedMethod) },
+                { "Expected/BlockOnlyEscapedMethod2.txt", new MockFileData(ExpectedCSharpFiles.BlockOnlyEscapedMethod2) },
+                { "Expected/BlockOnlyEscapedClass.txt", new MockFileData(ExpectedCSharpFiles.BlockOnlyEscapedClass) },
+                { "Expected/BlockOnlyEscapedClass2.txt", new MockFileData(ExpectedCSharpFiles.BlockOnlyEscapedClass2) },
+                { "Expected/ContentOnlyClass.txt", new MockFileData(ExpectedCSharpFiles.ContentOnlyClass) },
+                { "Expected/ContentOnlyMethod.txt", new MockFileData(ExpectedCSharpFiles.ContentOnlyMethod) },
+                { "Expected/ContentOnlyProperty.txt", new MockFileData(ExpectedCSharpFiles.ContentOnlyProperty) },
+                { "Expected/ContentOnlyEvent.txt", new MockFileData(ExpectedCSharpFiles.ContentOnlyEvent) },
+                { "Expected/ContentOnlyEventadd.txt", new MockFileData(ExpectedCSharpFiles.ContentOnlyEventadd) },
+                { "Expected/ContentOnlyEscapedClass.txt", new MockFileData(ExpectedCSharpFiles.ContentOnlyEscapedClass) },
+                { "Expected/ContentOnlyEscapedClass2.txt", new MockFileData(ExpectedCSharpFiles.ContentOnlyEscapedClass2) },
+                { "Expected/ContentOnlyEscapedMethod.txt", new MockFileData(ExpectedCSharpFiles.ContentOnlyEscapedMethod) }
+            });
+        }
 
         /// <summary>
         /// Tests extract snippet.
@@ -28,188 +105,191 @@ namespace Projbook.Tests.Core.Snippet
         [Test]
 
         // Whole file
-        [TestCase("AnyClass.cs", "", "AnyClass.txt")]
-        [TestCase("AnyClass.cs", null, "AnyClass.txt")]
-        [TestCase("AnyClass.cs", "   ", "AnyClass.txt")]
+        [TestCase("Source/AnyClass.cs", "", "Expected/AnyClass.txt")]
+        [TestCase("Source/AnyClass.cs", null, "Expected/AnyClass.txt")]
+        [TestCase("Source/AnyClass.cs", "   ", "Expected/AnyClass.txt")]
 
         // Simple matching
-        [TestCase("Sample.cs", "NS", "NS.txt")]
+        [TestCase("Source/Sample.cs", "NS", "Expected/NS.txt")]
 
         // Match class
-        [TestCase("Sample.cs", "NS.OneClassSomewhere", "OneClassSomewhere.txt")]
-        [TestCase("Sample.cs", "OneClassSomewhere", "OneClassSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "NS.OneClassSomewhere", "Expected/OneClassSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "OneClassSomewhere", "Expected/OneClassSomewhere.txt")]
 
         // Match interface
-        [TestCase("Sample.cs", "NS2.NS2.NS3.I", "I.txt")]
-        [TestCase("Sample.cs", "I", "I.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.I", "Expected/I.txt")]
+        [TestCase("Source/Sample.cs", "I", "Expected/I.txt")]
 
         // Match subclass
-        [TestCase("Sample.cs", "NS.OneClassSomewhere.SubClass", "SubClass.txt")]
-        [TestCase("Sample.cs", "OneClassSomewhere.SubClass", "SubClass.txt")]
-        [TestCase("Sample.cs", "SubClass", "SubClass.txt")]
+        [TestCase("Source/Sample.cs", "NS.OneClassSomewhere.SubClass", "Expected/SubClass.txt")]
+        [TestCase("Source/Sample.cs", "OneClassSomewhere.SubClass", "Expected/SubClass.txt")]
+        [TestCase("Source/Sample.cs", "SubClass", "Expected/SubClass.txt")]
+
+        // Match field
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.WithField.aFieldSomewhere", "Expected/FieldSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "WithField.aFieldSomewhere", "Expected/FieldSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "aFieldSomewhere", "Expected/FieldSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.WithField.anotherFieldSomewhere", "Expected/FieldSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "WithField.anotherFieldSomewhere", "Expected/FieldSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "anotherFieldSomewhere", "Expected/FieldSomewhere.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.WithField.fieldArray", "Expected/ArrayField.txt")]
+        [TestCase("Source/Sample.cs", "WithField.fieldArray", "Expected/ArrayField.txt")]
+        [TestCase("Source/Sample.cs", "fieldArray", "Expected/ArrayField.txt")]
 
         // Match property
-        [TestCase("Sample.cs", "NS.OneClassSomewhere.SubClass.WhateverProperty", "WhateverProperty.txt")]
-        [TestCase("Sample.cs", "OneClassSomewhere.SubClass.WhateverProperty", "WhateverProperty.txt")]
-        [TestCase("Sample.cs", "SubClass.WhateverProperty", "WhateverProperty.txt")]
-        [TestCase("Sample.cs", "WhateverProperty", "WhateverProperty.txt")]
+        [TestCase("Source/Sample.cs", "NS.OneClassSomewhere.SubClass.WhateverProperty", "Expected/WhateverProperty.txt")]
+        [TestCase("Source/Sample.cs", "OneClassSomewhere.SubClass.WhateverProperty", "Expected/WhateverProperty.txt")]
+        [TestCase("Source/Sample.cs", "SubClass.WhateverProperty", "Expected/WhateverProperty.txt")]
+        [TestCase("Source/Sample.cs", "WhateverProperty", "Expected/WhateverProperty.txt")]
 
         // Match property getter
-        [TestCase("Sample.cs", "NS.OneClassSomewhere.SubClass.WhateverProperty.get", "WhateverPropertyget.txt")]
-        [TestCase("Sample.cs", "OneClassSomewhere.SubClass.WhateverProperty.get", "WhateverPropertyget.txt")]
-        [TestCase("Sample.cs", "SubClass.WhateverProperty.get", "WhateverPropertyget.txt")]
-        [TestCase("Sample.cs", "WhateverProperty.get", "WhateverPropertyget.txt")]
+        [TestCase("Source/Sample.cs", "NS.OneClassSomewhere.SubClass.WhateverProperty.get", "Expected/WhateverPropertyget.txt")]
+        [TestCase("Source/Sample.cs", "OneClassSomewhere.SubClass.WhateverProperty.get", "Expected/WhateverPropertyget.txt")]
+        [TestCase("Source/Sample.cs", "SubClass.WhateverProperty.get", "Expected/WhateverPropertyget.txt")]
+        [TestCase("Source/Sample.cs", "WhateverProperty.get", "Expected/WhateverPropertyget.txt")]
 
         // Match property setter
-        [TestCase("Sample.cs", "NS.OneClassSomewhere.SubClass.WhateverProperty.set", "WhateverPropertyset.txt")]
-        [TestCase("Sample.cs", "OneClassSomewhere.SubClass.WhateverProperty.set", "WhateverPropertyset.txt")]
-        [TestCase("Sample.cs", "SubClass.WhateverProperty.set", "WhateverPropertyset.txt")]
-        [TestCase("Sample.cs", "WhateverProperty.set", "WhateverPropertyset.txt")]
+        [TestCase("Source/Sample.cs", "NS.OneClassSomewhere.SubClass.WhateverProperty.set", "Expected/WhateverPropertyset.txt")]
+        [TestCase("Source/Sample.cs", "OneClassSomewhere.SubClass.WhateverProperty.set", "Expected/WhateverPropertyset.txt")]
+        [TestCase("Source/Sample.cs", "SubClass.WhateverProperty.set", "Expected/WhateverPropertyset.txt")]
+        [TestCase("Source/Sample.cs", "WhateverProperty.set", "Expected/WhateverPropertyset.txt")]
 
         // Match indexer
-        [TestCase("Sample.cs", "NS2.NS2.NS3.D.[string,int]", "Indexer.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.D.[string,int]", "Indexer.txt")]
-        [TestCase("Sample.cs", "D.[string,int]", "Indexer.txt")]
-        [TestCase("Sample.cs", "[string,int]", "Indexer.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.D.[string,int]", "Expected/Indexer.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS3.D.[string,int]", "Expected/Indexer.txt")]
+        [TestCase("Source/Sample.cs", "D.[string,int]", "Expected/Indexer.txt")]
+        [TestCase("Source/Sample.cs", "[string,int]", "Expected/Indexer.txt")]
 
         // Match indexer getter
-        [TestCase("Sample.cs", "NS2.NS2.NS3.D.[string,int].get", "Indexerget.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.D.[string,int].get", "Indexerget.txt")]
-        [TestCase("Sample.cs", "D.[string,int].get", "Indexerget.txt")]
-        [TestCase("Sample.cs", "[string,int].get", "Indexerget.txt")]
-
-        // Match all getter and setter
-        [TestCase("Sample.cs", "set", "set.txt")]
-        [TestCase("Sample.cs", "get", "get.txt")]
-
-        // Match event
-        [TestCase("Sample.cs", "NS2.NS2.NS3.D.Event", "Event.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.D.Event", "Event.txt")]
-        [TestCase("Sample.cs", "D.Event", "Event.txt")]
-        [TestCase("Sample.cs", "Event", "Event.txt")]
-
-        // Match event adder
-        [TestCase("Sample.cs", "NS2.NS2.NS3.D.Event.add", "Eventadd.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.D.Event.add", "Eventadd.txt")]
-        [TestCase("Sample.cs", "D.Event.add", "Eventadd.txt")]
-        [TestCase("Sample.cs", "Event.add", "Eventadd.txt")]
-        [TestCase("Sample.cs", "add", "Eventadd.txt")]
-
-        // Match event remover
-        [TestCase("Sample.cs", "NS2.NS2.NS3.D.Event.remove", "Eventremove.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.D.Event.remove", "Eventremove.txt")]
-        [TestCase("Sample.cs", "D.Event.remove", "Eventremove.txt")]
-        [TestCase("Sample.cs", "Event.remove", "Eventremove.txt")]
-        [TestCase("Sample.cs", "remove", "Eventremove.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.D.[string,int].get", "Expected/Indexerget.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS3.D.[string,int].get", "Expected/Indexerget.txt")]
+        [TestCase("Source/Sample.cs", "D.[string,int].get", "Expected/Indexerget.txt")]
+        [TestCase("Source/Sample.cs", "[string,int].get", "Expected/Indexerget.txt")]
 
         // Match indexer setter
-        [TestCase("Sample.cs", "NS2.NS2.NS3.D.[string, int].set", "Indexerset.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.D.[string, int].set", "Indexerset.txt")]
-        [TestCase("Sample.cs", "D.[string, int].set", "Indexerset.txt")]
-        [TestCase("Sample.cs", "[string, int].set", "Indexerset.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.D.[string,int].set", "Expected/Indexerset.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS3.D.[string,int].set", "Expected/Indexerset.txt")]
+        [TestCase("Source/Sample.cs", "D.[string,int].set", "Expected/Indexerset.txt")]
+        [TestCase("Source/Sample.cs", "[string,int].set", "Expected/Indexerset.txt")]
+
+        // Match all getter and setter
+        [TestCase("Source/Sample.cs", "set", "Expected/set.txt")]
+        [TestCase("Source/Sample.cs", "get", "Expected/get.txt")]
+
+        // Match event
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.D.Event", "Expected/Event.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS3.D.Event", "Expected/Event.txt")]
+        [TestCase("Source/Sample.cs", "D.Event", "Expected/Event.txt")]
+        [TestCase("Source/Sample.cs", "Event", "Expected/Event.txt")]
+
+        // Match event adder
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.D.Event.add", "Expected/Eventadd.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS3.D.Event.add", "Expected/Eventadd.txt")]
+        [TestCase("Source/Sample.cs", "D.Event.add", "Expected/Eventadd.txt")]
+        [TestCase("Source/Sample.cs", "Event.add", "Expected/Eventadd.txt")]
+        [TestCase("Source/Sample.cs", "add", "Expected/Eventadd.txt")]
+
+        // Match event remover
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.D.Event.remove", "Expected/Eventremove.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS3.D.Event.remove", "Expected/Eventremove.txt")]
+        [TestCase("Source/Sample.cs", "D.Event.remove", "Expected/Eventremove.txt")]
+        [TestCase("Source/Sample.cs", "Event.remove", "Expected/Eventremove.txt")]
+        [TestCase("Source/Sample.cs", "remove", "Expected/Eventremove.txt")]
 
         // Match method with overloads
-        [TestCase("Sample.cs", "NS.OneClassSomewhere.Foo", "Foo.txt")]
-        [TestCase("Sample.cs", "OneClassSomewhere.Foo", "Foo.txt")]
-        [TestCase("Sample.cs", "Foo", "Foo.txt")]
+        [TestCase("Source/Sample.cs", "NS.OneClassSomewhere.Foo", "Expected/Foo.txt")]
+        [TestCase("Source/Sample.cs", "OneClassSomewhere.Foo", "Expected/Foo.txt")]
+        [TestCase("Source/Sample.cs", "Foo", "Expected/Foo.txt")]
 
         // Match method signature
-        [TestCase("Sample.cs", "NS.OneClassSomewhere.Foo(string)", "FooString.txt")]
-        [TestCase("Sample.cs", "OneClassSomewhere.Foo(string)", "FooString.txt")]
-        [TestCase("Sample.cs", "Foo(string)", "FooString.txt")]
-        [TestCase("Sample.cs", "(string)", "FooString.txt")]
-        [TestCase("Sample.cs", "NS.OneClassSomewhere.Foo(string, int)", "FooStringInt.txt")]
-        [TestCase("Sample.cs", "OneClassSomewhere.Foo(string, int)", "FooStringInt.txt")]
-        [TestCase("Sample.cs", "Foo(string, int)", "FooStringInt.txt")]
-        [TestCase("Sample.cs", "(string, int)", "FooStringInt.txt")]
-        [TestCase("Sample.cs", "(bool, string, int)", "IMethod.txt")]
-        [TestCase("Sample.cs", "NS2.NS2.NS3.I.InterfaceMethod(bool, string, int)", "IMethod.txt")]
-        [TestCase("Sample.cs", "InterfaceMethod", "IMethod.txt")]
+        [TestCase("Source/Sample.cs", "NS.OneClassSomewhere.Foo(string)", "Expected/FooString.txt")]
+        [TestCase("Source/Sample.cs", "OneClassSomewhere.Foo(string)", "Expected/FooString.txt")]
+        [TestCase("Source/Sample.cs", "Foo(string)", "Expected/FooString.txt")]
+        [TestCase("Source/Sample.cs", "(string)", "Expected/FooString.txt")]
+        [TestCase("Source/Sample.cs", "NS.OneClassSomewhere.Foo(string, int)", "Expected/FooStringInt.txt")]
+        [TestCase("Source/Sample.cs", "OneClassSomewhere.Foo(string, int)", "Expected/FooStringInt.txt")]
+        [TestCase("Source/Sample.cs", "Foo(string, int)", "Expected/FooStringInt.txt")]
+        [TestCase("Source/Sample.cs", "(string, int)", "Expected/FooStringInt.txt")]
+        [TestCase("Source/Sample.cs", "(bool, string, int)", "Expected/IMethod.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.I.InterfaceMethod(bool, string, int)", "Expected/IMethod.txt")]
+        [TestCase("Source/Sample.cs", "InterfaceMethod", "Expected/IMethod.txt")]
 
         // Match sub namespace with overlapping
-        [TestCase("Sample.cs", "NS.NS2.NS3", "NSNS2NS3.txt")]
-        [TestCase("Sample.cs", "NS.NS2.NS3.A", "NSNS2NS3A.txt")]
-        [TestCase("Sample.cs", "NS2", "NS2.txt")]
-        [TestCase("Sample.cs", "NS2.NS2.NS3", "NS2NS2NS3.txt")]
-        [TestCase("Sample.cs", "NS2.NS2.NS3.A", "NS2NS2NS3A.txt")]
+        [TestCase("Source/Sample.cs", "NS.NS2.NS3", "Expected/NSNS2NS3.txt")]
+        [TestCase("Source/Sample.cs", "NS.NS2.NS3.A", "Expected/NSNS2NS3A.txt")]
+        [TestCase("Source/Sample.cs", "NS2", "Expected/NS2.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3", "Expected/NS2NS2NS3.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.A", "Expected/NS2NS2NS3A.txt")]
 
         // Match constructor
-        [TestCase("Sample.cs", "NS2.NS2.NS3.B.<Constructor>", "Constructor.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.B.<Constructor>", "Constructor.txt")]
-        [TestCase("Sample.cs", "B.<Constructor>", "Constructor.txt")]
-        [TestCase("Sample.cs", "<Constructor>", "Constructor.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.B.<Constructor>", "Expected/Constructor.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS3.B.<Constructor>", "Expected/Constructor.txt")]
+        [TestCase("Source/Sample.cs", "B.<Constructor>", "Expected/Constructor.txt")]
+        [TestCase("Source/Sample.cs", "<Constructor>", "Expected/Constructor.txt")]
 
         // Match destructor
-        [TestCase("Sample.cs", "NS2.NS2.NS3.B.<Destructor>", "Destructor.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.B.<Destructor>", "Destructor.txt")]
-        [TestCase("Sample.cs", "B.<Destructor>", "Destructor.txt")]
-        [TestCase("Sample.cs", "<Destructor>", "Destructor.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.B.<Destructor>", "Expected/Destructor.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS3.B.<Destructor>", "Expected/Destructor.txt")]
+        [TestCase("Source/Sample.cs", "B.<Destructor>", "Expected/Destructor.txt")]
+        [TestCase("Source/Sample.cs", "<Destructor>", "Expected/Destructor.txt")]
 
         // Match generic class
-        [TestCase("Sample.cs", "NS2.NS2.NS3.C{T, U}", "GenericClass.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.C{T, U}", "GenericClass.txt")]
-        [TestCase("Sample.cs", "C{T, U}", "GenericClass.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.C{T, U}", "Expected/GenericClass.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS3.C{T, U}", "Expected/GenericClass.txt")]
+        [TestCase("Source/Sample.cs", "C{T, U}", "Expected/GenericClass.txt")]
 
         // Match generic method
-        [TestCase("Sample.cs", "NS2.NS2.NS3.C{T, U}.CMethod{X, Y}", "GenericMethod.txt")]
-        [TestCase("Sample.cs", "NS2.NS3.C{T, U}.CMethod{X, Y}", "GenericMethod.txt")]
-        [TestCase("Sample.cs", "C{T, U}.CMethod{X, Y}", "GenericMethod.txt")]
-        [TestCase("Sample.cs", "CMethod{X, Y}", "GenericMethod.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS2.NS3.C{T, U}.CMethod{X, Y}", "Expected/GenericMethod.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS3.C{T, U}.CMethod{X, Y}", "Expected/GenericMethod.txt")]
+        [TestCase("Source/Sample.cs", "C{T, U}.CMethod{X, Y}", "Expected/GenericMethod.txt")]
+        [TestCase("Source/Sample.cs", "CMethod{X, Y}", "Expected/GenericMethod.txt")]
 
         // Aggregate namespaces
-        [TestCase("Sample.cs", "NS2.NS3", "NS2NS3.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS3", "Expected/NS2NS3.txt")]
 
         // Aggregate classes
-        [TestCase("Sample.cs", "NS2.NS3.A", "A.txt")]
-        [TestCase("Sample.cs", "A", "A.txt")]
+        [TestCase("Source/Sample.cs", "NS2.NS3.A", "Expected/A.txt")]
+        [TestCase("Source/Sample.cs", "A", "Expected/A.txt")]
 
         // Funky scenario
-        [TestCase("NeedCleanup.cs", "", "NeedCleanup.txt")]
-        [TestCase("NeedCleanup.cs", "NeedCleanup", "NeedCleanupClass.txt")]
-        [TestCase("Empty.cs", "", "Empty.txt")]
+        [TestCase("Source/NeedCleanup.cs", "", "Expected/NeedCleanup.txt")]
+        [TestCase("Source/NeedCleanup.cs", "NeedCleanup", "Expected/NeedCleanupClass.txt")]
+        [TestCase("Source/Empty.cs", "", "Expected/Empty.txt")]
 
         // Match block structure only
-        [TestCase("Options.cs", "=Options", "BlockOnlyClass.txt")]
-        [TestCase("Options.cs", "=Options.Method", "BlockOnlyMethod.txt")]
-        [TestCase("Options.cs", "=EmptyMethod", "BlockOnlyEmptyMethod.txt")]
-        [TestCase("Options.cs", "=Options.Property", "BlockOnlyProperty.txt")]
-        [TestCase("Options.cs", "=Options.Event", "BlockOnlyEvent.txt")]
-        [TestCase("Options.cs", "=Options.Event.add", "BlockOnlyEventadd.txt")]
-        [TestCase("Options.cs", "=Event.add", "BlockOnlyEventadd.txt")]
-        [TestCase("Options.cs", "=add", "BlockOnlyEventadd.txt")]
-        [TestCase("Options.cs", "=ConflictingCommentsClass.Method", "BlockOnlyEscapedMethod.txt")]
-        [TestCase("Options.cs", "=ConflictingCommentsClass2.Method", "BlockOnlyEscapedMethod2.txt")]
-        [TestCase("Options.cs", "=ConflictingCommentsClass", "BlockOnlyEscapedClass.txt")]
-        [TestCase("Options.cs", "=ConflictingCommentsClass2", "BlockOnlyEscapedClass2.txt")]
+        [TestCase("Source/Options.cs", "=Options", "Expected/BlockOnlyClass.txt")]
+        [TestCase("Source/Options.cs", "=Options.Method", "Expected/BlockOnlyMethod.txt")]
+        [TestCase("Source/Options.cs", "=EmptyMethod", "Expected/BlockOnlyEmptyMethod.txt")]
+        [TestCase("Source/Options.cs", "=Options.Property", "Expected/BlockOnlyProperty.txt")]
+        [TestCase("Source/Options.cs", "=Options.Event", "Expected/BlockOnlyEvent.txt")]
+        [TestCase("Source/Options.cs", "=Options.Event.add", "Expected/BlockOnlyEventadd.txt")]
+        [TestCase("Source/Options.cs", "=Event.add", "Expected/BlockOnlyEventadd.txt")]
+        [TestCase("Source/Options.cs", "=add", "Expected/BlockOnlyEventadd.txt")]
+        [TestCase("Source/Options.cs", "=ConflictingCommentsClass.Method", "Expected/BlockOnlyEscapedMethod.txt")]
+        [TestCase("Source/Options.cs", "=ConflictingCommentsClass2.Method", "Expected/BlockOnlyEscapedMethod2.txt")]
+        [TestCase("Source/Options.cs", "=ConflictingCommentsClass", "Expected/BlockOnlyEscapedClass.txt")]
+        [TestCase("Source/Options.cs", "=ConflictingCommentsClass2", "Expected/BlockOnlyEscapedClass2.txt")]
 
         // Match content only
-        [TestCase("Options.cs", "-Options", "ContentOnlyClass.txt")]
-        [TestCase("Options.cs", "-Options.Method", "ContentOnlyMethod.txt")]
-        [TestCase("Options.cs", "-Options.Property", "ContentOnlyProperty.txt")]
-        [TestCase("Options.cs", "-Options.Event", "ContentOnlyEvent.txt")]
-        [TestCase("Options.cs", "-Options.Event.add", "ContentOnlyEventadd.txt")]
-        [TestCase("Options.cs", "-Event.add", "ContentOnlyEventadd.txt")]
-        [TestCase("Options.cs", "-add", "ContentOnlyEventadd.txt")]
-        [TestCase("Options.cs", "-ConflictingCommentsClass", "ContentOnlyEscapedClass.txt")]
-        [TestCase("Options.cs", "-ConflictingCommentsClass2", "ContentOnlyEscapedClass2.txt")]
-        [TestCase("Options.cs", "-ConflictingCommentsClass.Method", "ContentOnlyEscapedMethod.txt")]
-        [TestCase("Options.cs", "-ConflictingCommentsClass2.Method", "ContentOnlyEscapedMethod.txt")]
+        [TestCase("Source/Options.cs", "-Options", "Expected/ContentOnlyClass.txt")]
+        [TestCase("Source/Options.cs", "-Options.Method", "Expected/ContentOnlyMethod.txt")]
+        [TestCase("Source/Options.cs", "-EmptyMethod", "Expected/Empty.txt")]
+        [TestCase("Source/Options.cs", "-Options.Property", "Expected/ContentOnlyProperty.txt")]
+        [TestCase("Source/Options.cs", "-Options.Event", "Expected/ContentOnlyEvent.txt")]
+        [TestCase("Source/Options.cs", "-Options.Event.add", "Expected/ContentOnlyEventadd.txt")]
+        [TestCase("Source/Options.cs", "-Event.add", "Expected/ContentOnlyEventadd.txt")]
+        [TestCase("Source/Options.cs", "-add", "Expected/ContentOnlyEventadd.txt")]
+        [TestCase("Source/Options.cs", "-ConflictingCommentsClass", "Expected/ContentOnlyEscapedClass.txt")]
+        [TestCase("Source/Options.cs", "-ConflictingCommentsClass2", "Expected/ContentOnlyEscapedClass2.txt")]
+        [TestCase("Source/Options.cs", "-ConflictingCommentsClass.Method", "Expected/ContentOnlyEscapedMethod.txt")]
+        [TestCase("Source/Options.cs", "-ConflictingCommentsClass2.Method", "Expected/ContentOnlyEscapedMethod.txt")]
         
         // Match empty content
-        [TestCase("Options.cs", "-remove", "Empty.txt")]
-        [TestCase("Options.cs", "-get", "Empty.txt")]
-        [TestCase("Options.cs", "-EmptyMethod", "Empty.txt")]
-
-        // Get file from referenced project
-        [TestCase("Projbook/Core/ProjbookEngine.cs", "=ProjbookEngine.GenerateFile", "FromCore.txt")]
+        [TestCase("Source/Options.cs", "-remove", "Expected/Empty.txt")]
+        [TestCase("Source/Options.cs", "-get", "Expected/Empty.txt")]
+        [TestCase("Source/Options.cs", "-EmptyMethod", "Expected/Empty.txt")]
         public void ExtractSnippet(string fileName, string pattern, string expectedFile)
         {
-            // Resolve path
-            if (!fileName.StartsWith("Projbook"))
-            {
-                fileName = this.ComputeFilePath(fileName);
-            }
-
             // Run the extraction
             ISnippetExtractor snippetExtractor;
             if (!this.extractorCache.TryGetValue(fileName, out snippetExtractor))
@@ -217,20 +297,11 @@ namespace Projbook.Tests.Core.Snippet
                 snippetExtractor = new CSharpSnippetExtractor();
                 this.extractorCache[fileName] = snippetExtractor;
             }
-            Projbook.Core.Model.Snippet snippet = snippetExtractor.Extract(new StreamReader(this.LocateFile(fileName).OpenRead()), pattern);
-
-            // Load the expected file content
-            MemoryStream memoryStream = new MemoryStream();
-            using (var fileReader = new StreamReader(new FileStream(Path.GetFullPath(Path.Combine("Resources", "Expected", expectedFile)), FileMode.Open)))
-            using (var fileWriter = new StreamWriter(memoryStream))
-            {
-                fileWriter.Write(fileReader.ReadToEnd());
-            }
+            Extension.Model.PlainTextSnippet snippet = snippetExtractor.Extract(this.FileSystem.FileInfo.FromFileName(fileName), pattern) as Extension.Model.PlainTextSnippet;
 
             // Assert
-            Assert.AreEqual(
-                System.Text.Encoding.UTF8.GetString(memoryStream.ToArray()).Replace("\r\n", Environment.NewLine),
-                snippet.Content.Replace("\r\n", Environment.NewLine));
+            expectedFile = expectedFile.Replace('/', this.FileSystem.Path.DirectorySeparatorChar);
+            Assert.AreEqual(this.FileSystem.File.ReadAllText(expectedFile), snippet.Text.Replace("\r\n", "\n"));
         }
 
         /// <summary>
@@ -238,28 +309,24 @@ namespace Projbook.Tests.Core.Snippet
         /// </summary>
         /// <param name="pattern">The pattern.</param>
         [Test]
-        [ExpectedException(ExpectedException = typeof(SnippetExtractionException), ExpectedMessage = "Invalid extraction rule")]
         public void ExtractSnippetInvalidRule()
         {
             // Run the extraction
-            new CSharpSnippetExtractor().Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, "Resources", "SourcesA", "Sample.cs")).OpenRead()), "abc abc(abc");
+            Assert.Throws(
+                Is.TypeOf<SnippetExtractionException>().And.Message.EqualTo("Invalid extraction rule"),
+                () => new CSharpSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName("Source/AnyClass.cs"), "abc abc(abc"));
         }
 
         /// <summary>
         /// Tests extract snippet with non matching member.
         /// </summary>
-        /// <param name="pattern">The pattern.</param>
         [Test]
-        [TestCase("Sample.cs", "DoesntExist")]
-        [ExpectedException(ExpectedException = typeof(SnippetExtractionException), ExpectedMessage = "Cannot find member")]
-        public void ExtractSnippetNotFound(string fileName, string pattern)
+        public void ExtractSnippetNotFound()
         {
-            // Resolve path
-            fileName = this.ComputeFilePath(fileName);
-
             // Run the extraction
-            CSharpSnippetExtractor extractor = new CSharpSnippetExtractor();
-            Projbook.Core.Model.Snippet snippet = extractor.Extract(new StreamReader(new FileInfo(Path.Combine(this.SourceDirectories[0].FullName, fileName)).OpenRead()), pattern);
+            Assert.Throws(
+                Is.TypeOf<SnippetExtractionException>().And.Message.EqualTo("Cannot find member"),
+                () => new CSharpSnippetExtractor().Extract(this.FileSystem.FileInfo.FromFileName("Source/AnyClass.cs"), "DoesntExist"));
         }
     }
 }

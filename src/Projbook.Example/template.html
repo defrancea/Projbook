@@ -18,8 +18,17 @@
     <script src="Scripts/prism.js"></script>
     <link href="Content/prism.css" rel="stylesheet" />
 
+    <!-- jsTree -->
+    <link href="Content/themes/default/style.min.css" rel="stylesheet" />
+
     <!-- Projbook -->
-    <link href="Content/projbook.css" rel="stylesheet">
+    <link href="Content/projbook.css" rel="stylesheet" />
+    
+    <!-- Disqus variables (uncomment and set proper values to enable) -->
+    <!-- @{
+        string disqusRootPath = "http://example.com/Page/";
+        string disqusIdentifier = "myIdentifier";
+    }-->
 </head>
 <body role="document">
     <div class="container">
@@ -57,14 +66,55 @@
                     <div id="@(section.Id)">
                         @(section.Content)
                     </div>
+
+                    <!-- Disqus markup (uncomment to enable) -->
+                    <!-- <div>
+                        <div class="text-right">
+                            <a id="show-comments-@(section.Id)" class="show-comments" href="javascript:loadDisqus('@(disqusRootPath)', '@(section.Id)')" data-disqus-url="@(disqusRootPath)#!@(section.Id)">0 Comments</a>
+                            <a id="hide-comments-@(section.Id)" class="hide-comments" href="javascript:unloadDisqus('@(section.Id)')" style="display: none;">Hide Comments</a>
+                        </div>
+                        <div class="panel-group comment-panel" id="comment-panel-@(section.Id)" style="display: none;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div id="comment-content-@(section.Id)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>-->
                     }
                 </section>
                 }
             </div>
         </div>
     </div>
-    <script src="Scripts/jquery-1.9.0.min.js"></script>
+    <script src="Scripts/jquery-1.9.1.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
     <script src="Scripts/projbook.js"></script>
+
+    <!-- Disqus scripts (uncomment to enable) -->
+    <!--<script src="http://@(disqusIdentifier).disqus.com/embed.js"></script>
+    <script id="dsq-count-scr" src="http://@(disqusIdentifier).disqus.com/count.js" async></script>
+    <script src="Scripts/projbook-disqus.js"></script>-->
+
+    <!-- JsTree scripts -->
+    <script src="Scripts/jstree.min.js"></script>
+    <script>
+        $(function () {
+            $('.filetree').each(function () {
+                $(this).jstree({
+                    'types': {
+                        'file': {
+                            'icon': 'jstree-file'
+                        },
+                        'folder': {
+                            'icon': 'jstree-folder'
+                        },
+                    },
+                    "plugins": ["types"]
+                });
+                $(this).jstree("open_all");
+            })
+        });
+    </script>
 </body>
 </html>

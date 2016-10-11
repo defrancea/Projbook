@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using Projbook.Core.Snippet;
-using Projbook.Core.Snippet.CSharp;
-using System;
-using System.IO;
+using Projbook.Extension;
+using Projbook.Extension.CSharpExtractor;
+using Projbook.Tests.Utilities;
 
 namespace Projbook.Tests.Core.Snippet
 {
@@ -10,7 +10,7 @@ namespace Projbook.Tests.Core.Snippet
     /// Tests <see cref="SnippetExtractorFactory"/>.
     /// </summary>
     [TestFixture]
-    public class SnippetExtractorFactoryTests : AbstractTests
+    public class SnippetExtractorFactoryTests
     {
         /// <summary>
         /// The tested extractor factory.
@@ -21,31 +21,10 @@ namespace Projbook.Tests.Core.Snippet
         /// Initializes the test.
         /// </summary>
         [SetUp]
-        public override void Setup()
+        public void Setup()
         {
             // Initialize extractor
-            base.Setup();
-            this.SnippetExtractorFactory = new SnippetExtractorFactory(this.CsprojFile);
-        }
-
-        /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void WrongInitSourceNull()
-        {
-            new SnippetExtractorFactory(null);
-        }
-
-        /// <summary>
-        /// Tests with invalid input.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void WrongInitSourceEmpty()
-        {
-            new SnippetExtractorFactory(new FileInfo(""));
+            this.SnippetExtractorFactory = new SnippetExtractorFactory(TestsUtilities.EnsureExtensionsDeployed());
         }
 
         /// <summary>

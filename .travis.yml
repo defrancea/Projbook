@@ -2,16 +2,8 @@ language: csharp
 solution: ./src/Projbook.sln
 install:
   - nuget restore ./src/Projbook.sln
-  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+  - nuget install NUnit.Runners -Version 3.4.1 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Release ./src/Projbook.sln
   - xbuild /p:Configuration=ReleaseNoPdf ./src/Projbook.sln
-  - mono testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./src/Projbook.Tests/bin/ReleaseNoPdf/Projbook.Tests.dll
-  - bash ./build/deploy-doc.sh
-  - bash ./build/post-build.sh
-deploy:
-  provider: script
-  script: ./build/deploy-nuget.sh
-  skip_cleanup: true
-  on:
-    tags: true
+  - mono testrunner/NUnit.ConsoleRunner.3.4.1/tools/nunit3-console.exe ./src/Projbook.Tests/bin/ReleaseNoPdf/Projbook.Tests.dll

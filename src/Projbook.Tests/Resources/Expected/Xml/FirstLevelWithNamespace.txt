@@ -1,0 +1,7 @@
+﻿<n:FirstLevelWithNamespace>
+  <m:SecondLevelWithNamespace
+    FirstAttributeName="FirstAttributeValue"
+    SecondAttributeName="SecondAttributeValue" />
+  <FirstLevelNoNamespace
+    WithSome="Attribute" />
+</n:FirstLevelWithNamespace>

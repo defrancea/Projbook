@@ -1,9 +1,13 @@
-﻿using EnsureThat;
-using Projbook.Core.Snippet.CSharp;
-using Projbook.Core.Snippet.Xml;
+﻿using Projbook.Extension;
+using Projbook.Extension.Spi;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Xml;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
+using System.ComponentModel.Composition.ReflectionModel;
+using System.IO.Abstractions;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Projbook.Core.Snippet
 {
@@ -13,24 +17,34 @@ namespace Projbook.Core.Snippet
     public class SnippetExtractorFactory
     {
         /// <summary>
-        /// The csproj file.
+        /// Loaded extractor factories.
         /// </summary>
-        public FileInfo CsprojFile { get; private set; }
+        Dictionary<string, Func<ISnippetExtractor>> loadedExtractorFactories = new Dictionary<string, Func<ISnippetExtractor>>();
+
+        /// <summary>
+        /// The default extractor factory.
+        /// </summary>
+        private Func<ISnippetExtractor> defaultExtractorFactory;
+
+        /// <summary>
+        /// The extension directory.
+        /// </summary>
+        private DirectoryInfoBase extensionDirectory;
 
         /// <summary>
         /// Initializes a new instance of <see cref="SnippetExtractorFactory"/>.
         /// </summary>
-        /// <param name="csprojFile">Initializes the required <see cref="SourceDictionaries"/>.</param>
-        public SnippetExtractorFactory(FileInfo csprojFile)
+        /// <param name="extensionDirectory">The extension directory.</param>
+        public SnippetExtractorFactory(DirectoryInfoBase extensionDirectory)
         {
-            // Data validation
-            Ensure.That(() => csprojFile).IsNotNull();
-            Ensure.That(csprojFile.Exists, string.Format("Could not find '{0}' file", csprojFile)).IsTrue();
-
             // Initialize
-            this.CsprojFile = csprojFile;
-        }
+            this.defaultExtractorFactory = () => new DefaultSnippetExtractor();
+            this.extensionDirectory = extensionDirectory;
 
+            // Load extensions
+            this.LoadExtensions();
+        }
+        
         /// <summary>
         /// Creates a new instance of <see cref="ISnippetExtractor"/> according to the snippet extraction rule.
         /// </summary>
@@ -44,15 +58,65 @@ namespace Projbook.Core.Snippet
                 return null;
             }
 
-            // Initialize the proper extracted depending on the language
-            switch (snippetExtractionRule.Language)
+            // Lookup factory in loaded extractor factories
+            Func<ISnippetExtractor> matchingExtractorFactory;
+            if (loadedExtractorFactories.TryGetValue(snippetExtractionRule.Language, out matchingExtractorFactory))
             {
-                case "csharp":
-                    return new CSharpSnippetExtractor();
-                case "xml":
-                    return new XmlSnippetExtractor();
-                default:
-                    return new DefaultSnippetExtractor();
+                // Create instance from the matching extractor factory
+                return matchingExtractorFactory();
+            }
+
+            // Create instance from default extractor factory
+            return this.defaultExtractorFactory();
+        }
+
+        /// <summary>
+        /// Loads extensions.
+        /// </summary>
+        private void LoadExtensions()
+        {
+            // If the plugin directory doesn't exist, abort plugin loading
+            if (!this.extensionDirectory.Exists)
+                return;
+
+            // Initialize catalog
+            AggregateCatalog catalog = new AggregateCatalog();
+            catalog.Catalogs.Add(new DirectoryCatalog(this.extensionDirectory.FullName));
+
+            // Load ISnippetExtractor factories
+            string metadataName = "ExportTypeIdentity";
+            string targetTypeFullName = typeof(ISnippetExtractor).FullName;
+            foreach (ComposablePartDefinition composablePartDefinition in catalog.Parts.AsEnumerable())
+            {
+                // Look for composable part definition being an ISnippetExtracttor
+                if (composablePartDefinition.ExportDefinitions.Any(d =>
+                    d.Metadata.ContainsKey(metadataName) &&
+                    d.Metadata[metadataName].ToString() == targetTypeFullName))
+                {
+                    // Fetch the extension type from the composable part definition
+                    Type extensionType = ReflectionModelServices.GetPartType(composablePartDefinition).Value;
+
+                    // Try to retrieve syntax attribute
+                    SyntaxAttribute syntax = Attribute.GetCustomAttribute(extensionType, typeof(SyntaxAttribute)) as SyntaxAttribute;
+                    
+                    // Add the extractor type to loaded ones if a syntax attribute is found and the type has a default contructor
+                    if (null != syntax && null != extensionType.GetConstructor(Type.EmptyTypes))
+                    {
+                        // Create extractor factory
+                        Func<ISnippetExtractor> extractorFactory = Expression.Lambda<Func<ISnippetExtractor>>(Expression.New(extensionType)).Compile();
+
+                        // Record the created fectory as a loaded one
+                        this.loadedExtractorFactories.Add(syntax.Name, extractorFactory);
+                    }
+                }
+            }
+
+            // Lookup in loaded extractors to detect custom default extractor
+            Func<ISnippetExtractor> customDefaultExtractorFactory;
+            if (this.loadedExtractorFactories.TryGetValue("*", out customDefaultExtractorFactory))
+            {
+                // Set the custom default extractor
+                this.defaultExtractorFactory = customDefaultExtractorFactory;
             }
         }
     }

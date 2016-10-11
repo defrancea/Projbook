@@ -14,9 +14,9 @@ namespace Projbook.Core.Snippet
         public string Language { get; private set; }
 
         /// <summary>
-        /// The file name
+        /// The targe path.
         /// </summary>
-        public string FileName { get; private set; }
+        public string TargetPath { get; private set; }
 
         /// <summary>
         /// The pattern.
@@ -57,7 +57,7 @@ namespace Projbook.Core.Snippet
             return new SnippetExtractionRule
             {
                 Language = match.Groups[1].Value.Trim(),
-                FileName = match.Groups[2].Value.Trim(),
+                TargetPath = match.Groups[2].Value.Trim(),
                 Pattern = match.Groups[3].Value.Trim(),
             };
         }

@@ -1,0 +1,7 @@
+﻿<RootNode xmlns="DefaultNamespace" xmlns:n="NNamespace" xmlns:m="MNamespace">
+  <FirstLevelNoNamespace/>
+  <n:FirstLevelWithNamespace>
+    <m:SecondLevelWithNamespace FirstAttributeName="FirstAttributeValue" SecondAttributeName="SecondAttributeValue"/>
+    <FirstLevelNoNamespace WithSome="Attribute"/>
+  </n:FirstLevelWithNamespace>
+</RootNode>

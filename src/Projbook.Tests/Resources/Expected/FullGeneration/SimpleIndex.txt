@@ -1,0 +1,7 @@
+﻿<Title>Index title</Title>
+<Description>Index description</Description>
+<Icon>index-icon.png</Icon>
+<DocumentTitle>Test title</DocumentTitle>
+<DocumentDescription>Test description</DocumentDescription>
+<DocumentIcon>icon.png</DocumentIcon>
+<DocumentPath>doc.html</DocumentPath>

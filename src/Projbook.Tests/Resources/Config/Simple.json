@@ -1,0 +1,5 @@
+﻿{
+  "title": "Test title",
+  "template-html": "Template/Template.txt",
+  "template-pdf": "Template/Template-pdf.txt"
+}

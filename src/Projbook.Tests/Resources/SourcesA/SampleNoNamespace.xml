@@ -1,7 +1,0 @@
-﻿<RootNode>
-  <FirstLevel/>
-  <FirstLevel>
-    <SecondLevel FirstAttributeName="FirstAttributeValue" SecondAttributeName="SecondAttributeValue"/>
-    <FirstLevel WithSome="Attribute"/>
-  </FirstLevel>
-</RootNode>

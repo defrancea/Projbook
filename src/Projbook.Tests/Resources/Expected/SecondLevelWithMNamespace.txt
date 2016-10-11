@@ -1,3 +1,0 @@
-﻿<m:SecondLevelWithMNamespace
-  FirstAttributeName="FirstAttributeValue"
-  SecondAttributeName="SecondAttributeValue" />

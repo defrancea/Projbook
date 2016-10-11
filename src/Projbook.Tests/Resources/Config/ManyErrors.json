@@ -1,0 +1,32 @@
+﻿{
+  "title" :  "Title",
+  "template": "Template/NotExisting.txt",
+  "configurations": [
+    {
+      "title": "Test title",
+      "template-html": "Template/NotExisting.txt",
+      "template-pdf": "Template/Template-pdf.txt",
+      "output-html": "Doc.html",
+      "output-pdf": "Doc-pdf-input.html",
+      "pages": [
+        {
+          "path": "Page/NotExisting.md",
+          "title": "First page title"
+        },
+        {
+          "path": "Page/AnotherNotExisting.md",
+          "title": "Second page title"
+        },
+        {
+          "path": "Page/NotExisting.md",
+          "title": "Third page title"
+        }
+      ]
+    },
+    {
+      "title": "Test title",
+      "template-html": "Template/Template.txt",
+      "template-pdf": "Template/NotExisting-pdf.txt"
+    }
+  ]
+}

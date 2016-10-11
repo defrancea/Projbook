@@ -1,0 +1,23 @@
+﻿{
+  "title": "Test title",
+  "description": "Test description",
+  "icon": "icon.png",
+  "template-html": "Template/Template.txt",
+  "template-pdf": "Template/Template-pdf.txt",
+  "output-html": "doc.html",
+  "output-pdf": "doc-pdf-input.html",
+  "pages": [
+    {
+      "path": "Page/Content.md",
+      "title": "First page title"
+    },
+    {
+      "path": "Page/Snippet.md",
+      "title": "Second page title"
+    },
+    {
+      "path": "Page/Table.md",
+      "title": "Third page title"
+    }
+  ]
+}

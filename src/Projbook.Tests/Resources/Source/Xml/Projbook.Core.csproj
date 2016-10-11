@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(SolutionDir)build\Projbook.settings" Condition="Exists('$(SolutionDir)build\Projbook.settings')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F0CD4EDC-5873-4D81-9458-7CFBA3E49FE5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Projbook.Core</RootNamespace>
+    <AssemblyName>Projbook.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseNoPdf|AnyCPU'">
+    <OutputPath>bin\ReleaseNoPdf\</OutputPath>
+    <DefineConstants>TRACE;NOPDF</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Common.Logging, Version=2.1.2.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.2.1.2\lib\net40\Common.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CommonMark, Version=0.1.0.0, Culture=neutral, PublicKeyToken=001ef8810438905d, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonMark.NET.0.9.1\lib\net45\CommonMark.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EnsureThat.vDinasour, Version=3.1.1.24847, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ensure.That.3.1.1\lib\net45\EnsureThat.vDinasour.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json.Schema, Version=2.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.Schema.2.0.2\lib\net45\Newtonsoft.Json.Schema.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RazorEngine, Version=3.7.2.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\packages\RazorEngine.3.7.2\lib\net45\RazorEngine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Abstractions, Version=2.0.0.124, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Abstractions.2.0.0.124\lib\net40\System.IO.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WkHtmlToXSharp, Version=1.1.23.22, Culture=neutral, PublicKeyToken=bc70fce929bf608f, processorArchitecture=MSIL">
+      <HintPath>..\packages\WkHtmlToXSharp.1.1.23.22\lib\WkHtmlToXSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WkHtmlToXSharp.Linux32, Version=1.1.23.22, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WkHtmlToXSharp.Linux32.1.1.23.22\lib\WkHtmlToXSharp.Linux32.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WkHtmlToXSharp.Linux64, Version=1.1.23.22, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WkHtmlToXSharp.Linux64.1.1.23.22\lib\WkHtmlToXSharp.Linux64.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WkHtmlToXSharp.Win32, Version=1.1.23.22, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WkHtmlToXSharp.Win32.1.1.23.22\lib\WkHtmlToXSharp.Win32.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WkHtmlToXSharp.Win64, Version=1.1.23.22, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WkHtmlToXSharp.Win64.1.1.23.22\lib\WkHtmlToXSharp.Win64.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Projbook\Core\ConfigurationLoader.cs" />
+    <Compile Include="Projbook\Core\Exception\ConfigurationException.cs" />
+    <Compile Include="Projbook\Core\Markdown\PageBreakInfo.cs" />
+    <Compile Include="Projbook\Core\Markdown\ProjbookHtmlFormatter.cs" />
+    <Compile Include="Projbook\Core\Model\Configuration\Page.cs" />
+    <Compile Include="Projbook\Core\Model\Configuration\Validation\ConfigurationValidation.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ConfigurationValidation.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Projbook\Core\Model\GenerationError.cs" />
+    <Compile Include="Projbook\Core\Model\Section.cs" />
+    <Compile Include="Projbook\Core\Model\Page.cs" />
+    <Compile Include="Projbook\Core\Model\Configuration\Configuration.cs" />
+    <Compile Include="Projbook\Core\ProjbookEngine.cs" />
+    <Compile Include="Projbook\Core\Model\Anchor.cs" />
+    <Compile Include="Projbook\Core\Snippet\SnippetExtractionRule.cs" />
+    <Compile Include="Projbook\Core\Snippet\SnippetExtractorFactory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <EmbeddedResource Include="Projbook\Core\Model\Configuration\Validation\configuration-array-schema.json" />
+    <EmbeddedResource Include="Projbook\Core\Model\Configuration\Validation\configuration-schema.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Projbook\Core\Model\Configuration\Validation\ConfigurationValidation.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>ConfigurationValidation.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Projbook.Extension\Projbook.Extension.csproj">
+      <Project>{8338b756-0519-4d20-ba04-3a8f4839237a}</Project>
+      <Name>Projbook.Extension</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
