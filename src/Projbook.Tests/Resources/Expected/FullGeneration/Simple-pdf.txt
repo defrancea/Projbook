@@ -38,7 +38,7 @@
 <h1>Bar</h1>
 <pre><code class="language-csharp">public class Foo
 {
-}</code></pre><div class="filetree"><ul><li data-jstree='{"type":"folder"}'>Expected<ul><li data-jstree='{"type":"file"}'>Simple.txt</li></ul><ul><li data-jstree='{"type":"file"}'>SimpleIndex.txt</li></ul><ul><li data-jstree='{"type":"file"}'>Simple-pdf.txt</li></ul></li></ul></div>]]>
+}</code></pre><p>&lt;Stuff&gt; &lt;Stuff&gt;</p><div class="filetree"><ul><li data-jstree='{"type":"folder"}'>Expected<ul><li data-jstree='{"type":"file"}'>Simple.txt</li></ul><ul><li data-jstree='{"type":"file"}'>SimpleIndex.txt</li></ul><ul><li data-jstree='{"type":"file"}'>Simple-pdf.txt</li></ul></li></ul></div>]]>
 			</Content>
         </Section>
 	</Sections>
