@@ -190,6 +190,7 @@ namespace Projbook.Core.Markdown
             // Read all paragraph inline strings in order to make table detectable
             List<string> tableParts = new List<string>();
             List<string[]> splittedTableParts = new List<string[]>();
+            Match[] headerDelimiterMatches = null;
             if (isOpening && null != block && block.Tag == BlockTag.Paragraph)
             {
                 Inline inline = block.InlineContent;
@@ -201,6 +202,23 @@ namespace Projbook.Core.Markdown
                         tableParts.Add(inline.LiteralContent);
                         string line = inline.LiteralContent.Trim();
                         string[] lineParts = line.Split(new char[] { '|' }, StringSplitOptions.None).Select(x => x.Trim()).ToArray();
+
+                        // At the third line of the same block, ensure we're processing a table before to continue table parsing
+                        if (splittedTableParts.Count == 2)
+                        {
+                            // If the second line cannot be a header delimiter, break the table parsing
+                            if (splittedTableParts[1].Any(x => string.IsNullOrWhiteSpace(x)) || (splittedTableParts[1].Length < 2 && !tableParts[1].Contains('|')))
+                            {
+                                break;
+                            }
+                            
+                            // Matches the second line as header delimiter and abort table parsing if the match fail
+                            headerDelimiterMatches = splittedTableParts[1].Select(x => dashDelimiter.Match(x)).ToArray();
+                            if (!headerDelimiterMatches.All(x => x.Success))
+                            {
+                                break;
+                            }
+                        }
 
                         // Define parts boundaries
                         int startPos = 0;
@@ -226,18 +244,8 @@ namespace Projbook.Core.Markdown
                 }
             }
             
-            // Detect tables
-            Match[] matchingDelimiters = null;
-            bool isTable = false;
-            if (3 <= splittedTableParts.Count && splittedTableParts[1].All(x => !string.IsNullOrWhiteSpace(x)) && (splittedTableParts[1].Length >= 2 || tableParts[1].Contains('|')))
-            {
-                // Match dashes
-                matchingDelimiters = splittedTableParts[1].Select(x => dashDelimiter.Match(x)).ToArray();
-                isTable = matchingDelimiters.All(x => x.Success);
-            }
-            
             // Process table rendering
-            if (isTable)
+            if (null != headerDelimiterMatches && splittedTableParts.Count > 2)
             {
                 // Remove the delimiter
                 splittedTableParts.RemoveAt(1);
@@ -254,9 +262,9 @@ namespace Projbook.Core.Markdown
                     {
                         // Determine text alignment
                         string style = "text-left";
-                        if (matchingDelimiters.Length > j && 0 < i)
+                        if (headerDelimiterMatches.Length > j && 0 < i)
                         {
-                            Match match = matchingDelimiters[j];
+                            Match match = headerDelimiterMatches[j];
                             if (":" == match.Groups[1].Value && ":" == match.Groups[2].Value)
                             {
                                 style = "text-center";
@@ -291,7 +299,7 @@ namespace Projbook.Core.Markdown
         /// Renders <see cref="Node"/>.
         /// </summary>
         /// <param name="node">The node to render.</param>
-        private string Render (Node node)
+        private string Render(Node node)
         {
             // Data validation
             Ensure.That(() => node).IsNotNull();
