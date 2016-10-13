@@ -5,7 +5,7 @@
     {
       "title": "Test title",
       "template-html": "Template/NotExisting.txt",
-      "template-pdf": "Template/Template-pdf.txt",
+      "template-pdf": "Template\\Template-pdf.txt",
       "output-html": "Doc.html",
       "output-pdf": "Doc-pdf-input.html",
       "pages": [
@@ -14,7 +14,7 @@
           "title": "First page title"
         },
         {
-          "path": "Page/AnotherNotExisting.md",
+          "path": "Page\\AnotherNotExisting.md",
           "title": "Second page title"
         },
         {

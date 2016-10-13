@@ -321,7 +321,7 @@ namespace Projbook.Tests.Core
                 Assert.AreEqual("Could not find page 'Page/NotExisting.md'", argumentException.GenerationErrors[4].Message);
                 Assert.AreEqual(21, argumentException.GenerationErrors[4].Line);
                 Assert.AreEqual(20, argumentException.GenerationErrors[4].Column);
-                Assert.AreEqual("Could not find page 'Page/AnotherNotExisting.md'", argumentException.GenerationErrors[5].Message);
+                Assert.AreEqual("Could not find page 'Page\\AnotherNotExisting.md'", argumentException.GenerationErrors[5].Message);
                 Assert.AreEqual(17, argumentException.GenerationErrors[5].Line);
                 Assert.AreEqual(20, argumentException.GenerationErrors[5].Column);
             }
