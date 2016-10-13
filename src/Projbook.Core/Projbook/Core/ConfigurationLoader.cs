@@ -317,7 +317,7 @@ namespace Projbook.Core
             foreach (string reference in references)
             {
                 // Match and process each matching
-                Regex regex = new Regex(string.Format(regexTemplate, reference.Replace("\\", "\\\\")));
+                Regex regex = new Regex(string.Format(regexTemplate, reference.Replace("\\", "\\\\\\\\")));
                 foreach (Match match in regex.Matches(content))
                 {
                     // Initialize the line and lastLine index to 1 as default value
