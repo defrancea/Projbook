@@ -5,6 +5,7 @@ using System.Linq;
 using System.IO;
 using Projbook.Extension.Exception;
 using EnsureThat;
+using System;
 
 namespace Projbook.Extension.FileSystemExtractor
 {
@@ -39,7 +40,14 @@ namespace Projbook.Extension.FileSystemExtractor
             try
             {
                 // Search file system info from pattern
-                FileSystemInfoBase[] fileSystemInfoBase = directoryInfo.GetFileSystemInfos(pattern, SearchOption.AllDirectories);
+                FileSystemInfoBase[] fileSystemInfoBase = pattern
+                    .Split(new char[] { '|', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(x => x.Trim())
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .SelectMany(x => directoryInfo.GetFileSystemInfos(x, SearchOption.AllDirectories))
+                    .OrderByDescending(x => x is DirectoryInfoBase)
+                    .ThenBy(x => x.FullName)
+                    .ToArray();
                 
                 // Build snippet
                 return this.BuildSnippet(directoryInfo, fileSystemInfoBase);

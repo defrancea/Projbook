@@ -28,6 +28,8 @@ namespace Projbook.Tests.Core.Snippet
             // Initialize file system
             this.fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
+                { "A/B/Content.jpg", new MockFileData(string.Empty) },
+                { "A/Content.gif", new MockFileData(string.Empty) },
                 { "Content.txt", new MockFileData(string.Empty) },
                 { "Content2.txt", new MockFileData(string.Empty) },
                 { "Foo/Content.txt", new MockFileData(string.Empty) },
@@ -148,6 +150,49 @@ namespace Projbook.Tests.Core.Snippet
             Assert.AreEqual("Content2.txt", barfoobarcontent2.Name);
             Assert.AreEqual(true, barfoobarcontent2.IsLeaf);
             Assert.AreEqual(0, barfoobarcontent2.Children.Count);
+        }
+
+        /// <summary>
+        /// Tests extract snippet with multiple pattern.
+        /// </summary>
+        /// <param name="pattern">The pattern.</param>
+        [Test]
+        [TestCase("*.jpg|*.gif")]
+        [TestCase("*.jpg;*.gif")]
+        [TestCase("*.jpg|  ;|*.gif")]
+        public void ExtractSnippetFilterMultiplePattern(string pattern)
+        {
+            // Run the extraction
+            FileSystemSnippetExtractor extractor = new FileSystemSnippetExtractor();
+            DirectoryInfoBase directoryInfoBase = fileSystem.DirectoryInfo.FromDirectoryName(fileSystem.Path.GetFullPath("."));
+            NodeSnippet snippet = extractor.Extract(directoryInfoBase, pattern) as NodeSnippet;
+
+            // Assert children number
+            Assert.AreEqual(1, snippet.Node.Children.Count);
+            
+            // Assert A
+            Node acontent = snippet.Node.Children["A"];
+            Assert.AreEqual("A", acontent.Name);
+            Assert.AreEqual(false, acontent.IsLeaf);
+            Assert.AreEqual(2, acontent.Children.Count);
+
+            // Assert A/Content.gif
+            Node contentgif = acontent.Children["Content.gif"];
+            Assert.AreEqual("Content.gif", contentgif.Name);
+            Assert.AreEqual(true, contentgif.IsLeaf);
+            Assert.AreEqual(0, contentgif.Children.Count);
+
+            // Assert A/B
+            Node bcontent = acontent.Children["B"];
+            Assert.AreEqual("B", bcontent.Name);
+            Assert.AreEqual(false, bcontent.IsLeaf);
+            Assert.AreEqual(1, bcontent.Children.Count);
+
+            // Assert A/B/Content.jpg
+            Node contentjpg = bcontent.Children["Content.jpg"];
+            Assert.AreEqual("Content.jpg", contentjpg.Name);
+            Assert.AreEqual(true, contentjpg.IsLeaf);
+            Assert.AreEqual(0, contentjpg.Children.Count);
         }
 
         /// <summary>
