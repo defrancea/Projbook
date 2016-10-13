@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Projbook.Extension</id>
+    <version>0.0</version>
+    <title>Projbook.Extension</title>
+    <authors>Alain Defrance</authors>
+    <owners>Alain Defrance</owners>
+    <licenseUrl>https://github.com/defrancea/Projbook/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/defrancea/Projbook</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Generate project documentation using Markdown and allow integrating code snippet from the source code being built. Code snippet are always up-to-date.</description>
+    <summary>Generate project documentation using Markdown and allow integrating code snippet from the source code being built. Code snippet are always up-to-date.</summary>
+    <tags>Snippet PDF Markdown Documentation</tags>
+    <iconUrl>https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png</iconUrl>
+    <dependencies>
+      <dependency id="System.IO.Abstractions" version="2.0.0.136" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src/Projbook.Extension/bin/Release/Projbook.Extension.dll" target="lib" exclude="" />
+    <file src="src/Projbook.Extension/bin/Release/System.IO.Abstractions.dll" target="lib" exclude="" />
+  </files>
+</package>
