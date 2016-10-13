@@ -6,9 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+
     <!-- Bootstrap -->
     <link href="Content/bootstrap.min.css" rel="stylesheet">
     <link href="Content/bootstrap-theme.min.css" rel="stylesheet">
+    
+    <!-- Projbook -->
+    <link href="Content/projbook.css" rel="stylesheet" />
 </head>
 <body role="document">
     <div class="container">
@@ -24,7 +28,7 @@
             @foreach (var configuration in Model.IndexConfiguration.Configurations)
             {
             <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
+                <div class="thumbnail index-button">
                     <img src="@(configuration.Icon)">
                     <div class="caption">
                         <h3><a href="@(configuration.OutputHtml)">@(configuration.Title)</a></h3>

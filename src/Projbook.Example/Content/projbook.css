@@ -64,3 +64,10 @@
         display:none
     }
 }
+
+.index-button
+{
+    overflow: hidden;
+	padding-right: 10px;
+    white-space: nowrap;
+}
