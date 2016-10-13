@@ -12,3 +12,6 @@
 *.props text eol=lf
 *.targets text eol=lf
 *.txt text eol=lf
+
+src/Projbook.Documentation/Scripts/* linguist-vendored
+src/Projbook.Documentation/Content/* linguist-vendored
