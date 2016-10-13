@@ -14,7 +14,7 @@
           "title": "First page title"
         },
         {
-          "path": "Page/AnotherNotExisting.md",
+          "path": "Page\\AnotherNotExisting.md",
           "title": "Second page title"
         },
         {
