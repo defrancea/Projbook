@@ -7,6 +7,7 @@ using Projbook.Core.Model.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
+using System.Linq;
 
 namespace Projbook.Target
 {
@@ -40,6 +41,17 @@ namespace Projbook.Target
         public string OutputDirectory { get; set; }
 
         /// <summary>
+        /// The compilation symbols.
+        /// </summary>
+        [Required]
+        public string CompilationSymbols { get; set; }
+
+        /// <summary>
+        /// No pdf symbol.
+        /// </summary>
+        private const string NOPDF_SYMBOL = "PROJBOOK_NOPDF";
+
+        /// <summary>
         /// Trigger task execution.
         /// </summary>
         /// <returns>True if the task succeeded.</returns>
@@ -64,9 +76,18 @@ namespace Projbook.Target
                 this.Log.LogError(string.Empty, string.Empty, string.Empty, this.ConfigurationFile, 0, 0, 0, 0, string.Format("Error during loading configuration: {0}", exception.Message));
                 return false;
             }
+
+            // Parse compilation symbols
+            string[] compilationSymbols = new string[0];
+            if (!string.IsNullOrWhiteSpace(this.CompilationSymbols))
+            {
+                compilationSymbols = this.CompilationSymbols
+                    .Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(x => x.Trim()).ToArray();
+            }
             
             // Instantiate a ProjBook engine
-            ProjbookEngine projbookEngine = new ProjbookEngine(fileSystem, this.ProjectPath, this.ExtensionPath, indexConfiguration, this.OutputDirectory);
+            ProjbookEngine projbookEngine = new ProjbookEngine(fileSystem, this.ProjectPath, this.ExtensionPath, indexConfiguration, this.OutputDirectory, compilationSymbols.Contains(NOPDF_SYMBOL));
 
             // Run generation
             bool success = true;

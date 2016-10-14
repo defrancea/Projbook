@@ -46,6 +46,11 @@ namespace Projbook.Core
         public DirectoryInfoBase OutputDirectory { get; private set; }
 
         /// <summary>
+        /// Skip pdf.
+        /// </summary>
+        public bool SkipPdf { get; private set; }
+
+        /// <summary>
         /// The file system abstraction.
         /// </summary>
         private readonly IFileSystem fileSystem;
@@ -78,7 +83,8 @@ namespace Projbook.Core
         /// <param name="csprojFile">Initializes the required <see cref="CsprojFile"/>.</param>
         /// <param name="indexConfiguration">Initializes the required <see cref="IndexConfiguration"/>.</param>
         /// <param name="outputDirectoryPath">Initializes the required <see cref="OutputDirectory"/>.</param>
-        public ProjbookEngine(IFileSystem fileSystem, string csprojFile, string extensionPath, IndexConfiguration indexConfiguration, string outputDirectoryPath)
+        /// <param name="skipPdf">Initializes the required <see cref="SkipPdf"/>.</param>
+        public ProjbookEngine(IFileSystem fileSystem, string csprojFile, string extensionPath, IndexConfiguration indexConfiguration, string outputDirectoryPath, bool skipPdf)
         {
             // Data validation
             Ensure.That(() => fileSystem).IsNotNull();
@@ -94,6 +100,7 @@ namespace Projbook.Core
             this.IndexConfiguration = indexConfiguration;
             this.OutputDirectory = this.fileSystem.DirectoryInfo.FromDirectoryName(outputDirectoryPath);
             this.snippetExtractorFactory = new SnippetExtractorFactory(this.fileSystem.DirectoryInfo.FromDirectoryName(this.fileSystem.Path.GetFullPath(extensionPath)));
+            this.SkipPdf = skipPdf;
         }
 
         /// <summary>
@@ -374,7 +381,7 @@ namespace Projbook.Core
             }
 
             // Pdf generation
-            if (configuration.GeneratePdf)
+            if (configuration.GeneratePdf && !this.SkipPdf)
             {
                 try
                 {
