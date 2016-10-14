@@ -37,6 +37,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "resources", "resources", "{
 		..\resources\Projbook.png = ..\resources\Projbook.png
 		..\resources\Projbook.props = ..\resources\Projbook.props
 		..\resources\Projbook.targets = ..\resources\Projbook.targets
+		..\resources\Projbook.Core.targets = ..\resources\Projbook.Core.targets
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projbook.Extension", "Projbook.Extension\Projbook.Extension.csproj", "{8338B756-0519-4D20-BA04-3A8F4839237A}"

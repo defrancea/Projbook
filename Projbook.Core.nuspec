@@ -19,8 +19,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="resources/Projbook.targets" target="build" exclude="" />
-    <file src="resources/Projbook.props" target="build" exclude="" />
+    <file src="resources/Projbook.Core.targets" target="build/Projbook.Core.targets" exclude="" />
+    <file src="resources/Projbook.props" target="build/Projbook.Core.props" exclude="" />
     <file src="resources/Install.ps1" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/Common.Logging.dll" target="tools" exclude="" />
     <file src="src/Projbook.Core/bin/Release/CommonMark.dll" target="tools" exclude="" />
