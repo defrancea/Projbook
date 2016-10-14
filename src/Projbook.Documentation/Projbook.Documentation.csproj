@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Projbook.1.1.0-alpha2\build\Projbook.props" Condition="Exists('..\packages\Projbook.1.1.0-alpha2\build\Projbook.props')" />
+  <Import Project="..\packages\Projbook.1.1.0-cr1\build\Projbook.props" Condition="Exists('..\packages\Projbook.1.1.0-cr1\build\Projbook.props')" />
   <Import Project="$(SolutionDir)build\Projbook.settings" Condition="Exists('$(SolutionDir)build\Projbook.settings')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;PROJBOOK_NOPDF</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -42,36 +42,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CodeAnalysis, Version=1.3.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Projbook.1.1.0-alpha2\lib\plugins\Microsoft.CodeAnalysis.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.3.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Projbook.1.1.0-alpha2\lib\plugins\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Projbook.Extension.CSharpExtractor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Projbook.1.1.0-alpha2\lib\plugins\Projbook.Extension.CSharpExtractor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Projbook.Extension.FileSystemExtractor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Projbook.1.1.0-alpha2\lib\plugins\Projbook.Extension.FileSystemExtractor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Projbook.Extension.XmlExtractor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Projbook.1.1.0-alpha2\lib\plugins\Projbook.Extension.XmlExtractor.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Projbook.1.1.0-alpha2\lib\plugins\System.Collections.Immutable.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.Reflection.Metadata, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Projbook.1.1.0-alpha2\lib\plugins\System.Reflection.Metadata.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -182,8 +154,8 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Projbook.1.1.0-alpha2\build\Projbook.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Projbook.1.1.0-alpha2\build\Projbook.props'))" />
-    <Error Condition="!Exists('..\packages\Projbook.1.1.0-alpha2\build\Projbook.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Projbook.1.1.0-alpha2\build\Projbook.targets'))" />
+    <Error Condition="!Exists('..\packages\Projbook.1.1.0-cr1\build\Projbook.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Projbook.1.1.0-cr1\build\Projbook.props'))" />
+    <Error Condition="!Exists('..\packages\Projbook.1.1.0-cr1\build\Projbook.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Projbook.1.1.0-cr1\build\Projbook.targets'))" />
   </Target>
-  <Import Project="..\packages\Projbook.1.1.0-alpha2\build\Projbook.targets" Condition="Exists('..\packages\Projbook.1.1.0-alpha2\build\Projbook.targets')" />
+  <Import Project="..\packages\Projbook.1.1.0-cr1\build\Projbook.targets" Condition="Exists('..\packages\Projbook.1.1.0-cr1\build\Projbook.targets')" />
 </Project>
