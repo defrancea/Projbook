@@ -143,7 +143,7 @@ namespace Projbook.Tests.Core
                 Environment.CurrentDirectory = Path.GetDirectoryName(typeof(FullGenerationTests).Assembly.Location);
 
                 // Execute generation
-                GenerationError[] errors = new ProjbookEngine(this.FileSystem, this.FileSystem.Path.Combine(".", "Project.csproj"), this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
+                GenerationError[] errors = new ProjbookEngine(this.FileSystem, this.FileSystem.Path.Combine(".", "Project.csproj"), this.ExtensionDirectory.FullName, indexConfiguration, ".", false).GenerateAll();
 
                 // Read expected output
                 string expectedContent = string.IsNullOrWhiteSpace(expectedHtmlFileName) ? string.Empty : this.FileSystem.File.ReadAllText(expectedHtmlFileName);
@@ -211,7 +211,7 @@ namespace Projbook.Tests.Core
             // Perform generation
             IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", this.FileSystem.Path.Combine("Config", "ErrorInHtml.json"));
             Configuration[] configurations = indexConfiguration.Configurations;
-            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
+            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".", false).GenerateAll();
 
             // Assert result
             Assert.IsNotNull(errors);
@@ -235,7 +235,7 @@ namespace Projbook.Tests.Core
             // Perform generation
             IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", this.FileSystem.Path.Combine("Config", "ErrorInIndexHtml.json"));
             Configuration[] configurations = indexConfiguration.Configurations;
-            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
+            GenerationError[] errors = new ProjbookEngine(this.FileSystem, "Project.csproj", this.ExtensionDirectory.FullName, indexConfiguration, ".", false).GenerateAll();
 
             // Assert result
             Assert.IsNotNull(errors);
@@ -256,7 +256,7 @@ namespace Projbook.Tests.Core
             // Perform generation
             IndexConfiguration indexConfiguration = new ConfigurationLoader(this.FileSystem).Load(".", this.FileSystem.Path.Combine("Config", "MissingMembersInPage.json"));
             Configuration[] configurations = indexConfiguration.Configurations;
-            GenerationError[] errors = new ProjbookEngine(this.FileSystem, this.FileSystem.Path.Combine(".", "Project.csproj"), this.ExtensionDirectory.FullName, indexConfiguration, ".").GenerateAll();
+            GenerationError[] errors = new ProjbookEngine(this.FileSystem, this.FileSystem.Path.Combine(".", "Project.csproj"), this.ExtensionDirectory.FullName, indexConfiguration, ".", false).GenerateAll();
 
             // Assert result
             Assert.IsNotNull(errors);

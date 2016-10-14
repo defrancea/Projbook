@@ -7,6 +7,7 @@
       ProjectPath="$(ProjbookBoundProject)"
       ExtensionPath="$(MSBuildThisFileDirectory)../plugins"
       ConfigurationFile="projbook.json"
-      OutputDirectory="$(TargetDir)" />
+      OutputDirectory="$(TargetDir)"
+      CompilationSymbols="$(DefineConstants);"/>
   </Target>
 </Project>
