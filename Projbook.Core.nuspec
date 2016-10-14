@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Projbook.Core</id>
+    <version>0.0</version>
+    <title>Projbook.Core</title>
+    <authors>Alain Defrance</authors>
+    <owners>Alain Defrance</owners>
+    <licenseUrl>https://github.com/defrancea/Projbook/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/defrancea/Projbook</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Generate project documentation using Markdown and allow integrating code snippet from the source code being built. Code snippet are always up-to-date.</description>
+    <summary>Generate project documentation using Markdown and allow integrating code snippet from the source code being built. Code snippet are always up-to-date.</summary>
+    <tags>Snippet PDF Markdown Documentation</tags>
+    <iconUrl>https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png</iconUrl>
+    <dependencies>
+      <dependency id="bootstrap" version="3.3.7" />
+      <dependency id="jquery.jstree" version="3.3.1.1" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="resources/Projbook.targets" target="build" exclude="" />
+    <file src="resources/Projbook.props" target="build" exclude="" />
+    <file src="resources/Install.ps1" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/Common.Logging.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/CommonMark.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/Ensure.That.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/Newtonsoft.Json.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/Newtonsoft.Json.Schema.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/Projbook.Core.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/RazorEngine.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/System.Web.Razor.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/System.IO.Abstractions.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Core/bin/Release/WkHtmlToXSharp.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Target/bin/Release/Projbook.Target.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Extension/bin/Release/Projbook.Extension.dll" target="tools" exclude="" />
+    <file src="src/Projbook.Extension.FileSystemExtractor/bin/Release/Projbook.Extension.FileSystemExtractor.dll" target="plugins" exclude="" />
+    <file src="src/Projbook.Extension.XmlExtractor/bin/Release/Projbook.Extension.XmlExtractor.dll" target="plugins" exclude="" />
+    <file src="src/Projbook.Extension.CSharpExtractor/bin/Release/Projbook.Extension.CSharpExtractor.dll" target="plugins" exclude="" />
+    <file src="src/Projbook.Extension.CSharpExtractor/bin/Release/Microsoft.CodeAnalysis.CSharp.dll" target="plugins" exclude="" />
+    <file src="src/Projbook.Extension.CSharpExtractor/bin/Release/Microsoft.CodeAnalysis.dll" target="plugins" exclude="" />
+    <file src="src/Projbook.Extension.CSharpExtractor/bin/Release/System.Collections.Immutable.dll" target="plugins" exclude="" />
+    <file src="src/Projbook.Extension.CSharpExtractor/bin/Release/System.Reflection.Metadata.dll" target="plugins" exclude="" />
+    <file src="src/Projbook.Example/projbook-nopdf.json" target="content/projbook.json" exclude="" />
+    <file src="src/Projbook.Example/template.html" target="content" exclude="" />
+    <file src="src/Projbook.Example/index-template.html" target="content" exclude="" />
+    <file src="src/Projbook.Example/Content/prism.css" target="content/Content" exclude="" />
+    <file src="src/Projbook.Example/Content/projbook.css" target="content/Content" exclude="" />
+    <file src="src/Projbook.Example/Scripts/prism.js" target="content/Scripts" exclude="" />
+    <file src="src/Projbook.Example/Scripts/projbook.js" target="content/Scripts" exclude="" />
+    <file src="src/Projbook.Example/Scripts/projbook-disqus.js" target="content/Scripts" exclude="" />
+    <file src="src/Projbook.Example/Page/page1.md" target="content/Page" exclude="" />
+    <file src="src/Projbook.Example/Page/page2.md" target="content/Page" exclude="" />
+    <file src="src/Projbook.Example/Code/SampleClass.cs" target="content/Code" exclude="" />
+  </files>
+</package>

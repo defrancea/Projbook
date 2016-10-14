@@ -56,6 +56,7 @@
   <ItemGroup>
     <None Include="Page\page2.md" />
     <None Include="Page\page1.md" />
+    <None Include="projbook-nopdf.json" />
     <None Include="projbook.json" />
   </ItemGroup>
   <ItemGroup>
