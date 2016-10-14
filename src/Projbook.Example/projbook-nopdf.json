@@ -1,0 +1,27 @@
+﻿{
+  "title": "Projbook landing page",
+  "description": "Everything you ever dreamed to know!",
+  "template": "index-template.html",
+  "output": "index.html",
+  "icon": "https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png",
+  "configurations": [
+    {
+      "title": "Sample document",
+      "description": "Description",
+      "icon": "https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png",
+      "template-html": "template.html",
+      "output-html": "documentation.html",
+      "section-title-base": 1,
+      "pages": [
+        {
+          "title": "First page",
+          "path": "Page/page1.md"
+        },
+        {
+          "title": "Second page",
+          "path": "Page/page2.md"
+        }
+      ]
+    }
+  ]
+}
