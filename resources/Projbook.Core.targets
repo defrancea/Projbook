@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="Projbook" AssemblyFile="../tools/Projbook.Target.dll" />
+  <ImportGroup />
+  <Target Name="AfterBuild">
+    <Projbook
+      ProjectPath="$(ProjbookBoundProject)"
+      ExtensionPath="$(MSBuildThisFileDirectory)../plugins"
+      ConfigurationFile="projbook.json"
+      OutputDirectory="$(TargetDir)"
+      CompilationSymbols="$(DefineConstants);PROJBOOK_NOPDF"/>
+  </Target>
+</Project>

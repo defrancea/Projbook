@@ -109,6 +109,10 @@ namespace Projbook.Core
         /// <returns>The generation errors.</returns>
         public GenerationError[] GenerateAll()
         {
+            // Register bundles if pdf generation is not skipped
+            if (!this.SkipPdf)
+                this.RegisterHtmlToXLibraries();
+
             // Run generation for each configuration
             List<GenerationError> errors = new List<GenerationError>();
             foreach (Configuration configuration in this.IndexConfiguration.Configurations)
@@ -390,12 +394,6 @@ namespace Projbook.Core
                     this.GenerateFile(configuration.TemplatePdf, outputFileHtml, configuration, pages);
 
 #if !NOPDF
-                    // Register bundles
-                    WkHtmlToXLibrariesManager.Register(new Linux32NativeBundle());
-                    WkHtmlToXLibrariesManager.Register(new Linux64NativeBundle());
-                    WkHtmlToXLibrariesManager.Register(new Win32NativeBundle());
-                    WkHtmlToXLibrariesManager.Register(new Win64NativeBundle());
-
                     // Compute file names
                     string outputPdf = this.fileSystem.Path.ChangeExtension(configuration.OutputPdf, ".pdf");
                     string outputFilePdf = this.fileSystem.Path.Combine(this.OutputDirectory.FullName, outputPdf);
@@ -466,6 +464,17 @@ namespace Projbook.Core
 
             // Return the generation errors
             return generationError.ToArray();
+        }
+
+        /// <summary>
+        /// Register HtmlToX libraries.
+        /// </summary>
+        private void RegisterHtmlToXLibraries()
+        {
+            WkHtmlToXLibrariesManager.Register(new Linux32NativeBundle());
+            WkHtmlToXLibrariesManager.Register(new Linux64NativeBundle());
+            WkHtmlToXLibrariesManager.Register(new Win32NativeBundle());
+            WkHtmlToXLibrariesManager.Register(new Win64NativeBundle());
         }
 
         /// <summary>
