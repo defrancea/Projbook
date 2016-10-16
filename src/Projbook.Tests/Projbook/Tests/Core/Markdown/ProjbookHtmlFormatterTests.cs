@@ -543,6 +543,8 @@ namespace Projbook.Tests.Core
             Node file2 = new Node("File2.jpg", true);
             Node file3 = new Node("File3.cs", true);
             Node file4 = new Node("File4", true);
+            Node fileA = new Node("A", true);
+            Node fileZ = new Node("Z", true);
 
             // Declare folders
             Node root = new Node("Root", false);
@@ -560,6 +562,8 @@ namespace Projbook.Tests.Core
             root.Children.Add(folder1.Name, folder1);
             root.Children.Add(folder2.Name, folder2);
             root.Children.Add(file4.Name, file4);
+            root.Children.Add(fileA.Name, fileA);
+            root.Children.Add(fileZ.Name, fileZ);
 
             // Create snippet reference
             System.Collections.Generic.Dictionary<Guid, Extension.Model.Snippet> snippetReference = new System.Collections.Generic.Dictionary<Guid, Extension.Model.Snippet>();
@@ -578,7 +582,7 @@ namespace Projbook.Tests.Core
 
             // Assert rendering
             Assert.AreEqual(
-                @"<div class=""filetree""><ul><li data-jstree='{""type"":""folder""}'>Root<ul><li data-jstree='{""type"":""file""}'>File4</li></ul><ul><li data-jstree='{""type"":""folder""}'>Folder1<ul><li data-jstree='{""type"":""file""}'>File3.cs</li></ul></li></ul><ul><li data-jstree='{""type"":""folder""}'>Folder2<ul><li data-jstree='{""type"":""folder""}'>Folder3<ul><li data-jstree='{""type"":""file""}'>File1.txt</li></ul><ul><li data-jstree='{""type"":""file""}'>File2.jpg</li></ul></li></ul></li></ul></li></ul></div>",
+                @"<div class=""filetree""><ul><li data-jstree='{""type"":""folder""}'>Root<ul><li data-jstree='{""type"":""folder""}'>Folder1<ul><li data-jstree='{""type"":""file""}'>File3.cs</li></ul></li></ul><ul><li data-jstree='{""type"":""folder""}'>Folder2<ul><li data-jstree='{""type"":""folder""}'>Folder3<ul><li data-jstree='{""type"":""file""}'>File1.txt</li></ul><ul><li data-jstree='{""type"":""file""}'>File2.jpg</li></ul></li></ul></li></ul><ul><li data-jstree='{""type"":""file""}'>A</li></ul><ul><li data-jstree='{""type"":""file""}'>File4</li></ul><ul><li data-jstree='{""type"":""file""}'>Z</li></ul></li></ul></div>",
                 output);
         }
     }
