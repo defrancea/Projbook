@@ -1,8 +1,5 @@
-## Build [![Build Status](https://api.travis-ci.org/repositories/defrancea/Projbook.png)](https://travis-ci.org/defrancea/Projbook)
-The build is performed by [travis-ci](https://travis-ci.org/defrancea/Projbook) 
+# Projbook [![Build Status](https://travis-ci.org/defrancea/Projbook.svg?branch=master)](https://travis-ci.org/defrancea/Projbook/branches)
 
-## Documentation
-Projbook uses itself for its own documentation, check the [user manual](http://defrancea.github.com/Projbook) to learn how to use it and check the [documentation source code](https://github.com/defrancea/Projbook/tree/master/src/Projbook.Documentation) and follow [@projbooklib](https://twitter.com/projbooklib) for all info about the project.
+Check out the [user manual](http://defrancea.github.com/Projbook) and follow [@projbooklib](https://twitter.com/projbooklib) to have project's updates.
 
-## Contributing
-Please fill an [issue](https://github.com/defrancea/Projbook/issues) for any bug you find. Projbook is also very open to contribution. Feel free to chat with us through an issue, we'll be glad to integrate your contribution when it's ready.
+Feel free to fill an [issue](https://github.com/defrancea/Projbook/issues) for any bug you find or question you have. We really care about project's code quality so PR might take time to be integrated, however any of them is more than welcome.
