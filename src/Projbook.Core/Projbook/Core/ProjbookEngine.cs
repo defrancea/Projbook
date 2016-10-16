@@ -173,6 +173,13 @@ namespace Projbook.Core
                     {
                         // Build extraction rule
                         string fencedCode = node.Block.FencedCodeData.Info;
+
+                        // Do not trigger extraction if the fenced code is empty
+                        if (string.IsNullOrWhiteSpace(fencedCode))
+                        {
+                            continue;
+                        }
+
                         SnippetExtractionRule snippetExtractionRule = SnippetExtractionRule.Parse(fencedCode);
                         
                         // Extract and inject snippet and the factory were able to create an extractor
