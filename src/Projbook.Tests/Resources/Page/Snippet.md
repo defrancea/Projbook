@@ -5,5 +5,9 @@
 
 \<Stuff\> \<Stuff\>
 
+```  
+No syntax
+```
+
 ```fs [Expected] *.txt
 ```
