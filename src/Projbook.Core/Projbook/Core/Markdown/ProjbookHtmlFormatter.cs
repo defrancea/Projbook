@@ -335,7 +335,7 @@ namespace Projbook.Core.Markdown
             stringBuilder.Append(node.Name);
 
             // Recurse for children
-            foreach (Node currentNode in node.Children.OrderBy(x => x.Key).Select(x => x.Value))
+            foreach (Node currentNode in node.Children.OrderBy(x => x.Value.IsLeaf).ThenBy(x => x.Key).Select(x => x.Value))
             {
                 Render(currentNode, stringBuilder);
             }
