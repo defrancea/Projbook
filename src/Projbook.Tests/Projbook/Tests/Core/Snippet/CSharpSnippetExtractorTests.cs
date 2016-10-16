@@ -72,6 +72,9 @@ namespace Projbook.Tests.Core.Snippet
                 { "Expected/GenericMethod.txt", new MockFileData(ExpectedCSharpFiles.GenericMethod) },
                 { "Expected/NS2NS3.txt", new MockFileData(ExpectedCSharpFiles.NS2NS3) },
                 { "Expected/A.txt", new MockFileData(ExpectedCSharpFiles.A) },
+                { "Expected/E.txt", new MockFileData(ExpectedCSharpFiles.E) },
+                { "Expected/EA.txt", new MockFileData("EA") },
+                { "Expected/EC.txt", new MockFileData("EC") },
                 { "Expected/NeedCleanup.txt", new MockFileData(ExpectedCSharpFiles.NeedCleanup) },
                 { "Expected/NeedCleanupClass.txt", new MockFileData(ExpectedCSharpFiles.NeedCleanupClass) },
                 { "Expected/Empty.txt", new MockFileData(ExpectedCSharpFiles.Empty) },
@@ -119,6 +122,16 @@ namespace Projbook.Tests.Core.Snippet
         // Match interface
         [TestCase("Source/Sample.cs", "NS2.NS2.NS3.I", "Expected/I.txt")]
         [TestCase("Source/Sample.cs", "I", "Expected/I.txt")]
+
+        // Match enum
+        [TestCase("Source/Sample.cs", "NS2.NS3.E", "Expected/E.txt")]
+        [TestCase("Source/Sample.cs", "E", "Expected/E.txt")]
+
+        // Match enum member
+        [TestCase("Source/Sample.cs", "EA", "Expected/EA.txt")]
+        [TestCase("Source/Sample.cs", "E.EA", "Expected/EA.txt")]
+        [TestCase("Source/Sample.cs", "EC", "Expected/EC.txt")]
+        [TestCase("Source/Sample.cs", "E.EC", "Expected/EC.txt")]
 
         // Match subclass
         [TestCase("Source/Sample.cs", "NS.OneClassSomewhere.SubClass", "Expected/SubClass.txt")]

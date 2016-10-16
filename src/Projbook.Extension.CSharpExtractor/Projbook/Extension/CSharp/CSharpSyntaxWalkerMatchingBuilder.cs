@@ -84,7 +84,7 @@ namespace Projbook.Extension.CSharpExtractor
                 targetNode: n => n,
                 visit: base.VisitClassDeclaration);
         }
-        
+
         /// <summary>
         /// Visits an interface declaration.
         /// </summary>
@@ -98,6 +98,37 @@ namespace Projbook.Extension.CSharpExtractor
                 exctractName: n => node.Identifier.ValueText,
                 targetNode: n => n,
                 visit: base.VisitInterfaceDeclaration);
+        }
+
+        /// <summary>
+        /// Visits an enum declaration.
+        /// </summary>
+        /// <param name="node">The enum declaration to visit.</param>
+        public override void VisitEnumDeclaration(EnumDeclarationSyntax node)
+        {
+            // Visit
+            this.Visit<EnumDeclarationSyntax>(
+                node: node,
+                typeParameterList: null,
+                exctractName: n => node.Identifier.ValueText,
+                targetNode: n => n,
+                visit: base.VisitEnumDeclaration);
+        }
+
+
+        /// <summary>
+        /// Visits an enum member declaration.
+        /// </summary>
+        /// <param name="node">The enum member declaration to visit.</param>
+        public override void VisitEnumMemberDeclaration(EnumMemberDeclarationSyntax node)
+        {
+            // Visit
+            this.Visit<EnumMemberDeclarationSyntax>(
+                node: node,
+                typeParameterList: null,
+                exctractName: n => node.Identifier.ValueText,
+                targetNode: n => n,
+                visit: base.VisitEnumMemberDeclaration);
         }
 
         /// <summary>

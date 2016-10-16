@@ -348,6 +348,18 @@ namespace Projbook.Tests.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to enum E
+        ///{
+        ///    A, B
+        ///}.
+        /// </summary>
+        internal static string E {
+            get {
+                return ResourceManager.GetString("E", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
         internal static string Empty {

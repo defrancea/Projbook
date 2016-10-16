@@ -57,6 +57,12 @@
             void InterfaceMethod(bool v1, string v2, int v3);
         }
 
+        enum E
+        {
+            EA, EB,
+            EC
+        }
+
         class WithField
         {
             bool aFieldSomewhere, anotherFieldSomewhere;
