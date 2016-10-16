@@ -29,6 +29,11 @@
     string disqusRootPath = "http://defrancea.github.io/Projbook/";
     string disqusIdentifier = "projbook";
     }
+
+    <!-- Compute pdf filename -->
+    @{
+    string pdfName = @Model.Title == "Documentation" ? "projbook.pdf" : "plugins.pdf";
+    }
 </head>
 <body role="document">
     <div class="container">
@@ -37,7 +42,7 @@
             <!--Nav Bar -->
             <nav class="col-md-3 bs-docs-sidebar">
                 <div class="fixed hidden-xs hidden-sm">
-                    <a href="projbook.pdf"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download</a>
+                    <a href="@pdfName"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download</a>
                     <ul id="sidebar" class="nav nav-stacked">
                         @foreach (var page in Model.Pages)
                         {
@@ -90,6 +95,8 @@
             </div>
         </div>
     </div>
+    <br />
+    <br />
     <script src="Scripts/jquery-1.9.1.min.js"></script>
     <script src="Scripts/bootstrap.min.js"></script>
     <script src="Scripts/projbook.js"></script>

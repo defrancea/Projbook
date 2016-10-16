@@ -8,6 +8,10 @@ namespace Projbook.Documentation.Code
 {
     public class SampleClass
     {
+        public SampleClass()
+        {
+        }
+
         private void Method(string input)
         {
             Console.WriteLine(input);

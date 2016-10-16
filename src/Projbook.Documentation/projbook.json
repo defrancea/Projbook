@@ -6,9 +6,9 @@
   "icon": "https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png",
   "configurations": [
     {
-      "title": "Projbook",
-      "description": "Main documentation",
-      "icon": "https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png",
+      "title": "Documentation",
+      "description": "How to use it",
+      "icon": "Image/usermanual.png",
       "template-html": "template.html",
       "output-html": "projbook.html",
       "template-pdf": "template-pdf.html",
@@ -20,12 +20,28 @@
           "path": "Page/jumpstart.md"
         },
         {
-          "title": "Template",
-          "path": "Page/template.md"
+          "title": "Extractors",
+          "path": "Page/extractor.md"
         },
         {
-          "title": "Reference",
-          "path": "Page/reference.md"
+          "title": "Templates",
+          "path": "Page/template.md"
+        }
+      ]
+    },
+    {
+      "title": "Plugins",
+      "description": "How to write plugins",
+      "icon": "Image/plugins.png",
+      "template-html": "template.html",
+      "output-html": "plugins.html",
+      "template-pdf": "template-pdf.html",
+      "output-pdf": "plugins-pdf.html",
+      "section-title-base": 1,
+      "pages": [
+        {
+          "title": "How to write plugins",
+          "path": "Page/plugin.md"
         }
       ]
     }

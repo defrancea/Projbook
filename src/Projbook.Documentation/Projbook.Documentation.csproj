@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\SampleClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -74,8 +75,9 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Page\extractor.md" />
+    <None Include="Page\plugin.md" />
     <None Include="Page\template.md" />
-    <None Include="Page\reference.md" />
     <None Include="Page\jumpstart.md" />
     <None Include="projbook.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -116,6 +118,12 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Image\plugins.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Image\usermanual.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="index-template.html" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js">
@@ -147,6 +155,14 @@
     <ProjectReference Include="..\Projbook.Core\Projbook.Core.csproj">
       <Project>{f0cd4edc-5873-4d81-9458-7cfba3e49fe5}</Project>
       <Name>Projbook.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Projbook.Extension.CSharpExtractor\Projbook.Extension.CSharpExtractor.csproj">
+      <Project>{f5431901-29ac-46d4-a717-de2a9114e82d}</Project>
+      <Name>Projbook.Extension.CSharpExtractor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Projbook.Extension\Projbook.Extension.csproj">
+      <Project>{8338b756-0519-4d20-ba04-3a8f4839237a}</Project>
+      <Name>Projbook.Extension</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -11,16 +11,22 @@ git checkout --orphan gh-pages
 git rm -rf .
 cp ./src/Projbook.Documentation/bin/Release/index.html index.html
 cp ./src/Projbook.Documentation/bin/Release/projbook.html projbook.html
+cp ./src/Projbook.Documentation/bin/Release/plugins.html plugins.html
 cp ./src/Projbook.Documentation/bin/Release/projbook-pdf.pdf projbook.pdf
+cp ./src/Projbook.Documentation/bin/Release/plugins-pdf.pdf plugins.pdf
 cp -R ./src/Projbook.Documentation/bin/Release/Content Content
 cp -R ./src/Projbook.Documentation/bin/Release/Scripts Scripts
+cp -R ./src/Projbook.Documentation/bin/Release/Image Image
 cp -R ./src/Projbook.Documentation/bin/Release/fonts fonts
 git add ./index.html
 git add ./projbook.html
+git add ./plugins.html
 git add ./projbook.pdf
+git add ./plugins.pdf
 git add ./Content
 git add ./fonts
 git add ./Scripts
+git add ./Image
 git commit -m "Deploy Documentation"
 
 # Force push from the current repo's master branch to the remote
