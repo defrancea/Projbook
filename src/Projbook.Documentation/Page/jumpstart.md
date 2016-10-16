@@ -1,62 +1,65 @@
 # Set up
-1. Create a documentation project
-2. Add [Projbook](https://www.nuget.org/packages/Projbook) using nuget
-3. Update your pages in markdown format in `Page` folder
-4. Update `projbook.json` to match your files:
-```json[projbook.json]
-```
-5. Build the documentation project
-6. The generated documentation will be available in your `TargetDir`
+You can install Projbook to any project but we recommand creating a dedicated documentation project. It will allow you to centralize all the documentation without contaminating the code projects.
 
-# Extract csharp file content
-For the following examples we're going to use the following file as snippet source:
+First of all, install [Projbook](https://www.nuget.org/packages/Projbook) using nuget in the project you want the documentation generated from. Alternatively, you can install [Projbook.Core](https://www.nuget.org/packages/Projbook.Core) if you don't have any PDF needs.
+
+It will create a default configuration `projbook.json` from where you can configure your documentation project, define your templates and your page content:
+```fs[../Projbook.Example] projbook.json
+```
+```json[../Projbook.Example/projbook.json]
+```
+
+You can also find some sample files under `Page`. These are going to be the source of the documentation, it's where you'll spend most of your time writing your documentation referencing your actual code source. The syntax of these is markdown and we'll detail later how to reference and extract your source code.
+```fs[../Projbook.Example] *.md
+```
+
+Installing a visual studio [Markdown Editor](https://visualstudiogallery.msdn.microsoft.com/eaab33c3-437b-4918-8354-872dfe5d1bfe) will make the markdown writing easier.
+
+Default templates can edited in order to customize your rendering.
+```fs[../Projbook.Example] index-template.html|template*.html
+```
+
+To generate the documentation you simply need to build the project and find your documentation in your target directory:
+```fs[../Projbook.Documentation] index.html|projbook.html
+```
+> It is possible to skip pdf generation using compilation symbols by using `PROJBOOK_NOPDF` in order to speed up Debug build while keeping it for Release builds.
+Since `Projbook.Core` does not including pdf generation dependencies, this symbol will be forced if you choose it instead of `Projbook`.
+
+# Snippet extraction
+Projbook extends the markdown syntax in order to define snippet reference. By default, you can specify code block but you need to manually type the content this way:
+~~~md
+```txt
+Some code exmaple
+```
+~~~
+
+The first syntax extension allows you to leave the content empty but reference a file. During the document project's build it will find the file content and inject it inside the code block:
+~~~md
+```txt[Path/To/File.txt]
+```
+~~~
+
+Opionally you can specify a pattern used to extract some part of the referenced. This pattern highly depending on the type of content you extract. We'll detail supported syntax and format later.
+~~~md
+```txt[Path/To/File.txt] <pattern>
+```
+~~~
+
+The syntax you define will define two things:
+* The syntax highlighting that is going to be applied using [prism.js](http://prismjs.com/)
+* The pattern you can apply (will be detailed below)
+
+Ultimately you can extract any text-based content associated with any syntax hightlighting but using syntax-specific extraction pattern will make the snippet extraction really powerful.
+As an example, this code block:
+~~~md
+```csharp[Code/SampleClass.cs] Method(int)
+```
+~~~
+
+The whole file content being:
 ```csharp[Code/SampleClass.cs]
 ```
-Extracting file content is doable by simply using a regular code block syntax and add the extraction rule between `[]`.
-Extraction rule syntax include the target file, the member to extract and the extraction options.
 
-## File selector
-While using code block it's possible to reference a csharp file using `csharp[Path/To/The/File.cs]`.
-
-If nothing else is defined, the whole file content will be extracted:
-```csharp[Code/SampleClass.cs]
-```
-Using csharp as syntax allows to extract specific members (see below), however any syntax could be used for extracting a file content.
-It's valid to extract the same file as txt using `txt[Code/SampleClass.cs]` but the syntax highlighting will be lost:
-```text[Code/SampleClass.cs]
-```
-
-## Member selector
-The second part of the extraction rule is the member name, you can either use the raw name or the full qualified name. All of following extraction rule will extract the same content:
-* `csharp[Path/To/The/File.cs] SampleClass.Method(string)`
-* `csharp[Path/To/The/File.cs] Projbook.Documentation.Code.SampleClass.Method(string)`
-```csharp[Code/SampleClass.cs] SampleClass.Method(string)
-```
-
-## Aggregate members
-Thanks to the partial member matching, in case of ambigous matching Projbook will extract all matching members and stack them up. Here `Method` having overloads, `csharp[Code/SampleClass.cs] Method` will extract all of them, note that the member name is not fully qualified but it could if needed or preferred:
-```csharp[Code/SampleClass.cs] Method
-```
-
-# Extraction options
-During the extraction process Projbook can process snippet content in extracting block structure or the code block. This is doable by adding an option prefix to the extraction rule.
-
-## Block structure
-The `=` char represents the top and the bottom of a code block. With `csharp[Code/SampleClass.cs] =SampleClass` Projbook will perform a member extraction and will replace the code content by `// ...`:
-```csharp[Code/SampleClass.cs] =SampleClass
-```
-
-## Block content
-The `-` char represents the content of a code block. With `csharp[Code/SampleClass.cs] -Method(int)` Projbook will perform a member extraction isolating the code content:
-```csharp[Code/SampleClass.cs] -Method(int)
-```
-
-## Combine with member aggregation
-You can combine rules for extracting and processing many member with options. The rule `csharp[Code/SampleClass.cs] =Method` will find any matching member with name `Method`, stack them up and remove the code content by `// ...`:
-```csharp[Code/SampleClass.cs] =Method
-```
-
-# Extract Xml file content
-It is also possible to extract xml content by using XPath as query language, for example, we can export all Import tag in the Projbook's documentation project by using `xml[Projbook.Documentation.csproj] //Import`:
-```xml[Projbook.Documentation.csproj] //Import
+Will be rendered as extracting the referenced method:
+```csharp[Code/SampleClass.cs] Method(int)
 ```
