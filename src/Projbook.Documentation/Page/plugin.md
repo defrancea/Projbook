@@ -27,7 +27,7 @@ When extracting tree-based snippets like file system, you need to use the `NodeS
 ```
 
 Plugins are loaded with [MEF](https://msdn.microsoft.com/en-us/library/dd460648(v=vs.110).aspx) from the plugins directory:
-```fs[../packages/Projbook.1.1.0-cr1] *Extractor.dll*
+```fs[../packages/Projbook.1.1.0-cr2] *Extractor.dll*
 ```
 > All plugins dependencies need to be packaged at the same place
 
