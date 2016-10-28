@@ -19,6 +19,8 @@ Default templates can edited in order to customize your rendering.
 ```fs[../Projbook.Example] index-template.html|template*.html
 ```
 
+> Notice that the default template contains some commented code providing a disqus integration. Follow the instructions in the template to enable the same disqus integration as this document.
+
 To generate the documentation you simply need to build the project and find your documentation in your target directory:
 ```fs[../Projbook.Documentation] index.html|projbook.html
 ```
