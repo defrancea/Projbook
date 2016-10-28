@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Title -->
+    <title>Plugins</title>
+
+    <!-- Bootstrap -->
+    <link href="Content/bootstrap.min.css" rel="stylesheet">
+    <link href="Content/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Prism -->
+    <script src="Scripts/prism.js"></script>
+    <link href="Content/prism.css" rel="stylesheet" />
+
+    <!-- jsTree -->
+    <link href="Content/themes/default/style.min.css" rel="stylesheet" />
+
+    <!-- Projbook -->
+    <link href="Content/projbook.css" rel="stylesheet" />
+
+    <!-- Disqus variables -->
+
+
+    <!-- Compute pdf filename -->
+
+</head>
+<body role="document">
+    <div class="container">
+        <div class="row">
+
+            <!--Nav Bar -->
+            <nav class="col-md-3 bs-docs-sidebar">
+                <div class="fixed hidden-xs hidden-sm">
+                    <a href="plugins.pdf"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download</a>
+                    <ul id="sidebar" class="nav nav-stacked">
+                        <li>
+                            <a href="#Pagepluginmd">How to write plugins</a>
+                            <ul class="nav nav-stacked">
+                                <li><a href="#Pagepluginmd-extractor-plugins">Extractor plugins</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!--Main Content -->
+            <div class="col-md-9">
+                <section id="Pagepluginmd">
+                    <div class="page-header">
+                        <h1>How to write plugins</h1>
+                    </div>
+                    
+                    <div id="Pagepluginmd-extractor-plugins">
+                        <h2>Extractor plugins</h2>
+<p>All extractors are actually plugins that are bound to a syntax. Projbook engine will discover, load and callback snippets while processing snippet extraction.</p>
+<p>In order to write a plugin you need to install <a href="https://www.nuget.org/packages/Projbook.Extension/">Projbook.Extension</a> from nuget after what you can implement the plugin interface:</p>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// Defines interface for snippet extractor.
+/// &lt;/summary&gt;
+[InheritedExport]
+public interface ISnippetExtractor
+{
+    /// &lt;summary&gt;
+    /// Defines the target type.
+    /// &lt;/summary&gt;
+    TargetType TargetType { get; }
+
+    /// &lt;summary&gt;
+    /// Extracts a snippet.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;fileSystemInfo&quot;&gt;The file system info.&lt;/param&gt;
+    /// &lt;param name=&quot;pattern&quot;&gt;The extraction pattern.&lt;/param&gt;
+    /// &lt;returns&gt;The extracted snippet.&lt;/returns&gt;
+    Snippet Extract(FileSystemInfoBase fileSystemInfo, string pattern);
+}</code></pre>
+<p>You can reuse the default extractor implementation that will take case of the content loading and let you focus on your plugin:</p>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// Extractor in charge of browsing source directories. load file content and extract requested member.
+/// &lt;/summary&gt;
+[Syntax(name: &quot;csharp&quot;)]
+public class CSharpSnippetExtractor : DefaultSnippetExtractor
+{
+    // ...
+}</code></pre>
+<blockquote>
+<p>This plugin will be trigerred every time a code snippet is using the <code>csharp</code> syntax.</p>
+</blockquote>
+<p>The <code>TargetType</code> will indicate Projbook what kind of validation needs to be applied on the snippet like file or folder existence and error reporting:</p>
+<pre><code class="language-csharp">namespace Projbook.Extension.Spi
+{
+    /// &lt;summary&gt;
+    /// Represents an extraction target.
+    /// &lt;/summary&gt;
+    public enum TargetType
+    {
+        /// &lt;summary&gt;
+        /// Free text target, used by plugins extracting from free value.
+        /// &lt;/summary&gt;
+        FreeText,
+
+        /// &lt;summary&gt;
+        /// File target, used by plugins extracting from a file.
+        /// &lt;/summary&gt;
+        File,
+
+        /// &lt;summary&gt;
+        /// Folder target, ised bu plugins extracting from a folder.
+        /// &lt;/summary&gt;
+        Folder
+    }
+}</code></pre>
+<p>While implementing an extractor plugin you return an implementation of:</p>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// Represents a snippet that has been extracted from source directories.
+/// &lt;/summary&gt;
+public class Snippet
+{
+    // ...
+}</code></pre>
+<p>When extracting text-based snippet like source code, you need to use the <code>PlainTextSnippet</code> implementation wraping the snippet content it will be injected in the code block:</p>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The text content.
+/// &lt;/summary&gt;
+public readonly string Text;</code></pre>
+<p>When extracting tree-based snippets like file system, you need to use the <code>NodeSnippet</code> implementation wraping the tree-based structure and will be rendered using jstree:</p>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The node content.
+/// &lt;/summary&gt;
+public readonly Node Node;</code></pre>
+<p>Plugins are loaded with <a href="https://msdn.microsoft.com/en-us/library/dd460648(v=vs.110).aspx">MEF</a> from the plugins directory:</p>
+<div class="filetree"><ul><li data-jstree='{"type":"folder"}'>Projbook.1.1.0-cr2</li></ul></div>
+<blockquote>
+<p>All plugins dependencies need to be packaged at the same place</p>
+</blockquote>
+<p>Look at <a href="https://github.com/defrancea/Projbook/tree/master/src/Projbook.Extension.CSharpExtractor">CSharp</a>, <a href="https://github.com/defrancea/Projbook/tree/master/src/Projbook.Extension.XmlExtractor">Xml</a> or <a href="https://github.com/defrancea/Projbook/tree/master/src/Projbook.Extension.FileSystemExtractor">FileSystem</a> plugin source code for a full and detailed example.</p>
+
+                    </div>
+                    <!-- Disqus markup -->
+                    <div>
+                        <div class="text-right">
+                            <a id="show-comments-Pagepluginmd-extractor-plugins" class="show-comments" href="javascript:loadDisqus('http://defrancea.github.io/Projbook/', 'Pagepluginmd-extractor-plugins')" data-disqus-url="http://defrancea.github.io/Projbook/#!Pagepluginmd-extractor-plugins">0 Comments</a>
+                            <a id="hide-comments-Pagepluginmd-extractor-plugins" class="hide-comments" href="javascript:unloadDisqus('Pagepluginmd-extractor-plugins')" style="display: none;">Hide Comments</a>
+                        </div>
+                        <div class="panel-group comment-panel" id="comment-panel-Pagepluginmd-extractor-plugins" style="display: none;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div id="comment-content-Pagepluginmd-extractor-plugins"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <script src="Scripts/jquery-1.9.1.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/projbook.js"></script>
+    
+    <!-- Disqus scripts -->
+    <script src="http://projbook.disqus.com/embed.js"></script>
+    <script id="dsq-count-scr" src="http://projbook.disqus.com/count.js" async></script>
+    <script src="Scripts/projbook-disqus.js"></script>
+    
+    <!-- JsTree scripts -->
+    <script src="Scripts/jstree.min.js"></script>
+    <script>
+        $(function () {
+            $('.filetree').each(function () {
+                $(this).jstree({
+                    'types': {
+                        'file': {
+                            'icon': 'jstree-file'
+                        },
+                        'folder': {
+                            'icon': 'jstree-folder'
+                        },
+                    },
+                    "plugins": ["types"]
+                });
+                $(this).jstree("open_all");
+            })
+        });
+    </script>
+</body>
+</html>

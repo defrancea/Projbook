@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Title -->
+    <title>Documentation</title>
+
+    <!-- Bootstrap -->
+    <link href="Content/bootstrap.min.css" rel="stylesheet">
+    <link href="Content/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Prism -->
+    <script src="Scripts/prism.js"></script>
+    <link href="Content/prism.css" rel="stylesheet" />
+
+    <!-- jsTree -->
+    <link href="Content/themes/default/style.min.css" rel="stylesheet" />
+
+    <!-- Projbook -->
+    <link href="Content/projbook.css" rel="stylesheet" />
+
+    <!-- Disqus variables -->
+
+
+    <!-- Compute pdf filename -->
+
+</head>
+<body role="document">
+    <div class="container">
+        <div class="row">
+
+            <!--Nav Bar -->
+            <nav class="col-md-3 bs-docs-sidebar">
+                <div class="fixed hidden-xs hidden-sm">
+                    <a href="projbook.pdf"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> Download</a>
+                    <ul id="sidebar" class="nav nav-stacked">
+                        <li>
+                            <a href="#Pagejumpstartmd">Jump start</a>
+                            <ul class="nav nav-stacked">
+                                <li><a href="#Pagejumpstartmd-set-up">Set up</a></li>
+                                <li><a href="#Pagejumpstartmd-snippet-extraction">Snippet extraction</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#Pageextractormd">Extractors</a>
+                            <ul class="nav nav-stacked">
+                                <li><a href="#Pageextractormd-c--pattern">C# pattern</a></li>
+                                <li><a href="#Pageextractormd-xml-pattern">Xml pattern</a></li>
+                                <li><a href="#Pageextractormd-file-system-pattern">File system pattern</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#Pagetemplatemd">Templates</a>
+                            <ul class="nav nav-stacked">
+                                <li><a href="#Pagetemplatemd-html-and-pdf-templates">HTML and PDF templates</a></li>
+                                <li><a href="#Pagetemplatemd-index-template">Index template</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!--Main Content -->
+            <div class="col-md-9">
+                <section id="Pagejumpstartmd">
+                    <div class="page-header">
+                        <h1>Jump start</h1>
+                    </div>
+                    
+                    <div id="Pagejumpstartmd-set-up">
+                        <h2>Set up</h2>
+<p>You can install Projbook to any project but we recommand creating a dedicated documentation project. It will allow you to centralize all the documentation without contaminating the code projects.</p>
+<p>First of all, install <a href="https://www.nuget.org/packages/Projbook">Projbook</a> using nuget in the project you want the documentation generated from. Alternatively, you can install <a href="https://www.nuget.org/packages/Projbook.Core">Projbook.Core</a> if you don't have any PDF needs.</p>
+<p>It will create a default configuration <code>projbook.json</code> from where you can configure your documentation project, define your templates and your page content:</p>
+<div class="filetree"><ul><li data-jstree='{"type":"folder"}'>Projbook.Example<ul><li data-jstree='{"type":"file"}'>projbook.json</li></ul></li></ul></div>
+<pre><code class="language-json">{
+  &quot;title&quot;: &quot;Projbook landing page&quot;,
+  &quot;description&quot;: &quot;Everything you ever dreamed to know!&quot;,
+  &quot;template&quot;: &quot;index-template.html&quot;,
+  &quot;output&quot;: &quot;index.html&quot;,
+  &quot;icon&quot;: &quot;https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png&quot;,
+  &quot;configurations&quot;: [
+    {
+      &quot;title&quot;: &quot;Sample document&quot;,
+      &quot;description&quot;: &quot;Description&quot;,
+      &quot;icon&quot;: &quot;https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png&quot;,
+      &quot;template-html&quot;: &quot;template.html&quot;,
+      &quot;template-pdf&quot;: &quot;template-pdf.html&quot;,
+      &quot;output-html&quot;: &quot;documentation.html&quot;,
+      &quot;output-pdf&quot;: &quot;documentation-pdf-input.html&quot;,
+      &quot;section-title-base&quot;: 1,
+      &quot;pages&quot;: [
+        {
+          &quot;title&quot;: &quot;First page&quot;,
+          &quot;path&quot;: &quot;Page/page1.md&quot;
+        },
+        {
+          &quot;title&quot;: &quot;Second page&quot;,
+          &quot;path&quot;: &quot;Page/page2.md&quot;
+        }
+      ]
+    }
+  ]
+}</code></pre>
+<p>You can also find some sample files under <code>Page</code>. These are going to be the source of the documentation, it's where you'll spend most of your time writing your documentation referencing your actual code source. The syntax of these is markdown and we'll detail later how to reference and extract your source code.</p>
+<div class="filetree"><ul><li data-jstree='{"type":"folder"}'>Projbook.Example</li></ul></div>
+<p>Installing a visual studio <a href="https://visualstudiogallery.msdn.microsoft.com/eaab33c3-437b-4918-8354-872dfe5d1bfe">Markdown Editor</a> will make the markdown writing easier.</p>
+<p>Default templates can edited in order to customize your rendering.</p>
+<div class="filetree"><ul><li data-jstree='{"type":"folder"}'>Projbook.Example<ul><li data-jstree='{"type":"file"}'>index-template.html</li></ul><ul><li data-jstree='{"type":"file"}'>template.html</li></ul><ul><li data-jstree='{"type":"file"}'>template-pdf.html</li></ul></li></ul></div>
+<blockquote>
+<p>Notice that the default template contains some commented code providing a disqus integration. Follow the instructions in the template to enable the same disqus integration as this document.</p>
+</blockquote>
+<p>To generate the documentation you simply need to build the project and find your documentation in your target directory:</p>
+<div class="filetree"><ul><li data-jstree='{"type":"folder"}'>Projbook.Documentation</li></ul></div>
+<blockquote>
+<p>It is possible to skip pdf generation using compilation symbols by using <code>PROJBOOK_NOPDF</code> in order to speed up Debug build while keeping it for Release builds.
+Since <code>Projbook.Core</code> does not including pdf generation dependencies, this symbol will be forced if you choose it instead of <code>Projbook</code>.</p>
+</blockquote>
+
+                    </div>
+                    <!-- Disqus markup -->
+                    <div>
+                        <div class="text-right">
+                            <a id="show-comments-Pagejumpstartmd-set-up" class="show-comments" href="javascript:loadDisqus('http://defrancea.github.io/Projbook/', 'Pagejumpstartmd-set-up')" data-disqus-url="http://defrancea.github.io/Projbook/#!Pagejumpstartmd-set-up">0 Comments</a>
+                            <a id="hide-comments-Pagejumpstartmd-set-up" class="hide-comments" href="javascript:unloadDisqus('Pagejumpstartmd-set-up')" style="display: none;">Hide Comments</a>
+                        </div>
+                        <div class="panel-group comment-panel" id="comment-panel-Pagejumpstartmd-set-up" style="display: none;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div id="comment-content-Pagejumpstartmd-set-up"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Pagejumpstartmd-snippet-extraction">
+                        <h2>Snippet extraction</h2>
+<p>Projbook extends the markdown syntax in order to define snippet reference. By default, you can specify code block but you need to manually type the content this way:</p>
+<pre><code class="language-md">```txt
+Some code exmaple
+```
+</code></pre>
+<p>The first syntax extension allows you to leave the content empty but reference a file. During the document project's build it will find the file content and inject it inside the code block:</p>
+<pre><code class="language-md">```txt[Path/To/File.txt]
+```
+</code></pre>
+<p>Opionally you can specify a pattern used to extract some part of the referenced. This pattern highly depending on the type of content you extract. We'll detail supported syntax and format later.</p>
+<pre><code class="language-md">```txt[Path/To/File.txt] &lt;pattern&gt;
+```
+</code></pre>
+<p>The syntax you define will define two things:</p>
+<ul>
+<li>The syntax highlighting that is going to be applied using <a href="http://prismjs.com/">prism.js</a></li>
+<li>The pattern you can apply (will be detailed below)</li>
+</ul>
+<p>Ultimately you can extract any text-based content associated with any syntax hightlighting but using syntax-specific extraction pattern will make the snippet extraction really powerful.
+As an example, this code block:</p>
+<pre><code class="language-md">```csharp[Code/SampleClass.cs] Method(int)
+```
+</code></pre>
+<p>The whole file content being:</p>
+<pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Projbook.Documentation.Code
+{
+    public class SampleClass
+    {
+        public SampleClass()
+        {
+        }
+
+        private void Method(string input)
+        {
+            Console.WriteLine(input);
+        }
+
+        private void Method(int input)
+        {
+            Console.WriteLine(42 + input);
+        }
+    }
+}
+</code></pre>
+<p>Will be rendered as extracting the referenced method:</p>
+<pre><code class="language-csharp">private void Method(int input)
+{
+    Console.WriteLine(42 + input);
+}</code></pre>
+
+                    </div>
+                    <!-- Disqus markup -->
+                    <div>
+                        <div class="text-right">
+                            <a id="show-comments-Pagejumpstartmd-snippet-extraction" class="show-comments" href="javascript:loadDisqus('http://defrancea.github.io/Projbook/', 'Pagejumpstartmd-snippet-extraction')" data-disqus-url="http://defrancea.github.io/Projbook/#!Pagejumpstartmd-snippet-extraction">0 Comments</a>
+                            <a id="hide-comments-Pagejumpstartmd-snippet-extraction" class="hide-comments" href="javascript:unloadDisqus('Pagejumpstartmd-snippet-extraction')" style="display: none;">Hide Comments</a>
+                        </div>
+                        <div class="panel-group comment-panel" id="comment-panel-Pagejumpstartmd-snippet-extraction" style="display: none;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div id="comment-content-Pagejumpstartmd-snippet-extraction"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="Pageextractormd">
+                    <div class="page-header">
+                        <h1>Extractors</h1>
+                    </div>
+                    <p>Extraction pattern are implemented as <a href="plugins.html">projbook plugins</a>. Below is the documentation of the built in ones.</p>
+
+                    <div id="Pageextractormd-c--pattern">
+                        <h2>C# pattern</h2>
+<p>C# patterns allow referencing any syntax block member like namepsaces, classes, fields, properties, events, indexers, methods. Some options allows wipe block content or extract block content only.
+It mostly follow the <a href="https://msdn.microsoft.com/en-us/library/cc837134.aspx">cref</a> syntax with some extra options and modifications:</p>
+<ul>
+<li>Constructors are matched by <code>&lt;Constructor&gt;</code></li>
+<li>Finalizers are matched by <code>&lt;Destructor&gt;</code></li>
+<li>Indexers are matched by their type like <code>[int]</code></li>
+<li>You can reference events and properties sub blocks by using their name like <code>ThePropertyName.get</code> or <code>TheEventName.add</code></li>
+<li>It's possible to match any methods by parameters like <code>(string, int)</code> matching any method having these parameters</li>
+<li>The <code>-</code> prefix to extract the block content only</li>
+<li>The <code>=</code> prefix to extract the block structure only</li>
+</ul>
+<p>All example below are using this file content:</p>
+<pre><code class="language-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Projbook.Documentation.Code
+{
+    public class SampleClass
+    {
+        public SampleClass()
+        {
+        }
+
+        private void Method(string input)
+        {
+            Console.WriteLine(input);
+        }
+
+        private void Method(int input)
+        {
+            Console.WriteLine(42 + input);
+        }
+    }
+}
+</code></pre>
+<p>Member selection will simply apply a pattern matching on the full qualified member name such as you can use either name or a full qualified name to resolve ambiguity.
+All of these pattern are equivalent in this context:</p>
+<ul>
+<li><code>csharp[Path/To/The/File.cs] SampleClass.Method(string)</code></li>
+<li><code>csharp[Path/To/The/File.cs] Projbook.Documentation.Code.SampleClass.Method(string)</code></li>
+<li><code>csharp[Path/To/The/File.cs] (string)</code></li>
+</ul>
+<p>Will produce:</p>
+<pre><code class="language-csharp">private void Method(string input)
+{
+    Console.WriteLine(input);
+}</code></pre>
+<p>Constructors are matched by <code>&lt;Constructor&gt;</code> special name, <code>csharp[Code/SampleClass.cs] &lt;Constructor&gt;</code> would extract:</p>
+<pre><code class="language-csharp">public SampleClass()
+{
+}</code></pre>
+<p>Thanks to pattern matching, in case of ambigous matching Projbook will extract all matching members and stack them up. Here <code>Method</code> having overloads, <code>csharp[Code/SampleClass.cs] Method</code> will extract all of them. Note that the member name is not fully qualified but it could if needed or preferred:</p>
+<pre><code class="language-csharp">private void Method(string input)
+{
+    Console.WriteLine(input);
+}
+
+private void Method(int input)
+{
+    Console.WriteLine(42 + input);
+}</code></pre>
+<blockquote>
+<p>This feature is not specific to method name but also apply to parameter extracting all methods having the same parameters and can even be combined with options (see below for more details).</p>
+</blockquote>
+<p>During the extraction process Projbook can process snippet content in extracting block structure or the code block. This is doable by adding an option prefix to the extraction rule.</p>
+<p>The <code>=</code> char represents the top and the bottom of a code block. With <code>csharp[Code/SampleClass.cs] =SampleClass</code> Projbook will perform a member extraction and will replace the code content by <code>// ...</code>:</p>
+<pre><code class="language-csharp">public class SampleClass
+{
+    // ...
+}</code></pre>
+<p>The <code>-</code> char represents the content of a code block. With <code>csharp[Code/SampleClass.cs] -Method(int)</code> Projbook will perform a member extraction isolating the code content:</p>
+<pre><code class="language-csharp">Console.WriteLine(42 + input);</code></pre>
+<p>You can combine rules for extracting and processing many member with options. The rule <code>csharp[Code/SampleClass.cs] =Method</code> will find any matching member with name <code>Method</code>, stack them up and remove the code content by <code>// ...</code>:</p>
+<pre><code class="language-csharp">private void Method(string input)
+{
+    // ...
+}
+
+private void Method(int input)
+{
+    // ...
+}</code></pre>
+
+                    </div>
+                    <!-- Disqus markup -->
+                    <div>
+                        <div class="text-right">
+                            <a id="show-comments-Pageextractormd-c--pattern" class="show-comments" href="javascript:loadDisqus('http://defrancea.github.io/Projbook/', 'Pageextractormd-c--pattern')" data-disqus-url="http://defrancea.github.io/Projbook/#!Pageextractormd-c--pattern">0 Comments</a>
+                            <a id="hide-comments-Pageextractormd-c--pattern" class="hide-comments" href="javascript:unloadDisqus('Pageextractormd-c--pattern')" style="display: none;">Hide Comments</a>
+                        </div>
+                        <div class="panel-group comment-panel" id="comment-panel-Pageextractormd-c--pattern" style="display: none;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div id="comment-content-Pageextractormd-c--pattern"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Pageextractormd-xml-pattern">
+                        <h2>Xml pattern</h2>
+<p>It is also possible to extract xml content by using <a href="https://msdn.microsoft.com/en-us/library/ms256115">XPath</a> as query language, for example, we can export all Import tag in the Projbook's documentation project by using <code>xml[Projbook.Documentation.csproj] //Import</code>:</p>
+<pre><code class="language-xml">&lt;Import
+  Project=&quot;..\packages\Projbook.1.1.0-cr2\build\Projbook.props&quot;
+  Condition=&quot;Exists('..\packages\Projbook.1.1.0-cr2\build\Projbook.props')&quot; /&gt;
+
+&lt;Import
+  Project=&quot;$(SolutionDir)build\Projbook.settings&quot;
+  Condition=&quot;Exists('$(SolutionDir)build\Projbook.settings')&quot; /&gt;
+
+&lt;Import
+  Project=&quot;$(MSBuildToolsPath)\Microsoft.CSharp.targets&quot; /&gt;
+
+&lt;Import
+  Project=&quot;..\packages\Projbook.1.1.0-cr2\build\Projbook.targets&quot;
+  Condition=&quot;Exists('..\packages\Projbook.1.1.0-cr2\build\Projbook.targets')&quot; /&gt;</code></pre>
+
+                    </div>
+                    <!-- Disqus markup -->
+                    <div>
+                        <div class="text-right">
+                            <a id="show-comments-Pageextractormd-xml-pattern" class="show-comments" href="javascript:loadDisqus('http://defrancea.github.io/Projbook/', 'Pageextractormd-xml-pattern')" data-disqus-url="http://defrancea.github.io/Projbook/#!Pageextractormd-xml-pattern">0 Comments</a>
+                            <a id="hide-comments-Pageextractormd-xml-pattern" class="hide-comments" href="javascript:unloadDisqus('Pageextractormd-xml-pattern')" style="display: none;">Hide Comments</a>
+                        </div>
+                        <div class="panel-group comment-panel" id="comment-panel-Pageextractormd-xml-pattern" style="display: none;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div id="comment-content-Pageextractormd-xml-pattern"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Pageextractormd-file-system-pattern">
+                        <h2>File system pattern</h2>
+<p>A special syntax <code>fs</code> for <strong>file system</strong> is handled and rendered as a tree, simply uses Projbook references to target a path in the file system with this syntax and it will be rendered as a jstree:</p>
+<pre><code class="language-md">```fs[Page]
+```
+</code></pre>
+<p>Being rendered as:</p>
+<div class="filetree"><ul><li data-jstree='{"type":"folder"}'>Page<ul><li data-jstree='{"type":"file"}'>extractor.md</li></ul><ul><li data-jstree='{"type":"file"}'>jumpstart.md</li></ul><ul><li data-jstree='{"type":"file"}'>plugin.md</li></ul><ul><li data-jstree='{"type":"file"}'>template.md</li></ul></li></ul></div>
+<p>Patterns can be <a href="https://msdn.microsoft.com/en-us/library/wz42302f(v=vs.110).aspx">file search pattern</a> such as <code>*.cs</code> or <code>my-file.txt</code> like this:</p>
+<pre><code class="language-md">```fs[.] *.md*
+```
+</code></pre>
+<p>Being rendered as:</p>
+<div class="filetree"><ul><li data-jstree='{"type":"folder"}'>Projbook.Documentation</li></ul></div>
+<p>It's also possible to combine patterns using <code>|</code> or <code>;</code> chars such as the following extraction rule:</p>
+<pre><code class="language-md">```fs[.] *.md|*template*.html
+```
+</code></pre>
+<p>Produces:</p>
+<div class="filetree"><ul><li data-jstree='{"type":"folder"}'>Projbook.Documentation<ul><li data-jstree='{"type":"file"}'>index-template.html</li></ul><ul><li data-jstree='{"type":"file"}'>template.html</li></ul><ul><li data-jstree='{"type":"file"}'>template-pdf.html</li></ul></li></ul></div>
+                    </div>
+                    <!-- Disqus markup -->
+                    <div>
+                        <div class="text-right">
+                            <a id="show-comments-Pageextractormd-file-system-pattern" class="show-comments" href="javascript:loadDisqus('http://defrancea.github.io/Projbook/', 'Pageextractormd-file-system-pattern')" data-disqus-url="http://defrancea.github.io/Projbook/#!Pageextractormd-file-system-pattern">0 Comments</a>
+                            <a id="hide-comments-Pageextractormd-file-system-pattern" class="hide-comments" href="javascript:unloadDisqus('Pageextractormd-file-system-pattern')" style="display: none;">Hide Comments</a>
+                        </div>
+                        <div class="panel-group comment-panel" id="comment-panel-Pageextractormd-file-system-pattern" style="display: none;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div id="comment-content-Pageextractormd-file-system-pattern"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="Pagetemplatemd">
+                    <div class="page-header">
+                        <h1>Templates</h1>
+                    </div>
+                    <p>Default templates are using bootstrap can be directly used as it without any changes but can be modified or entirely rewritte if needed.
+Templates use html with <a href="https://www.asp.net/web-pages/overview/getting-started/introducing-razor-syntax-c">Razor syntax</a> having relevant information about documentation as model.</p>
+
+                    <div id="Pagetemplatemd-html-and-pdf-templates">
+                        <h2>HTML and PDF templates</h2>
+<p>There are two template file per generation configuration that you can define in <code>projbook.json</code>:</p>
+<ul>
+<li><code>template-html</code>: Used as template for HTML generation.</li>
+<li><code>template-pdf</code>: Used as template for PDF generation.</li>
+</ul>
+<p>By default the generated files are going to have the same name as the template one with the <code>-generated</code> sufix but you can define your own using:</p>
+<ul>
+<li><code>output-html</code>: The output file for <code>template-html</code></li>
+<li><code>output-pdf</code>: The output file for <code>template-pdf</code></li>
+</ul>
+<blockquote>
+<p>You can use html template, pdf or both but at least one must be definied.</p>
+</blockquote>
+<p>The <code>@Model</code> variable contains two top level member:</p>
+<ul>
+<li><code>Model.Title</code>: The documentation title from the configuration</li>
+<li><code>Model.Pages</code>: An array of Page (mode details below)</li>
+</ul>
+<p>Here is the <code>Page</code> class members exposed in the template templates:</p>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The page id.
+/// &lt;/summary&gt;
+public string Id { get; private set; }</code></pre>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The page title.
+/// &lt;/summary&gt;
+public string Title { get; private set; }</code></pre>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The pre section content.
+/// &lt;/summary&gt;
+public string PreSectionContent { get; private set; }</code></pre>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The page sections.
+/// &lt;/summary&gt;
+public Section[] Sections { get; private set; }</code></pre>
+<p>Here is the <code>Section</code> class members exposed in the template templates:</p>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The section id.
+/// &lt;/summary&gt;
+public string Id { get; private set; }</code></pre>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The section level.
+/// &lt;/summary&gt;
+public int Level { get; private set; }</code></pre>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The section title.
+/// &lt;/summary&gt;
+public string Title { get; private set; }</code></pre>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The section content.
+/// &lt;/summary&gt;
+public string Content { get; private set; }</code></pre>
+
+                    </div>
+                    <!-- Disqus markup -->
+                    <div>
+                        <div class="text-right">
+                            <a id="show-comments-Pagetemplatemd-html-and-pdf-templates" class="show-comments" href="javascript:loadDisqus('http://defrancea.github.io/Projbook/', 'Pagetemplatemd-html-and-pdf-templates')" data-disqus-url="http://defrancea.github.io/Projbook/#!Pagetemplatemd-html-and-pdf-templates">0 Comments</a>
+                            <a id="hide-comments-Pagetemplatemd-html-and-pdf-templates" class="hide-comments" href="javascript:unloadDisqus('Pagetemplatemd-html-and-pdf-templates')" style="display: none;">Hide Comments</a>
+                        </div>
+                        <div class="panel-group comment-panel" id="comment-panel-Pagetemplatemd-html-and-pdf-templates" style="display: none;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div id="comment-content-Pagetemplatemd-html-and-pdf-templates"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Pagetemplatemd-index-template">
+                        <h2>Index template</h2>
+<p>The home page is generated using its own template that you can change using the following properties:</p>
+<ul>
+<li><code>template</code>: The index template with <code>index-template/html</code> as a default value.</li>
+<li><code>output</code>: The output file name with <code>index.html</code> as a default value.</li>
+</ul>
+<p>From this template you can use <code>@Model.IndexConfiguration</code> containing the following member:</p>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The index title.
+/// &lt;/summary&gt;
+public string Title { get; set; }</code></pre>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The index description.
+/// &lt;/summary&gt;
+public string Description { get; set; }</code></pre>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The index output.
+/// &lt;/summary&gt;
+public string Icon { get; set; }</code></pre>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The index configurations.
+/// &lt;/summary&gt;
+public Configuration[] Configurations { get; set; }</code></pre>
+<p>Each Configuration configurations contains:</p>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The document title.
+/// &lt;/summary&gt;
+public string Title { get; set; }</code></pre>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The document description.
+/// &lt;/summary&gt;
+public string Description { get; set; }</code></pre>
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// The document icon.
+/// &lt;/summary&gt;
+public string Icon { get; set; }</code></pre>
+<blockquote>
+<p>Projbook default templates use a ready to go preset bootstrap-based content but you're free to edit template to matches your needs or your project theme.</p>
+</blockquote>
+
+                    </div>
+                    <!-- Disqus markup -->
+                    <div>
+                        <div class="text-right">
+                            <a id="show-comments-Pagetemplatemd-index-template" class="show-comments" href="javascript:loadDisqus('http://defrancea.github.io/Projbook/', 'Pagetemplatemd-index-template')" data-disqus-url="http://defrancea.github.io/Projbook/#!Pagetemplatemd-index-template">0 Comments</a>
+                            <a id="hide-comments-Pagetemplatemd-index-template" class="hide-comments" href="javascript:unloadDisqus('Pagetemplatemd-index-template')" style="display: none;">Hide Comments</a>
+                        </div>
+                        <div class="panel-group comment-panel" id="comment-panel-Pagetemplatemd-index-template" style="display: none;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div id="comment-content-Pagetemplatemd-index-template"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <script src="Scripts/jquery-1.9.1.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="Scripts/projbook.js"></script>
+    
+    <!-- Disqus scripts -->
+    <script src="http://projbook.disqus.com/embed.js"></script>
+    <script id="dsq-count-scr" src="http://projbook.disqus.com/count.js" async></script>
+    <script src="Scripts/projbook-disqus.js"></script>
+    
+    <!-- JsTree scripts -->
+    <script src="Scripts/jstree.min.js"></script>
+    <script>
+        $(function () {
+            $('.filetree').each(function () {
+                $(this).jstree({
+                    'types': {
+                        'file': {
+                            'icon': 'jstree-file'
+                        },
+                        'folder': {
+                            'icon': 'jstree-folder'
+                        },
+                    },
+                    "plugins": ["types"]
+                });
+                $(this).jstree("open_all");
+            })
+        });
+    </script>
+</body>
+</html>

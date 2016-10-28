@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Bootstrap -->
+    <link href="Content/bootstrap.min.css" rel="stylesheet">
+    <link href="Content/bootstrap-theme.min.css" rel="stylesheet">
+    
+    <!-- Projbook -->
+    <link href="Content/projbook.css" rel="stylesheet" />
+</head>
+<body role="document">
+    <div class="container">
+        <br/>
+        <header class="jumbotron hero-spacer">
+            <img style="float:left" height="170" src="https://raw.githubusercontent.com/defrancea/Projbook/master/resources/Projbook.png" />
+            <div style="margin-left:200px">
+                <h1>Projbook</h1>
+                <p>A kick-ass documentation generator!</p>
+            </div>
+        </header>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                Projbook is a lighweight and open source documentation generator intended to help you writing your code-related documentation such as libraries or frameworks.<br/>
+                It is not an API documentation generator like <a href="http://www.stack.nl/~dimitri/doxygen/">doxygen</a>, or <a href="https://dotnet.github.io/docfx/">docfs</a> but complementary to them.<br />
+                <br />
+                Projbook becomes handy while dealing with real documentation content including code snippets like user guide where snippets needs to be very detailed but always up to date.<br />
+                It will provide ways to extract the exact snippet you need and inject them the documentation ensuring:
+                <ul>
+                    <li>The code is compilable</li>
+                    <li>The reference is correct</li>
+                    <li>Can be integrated with a continuous integration environment</li>
+                </ul>
+                As an example, this website is entirely generated using Projbook, trigerred and deployed by a continous environemnt.
+                This <a href="https://github.com/defrancea/Projbook/tree/master/src/Projbook.Documentation">documentation's source</a> is available with the <a href="https://github.com/defrancea/Projbook/tree/master">project's source</a> on github.<br />
+                <br />
+                The project is available on <a href="https://www.nuget.org/packages?q=Projbook">nuget</a> and updates are broacasted on <a href="https://twitter.com/projbooklib">@projbooklib</a>.
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col-md-3 col-sm-6 hero-feature">
+                <div class="thumbnail index-button">
+                    <img src="Image/usermanual.png">
+                    <div class="caption">
+                        <h3><a href="projbook.html">Documentation</a></h3>
+                        <p>How to use it</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 hero-feature">
+                <div class="thumbnail index-button">
+                    <img src="Image/plugins.png">
+                    <div class="caption">
+                        <h3><a href="plugins.html">Plugins</a></h3>
+                        <p>How to write plugins</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="Scripts/jquery-1.9.1.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+</body>
+</html>
