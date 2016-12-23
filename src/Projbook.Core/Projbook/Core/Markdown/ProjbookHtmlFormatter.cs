@@ -1,4 +1,4 @@
-﻿using CommonMark;
+﻿/*using CommonMark;
 using CommonMark.Formatters;
 using CommonMark.Syntax;
 using EnsureThat;
@@ -345,4 +345,4 @@ namespace Projbook.Core.Markdown
             stringBuilder.Append("</ul>");
         }
     }
-}
+}*/

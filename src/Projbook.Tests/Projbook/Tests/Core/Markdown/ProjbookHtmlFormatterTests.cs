@@ -1,4 +1,4 @@
-﻿using CommonMark;
+﻿/*using CommonMark;
 using CommonMark.Syntax;
 using NUnit.Framework;
 using Projbook.Core.Markdown;
@@ -586,4 +586,4 @@ namespace Projbook.Tests.Core
                 output);
         }
     }
-}
+}*/
