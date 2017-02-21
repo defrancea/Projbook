@@ -263,13 +263,13 @@ namespace Projbook.Tests.Core
             Assert.AreEqual(3, errors.Length);
             Assert.AreEqual("Cannot find member: NotFound", errors[0].Message);
             Assert.AreEqual(1, errors[0].Line);
-            Assert.AreEqual(27, errors[0].Column);
+            Assert.AreEqual(26, errors[0].Column);
             Assert.AreEqual("Cannot find member: NotFound", errors[1].Message);
             Assert.AreEqual(7, errors[1].Line);
-            Assert.AreEqual(27, errors[1].Column);
+            Assert.AreEqual(26, errors[1].Column);
             Assert.IsTrue(errors[2].Message.StartsWith("Cannot find target 'Source/NotFound.cs' in any referenced project"));
             Assert.AreEqual(13, errors[2].Line);
-            Assert.AreEqual(12, errors[2].Column);
+            Assert.AreEqual(11, errors[2].Column);
         }
     }
 }
